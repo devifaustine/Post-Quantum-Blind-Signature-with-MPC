@@ -1,13 +1,15 @@
 # Post-Quantum-Blind-Signature-with-MPC
-A simulation of a quantum resistant blind signature scheme using Multi-Party Computation (MPC).
+A simulation of a quantum-resistant blind signature scheme using Multi-Party Computation (MPC).
 
-The idea is to use SPHINCS+ as a circuit to compute a Post-Quantum digital signature, and then put it inside the MPC, such that the parties doesn't know each other's input - the signer's input would then be the secret key, whereas the user input would be the message. 
-The user would then get the output - signed message.
+The idea is to use SPHINCS+ to compute a quantum-resistant digital signature, and compute it inside the MPC, such that the parties involved do not learn anything from each other's private inputs.
+In this setting there would only be 2 parties, the user and the signer. The signer's secret input would be the secret key, whereas the user input would be the message to be signed. These two inputs would be kept private from each other.
+The user would then get the output at the end of the protocol, which is the signed message. 
+The signature can then be verified using the signer's public key. 
 
 We use the [SPHINCS+](https://sphincs.org/) signature scheme, which is stateless and hash-based as the base scheme for the blind signature. 
 
-This implementation uses the [PySpx](https://github.com/sphincs/pyspx.git) library, the package is described [here](https://pypi.org/project/PySPX/).
+This implementation uses the [PySpx](https://github.com/sphincs/pyspx.git) library, the package is described [here](https://pypi.org/project/PySPX/) and also [MPyC](https://github.com/lschoe/mpyc), described [here](https://mpyc.readthedocs.io/en/latest/mpyc.html).
 
-The goal is to benchmark this scheme and determine if it is efficient in practice and can be used as a blind signature scheme. 
+The goal is to benchmark this new scheme and determine if it is efficient in practice and can be used as a blind signature scheme. 
 
 We want the cost for the signer lower than the user's generally since the computation will mostly be done by the signer. 
