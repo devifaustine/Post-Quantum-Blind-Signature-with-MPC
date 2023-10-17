@@ -1,7 +1,7 @@
 # Post-Quantum-Blind-Signature-with-MPC
 A simulation of a quantum-resistant blind signature scheme using Multi-Party Computation (MPC).
 
-The idea is to use SPHINCS+ to compute a quantum-resistant digital signature, and compute it inside the MPC, such that the parties involved do not learn anything from each other's private inputs.
+The idea is to use [SPHINCS+](https://sphincs.org/) to compute a quantum-resistant digital signature, and compute it inside the MPC, such that the parties involved do not learn anything from each other's private inputs.
 In this setting there would only be 2 parties, the user and the signer. The signer's secret input would be the secret key, whereas the user input would be the message to be signed. These two inputs would be kept private from each other.
 The user would then get the output at the end of the protocol, which is the signed message. 
 The signature can then be verified using the signer's public key. 
