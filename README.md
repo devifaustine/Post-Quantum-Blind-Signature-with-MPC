@@ -10,6 +10,4 @@ We use the [SPHINCS+](https://sphincs.org/) signature scheme, which is stateless
 
 This implementation uses the [PySpx](https://github.com/sphincs/pyspx.git) library, the package is described [here](https://pypi.org/project/PySPX/) and also [MPyC](https://github.com/lschoe/mpyc), described [here](https://mpyc.readthedocs.io/en/latest/mpyc.html).
 
-The goal is to benchmark this new scheme and determine if it is efficient in practice and can be used as a blind signature scheme. 
-
-We want the cost for the signer lower than the user's generally since the computation will mostly be done by the signer. 
+The goal is to benchmark this new scheme and determine if it is efficient in practice and can be used as a blind signature scheme.
