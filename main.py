@@ -6,8 +6,8 @@ import random
 import string
 import time
 from statistics import mean
-
-from mpyc.runtime import mpc
+import inspect
+import importlib
 
 # Create 2 seeds randomly, one for SHA128 the other for SHA256
 x = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(48))
@@ -79,6 +79,7 @@ for i in range(len(time_256)):
 print("Time required for SHA128 is %d seconds." %elapsed_128)
 print("Time required for SHA256 is %d seconds." %elapsed_256)
 print("SHA128 is %d times faster than SHA256" %(elapsed_128/elapsed_256))
+
 
 """
 
