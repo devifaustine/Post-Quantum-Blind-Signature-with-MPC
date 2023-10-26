@@ -1,14 +1,34 @@
 from mpyc.runtime import mpc
+import os
+from math import ceil, log
+
+# here are the list of variables needed
+n = 256
+m = 512
+h = 60
+d = 12
+w = 16
+tau = 16
+k = 32
+
+l = 1 # TODO: change this value
 
 def keygen(seed):
     """
     generate a public and private key pair based on the seed
     :param seed: seed (typically 32 bytes / 256 bits long)
-    :return: (public key, private key)
+    :return: public key, private key
     """
     # TODO: make the key generation function based on the seed
-    pk = 0
-    sk = 0
+    secret_seed = os.urandom(seed)
+    secret_prf = os.urandom(seed)
+    public_seed = os.urandom(seed)
+
+    # TODO: l is supposedly self.wots.l, find out what this is in SPHINCS-256-py
+    p = max(w - 1, 2 * (h + ceil(log(l, 2))), 2 * tau)
+    public_root = [os.urandom(seed // 8) for _ in range(p)]
+    pk = [public_seed, public_root]
+    sk = [secret_seed, secret_prf, public_seed, public_root]
     return pk, sk
 
 def verify(s, m, pk):
@@ -19,7 +39,7 @@ def verify(s, m, pk):
     :param pk: public key
     :return: true/false
     """
-    # TODO: finish the verification process/function 
+    # TODO: finish the verification process/function
     return True
 
 def check_type(x):
