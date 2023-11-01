@@ -25,20 +25,22 @@ for i in range(len(list_seeds)):
 # Randomly generate 100 messages of random length (1-70) to be signed later on
 messages = []
 
-print("Messages: ")
+# print("Messages: ")
+# generating messages to be signed / payload
 for i in range(100):
     length = random.randint(1, 70)
     message = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
     messages.append(bytes(message, 'ascii'))
-    print("\t %s" %message)
+    # prints out generated messages
+    #print("\t %s" %message)
 
 # list of elapsed time for SPHINCS using SHA128
 time_128 = []
 # list of elapsed time for SPHINCS using SHA256
 time_256 = []
 
-# Signing using SHA-128
 for i in range(len(messages)):
+    # Signing using SHA-128
     start = time.time()
     public_key, secret_key = pyspx.shake_128f.generate_keypair(seeds[0])
     signature = pyspx.shake_128f.sign(messages[i], secret_key)
@@ -64,11 +66,10 @@ for i in range(len(messages)):
     #print(ver)
     #print("time =", elapsed)
 
-print(time_128)
-print(time_256)
-print()
 #print("Average time to sign messages using SHA-128 = %d" %(mean(time_128)))
 #print("Average time to sign messages using SHA-256 = %d" %(mean(time_256)))
+#print(time_128)
+#print(time_256)
 
 elapsed_128 = 0
 elapsed_256 = 0
@@ -78,9 +79,10 @@ for i in range(len(time_128)):
 for i in range(len(time_256)):
     elapsed_256 += time_256[i]
 
-# prints out the average time results
-print("Time required for SHA128 is %d seconds." %(elapsed_128 / len(time_128)))
-print("Time required for SHA256 is %d seconds." %(elapsed_256 / len(time_256)))
+# prints out the average time results - needs to be divided by 100, since it is
+# the sum of time it takes to sign 100 messages
+print("Time required for SHA128 is %d seconds." %elapsed_128)
+print("Time required for SHA256 is %d seconds." %elapsed_256)
 print("SHA128 is %d times faster than SHA256" %(elapsed_128/elapsed_256))
 
 
