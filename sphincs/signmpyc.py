@@ -47,6 +47,13 @@ class SPHINCS(object):
 
     @classmethod
     def address(self, level, subtree, leaf):
+        """
+        combine level, subtree and leaf with bitwise or into bytes
+        :param level: level of the tree
+        :param subtree: the subtree
+        :param leaf: the leaf
+        :return: byte representation of t / the address of the leaf
+        """
         t = level | (subtree << 4) | (leaf << 59)
         return int.to_bytes(t, length=8, byteorder='little')
 
@@ -59,19 +66,11 @@ class SPHINCS(object):
         pk1 = root(hash_tree(H, leafs))
         return pk1
 
-    def wots_leaf(self, address, SK1, masks):
-        seed = self.Fa(address, SK1)
-        pk_A = self.wots.keygen(seed, masks)
-        H = lambda x, y, i: self.H(xor(x, masks[2*i]), xor(y, masks[2*i+1]))
-        return root(l_tree(H, pk_A))
-
     def keygen(self):
         """
         generate a public and private key pair
         :return: public key, private key
         """
-        # TODO: make the key generation function based on the seed
-
         sk1 = os.urandom(self.n // 8)
         sk2 = os.urandom(self.n // 8)
         p = max(self.w - 1, 2 * (self.h + ceil(log(self.wots.l, 2))), 2 * self.tau)
@@ -82,6 +81,12 @@ class SPHINCS(object):
         pk = (pk1, q)
 
         return pk, sk
+
+    def wots_leaf(self, address, SK1, masks):
+        seed = self.Fa(address, SK1)
+        pk_A = self.wots.keygen(seed, masks)
+        H = lambda x, y, i: self.H(xor(x, masks[2*i]), xor(y, masks[2*i+1]))
+        return root(l_tree(H, pk_A))
 
     def verify(s, m, pk):
         """
@@ -101,34 +106,29 @@ class SPHINCS(object):
         """
         return mpc.SecInt(32)
 
-async def sign():
-    """
-    signing function of SPHINCS+
-    :return: nothing
-    """
+    async def sign(self):
+        """
+        signing function of SPHINCS+
+        :return: nothing
+        """
 
-    # TODO: finish this function
-    secint = mpc.SecInt(16)
+        # TODO: finish this function
+        secint = mpc.SecInt(16)
 
-    # wait until all parties (user and signer) starts the mpc
-    await mpc.start()
+        # wait until all parties (user and signer) starts the mpc
+        await mpc.start()
 
-    # accept input from all parties
-    payload = input('Give your input here: ')
+        # accept input from all parties
+        payload = input('Give your input here: ')
 
-    # TODO: check the type of input (message or sk) and use check_type() to determine the secure object
-    payloads = mpc.input(secint(int(payload)))
+        # TODO: check the type of input (message or sk) and use check_type() to determine the secure object
+        payloads = mpc.input(secint(int(payload)))
 
-    # TODO: process both inputs from parties and sign the message with the sk
-    for i in range(len(payloads)):
-        print(payloads[i])
-    print("There's the payload")
+        # TODO: process both inputs from parties and sign the message with the sk
+        for i in range(len(payloads)):
+            print(payloads[i])
+        print("There's the payload")
 
-    # TODO: outputs the blind signature before shutting down
-    await mpc.shutdown()
+        # TODO: outputs the blind signature before shutting down
+        await mpc.shutdown()
 
-# runs the sign() function using MPC
-# TODO: signing process needs to be done in file mpyc_sphincs_benchmark.py
-#mpc.run(sign())
-
-# TODO: verifies if the signature is correct and legit
