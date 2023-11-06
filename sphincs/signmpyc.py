@@ -6,7 +6,7 @@ from ChaCha import ChaCha
 from WOTS import WOTS
 from HORST import HORST
 from bytes_utils import xor, chunkbytes, ints_to_4bytes, ints_from_4bytes
-from trees import root, hash_tree
+from trees import root, hash_tree, l_tree
 
 class SPHINCS(object):
 
@@ -45,14 +45,26 @@ class SPHINCS(object):
         self.horst = HORST(n=n, m=m, k=k, tau=tau,
                            F=self.F, H=self.H, Gt=self.Glambda)
 
+    @classmethod
+    def address(self, level, subtree, leaf):
+        t = level | (subtree << 4) | (leaf << 59)
+        return int.to_bytes(t, length=8, byteorder='little')
+
     def keygen_pub(self, sk1, q):
         addresses = [self.address(self.d - 1, 0, i)
                      for i in range(1 << (self.h//self.d))]
-        leafs = [self.wots_leaf(A, sk1, q) for a in addresses]
+        leafs = [self.wots_leaf(a, sk1, q) for a in addresses]
         Qtree = q[2 * ceil(log(self.wots.l, 2)):]
         H = lambda x, y, i: self.H(xor(x, Qtree[2*i]), xor(y, Qtree[2*i+1]))
-        PK1 = root(hash_tree(H, leafs))
-        return PK1
+        pk1 = root(hash_tree(H, leafs))
+        return pk1
+
+    def wots_leaf(self, address, SK1, masks):
+        seed = self.Fa(address, SK1)
+        pk_A = self.wots.keygen(seed, masks)
+        H = lambda x, y, i: self.H(xor(x, masks[2*i]), xor(y, masks[2*i+1]))
+        return root(l_tree(H, pk_A))
+
     def keygen(self):
         """
         generate a public and private key pair
@@ -106,7 +118,7 @@ async def sign():
 
     # TODO: check the type of input (message or sk) and use check_type() to determine the secure object
     payloads = mpc.input(secint(int(payload)))
-    
+
     # TODO: process both inputs from parties and sign the message with the sk
     for i in range(len(payloads)):
         print(payloads[i])
@@ -116,6 +128,7 @@ async def sign():
     await mpc.shutdown()
 
 # runs the sign() function using MPC
-mpc.run(sign())
+# TODO: signing process needs to be done in file mpyc_sphincs_benchmark.py
+#mpc.run(sign())
 
 # TODO: verifies if the signature is correct and legit
