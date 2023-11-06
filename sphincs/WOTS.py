@@ -1,8 +1,8 @@
 from math import ceil, floor, log2
 from bytes_utils import xor, chunkbytes
 
-
-class WOTSplus(object):
+# TODO: fix and add comments - understand and modify it
+class WOTS(object):
 
     def __init__(self, n, w, F, Gl):
         """
