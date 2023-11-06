@@ -10,8 +10,8 @@ d = 12
 w = 16
 tau = 16
 k = 32
-
-l = 1 # TODO: change this value
+# l = l1 + l2 = 64 + 3
+l = 67
 
 def keygen(seed):
     """
@@ -24,7 +24,6 @@ def keygen(seed):
     secret_prf = os.urandom(seed)
     public_seed = os.urandom(seed)
 
-    # TODO: l is supposedly self.wots.l, find out what this is in SPHINCS-256-py
     p = max(w - 1, 2 * (h + ceil(log(l, 2))), 2 * tau)
     public_root = [os.urandom(seed // 8) for _ in range(p)]
     pk = [public_seed, public_root]
