@@ -38,29 +38,61 @@ for i in range(100):
 time_128 = []
 # list of elapsed time for SPHINCS using SHA256
 time_256 = []
+# list of elapsed time for keygen SPHINCS using SHA128
+time_key_128 = []
+# list of elapsed time for keygen SPHINCS using SHA256
+time_key_256 = []
+# list of elapsed time for verify SPHINCS using SHA128
+time_ver_128 = []
+# list of elapsed time for verify SPHINCS using SHA256
+time_ver_256 = []
 
+# benchmark the keygen(), sign() and verify()
 for i in range(len(messages)):
     # Signing using SHA-128
-    start = time.time()
+    # generate public and private key pair
+    start_key = time.time()
     public_key, secret_key = pyspx.shake_128f.generate_keypair(seeds[0])
+    end_key = time.time()
+    time_key_128.append(end_key - start_key)
+
+    # sign the message
+    start = time.time()
     signature = pyspx.shake_128f.sign(messages[i], secret_key)
-    ver = pyspx.shake_128f.verify(messages[i], signature, public_key)
     end = time.time()
-    elapsed = end - start
-    time_128.append(elapsed)
+    time_128.append(end - start)
+
+
+    # verify the signature
+    start_ver = time.time()
+    ver = pyspx.shake_128f.verify(messages[i], signature, public_key)
+    end_ver = time.time()
+    time_ver_128.append(end_ver - start_ver)
+
     if not ver:
         print(ver)
     #print(ver)
     #print("time =", elapsed)
 
     # Signing using SHA-256
-    start = time.time()
+    # keygen using SHA256
+    start_key_2 = time.time()
     public_key, secret_key = pyspx.shake_256f.generate_keypair(seeds[1])
+    end_key_2 = time.time()
+    time_key_256.append(end_key_2 - start_key_2)
+
+    # sign the message using SHA256
+    start = time.time()
     signature = pyspx.shake_256f.sign(messages[i], secret_key)
-    ver = pyspx.shake_256f.verify(messages[i], signature, public_key)
     end = time.time()
-    elapsed = end - start
-    time_256.append(elapsed)
+    time_256.append(end - start)
+
+    # verify the signature using SHA256
+    start_ver_2 = time.time()
+    ver = pyspx.shake_256f.verify(messages[i], signature, public_key)
+    end_ver_2 = time.time()
+    time_ver_256.append(end_ver_2 - start_ver_2)
+
     if not ver:
         print(ver)
     #print(ver)
@@ -81,11 +113,19 @@ for i in range(len(time_256)):
 
 # prints out the average time results - needs to be divided by 100, since it is
 # the sum of time it takes to sign 100 messages
-print("Time required for SHA128 is %d seconds." %elapsed_128)
-print("Time required for SHA256 is %d seconds." %elapsed_256)
+print("Time required for sign() using SHA128 is %d seconds." %elapsed_128)
+print("Time required for sign() using SHA256 is %d seconds." %elapsed_256)
 print("SHA128 is %d times faster than SHA256" %(elapsed_128/elapsed_256))
+print()
 
+print("here's the time for keygen() using SHA128: ", time_key_128)
+print()
+print("here's the time for keygen() using SHA256: ", time_key_256)
+print()
 
+print("here's the time for verify() using SHA128: ", time_ver_128)
+print()
+print("here's the time for verify() using SHA256: ", time_ver_256)
 """
 
 # Average Time

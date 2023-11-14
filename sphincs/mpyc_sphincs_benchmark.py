@@ -18,7 +18,7 @@ for i in range(len(key)):
     print(type(key[i]))
 
 # runs the sign() function using MPC
-# TODO: does the benchmark and mpc.run(sign()) needs to be separated? 
+# TODO: does the benchmark and mpc.run(sign()) needs to be separated?
 # TODO: signing process needs to be done in file mpyc_sphincs_benchmark.py
 mpc.run(sphincs.sign())
 
