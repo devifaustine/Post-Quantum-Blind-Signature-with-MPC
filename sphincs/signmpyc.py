@@ -88,47 +88,36 @@ class SPHINCS(object):
         H = lambda x, y, i: self.H(xor(x, masks[2*i]), xor(y, masks[2*i+1]))
         return root(l_tree(H, pk_A))
 
-    def verify(s, m, pk):
+    def sign(self, M, SK):
         """
-        verifies the signature s accordingly, which is a signature of m with public key pk
-        :param s: signature
-        :param m: message
-        :param pk: public key
-        :return: true/false
+        sign the message M using secret key SK
+        :param M: message
+        :param SK: secret key
+        :return: signature sign(M, SK)
         """
-        # TODO: finish the verification process/function
-        return True
-
-    def check_type(x):
-        """
-        checks the type of x and returns the object as the secure type of itself
-        :return: secure x
-        """
-        return mpc.SecInt(32)
-
-    async def sign(self):
-        """
-        signing function of SPHINCS+
-        :return: nothing
-        """
-
-        # TODO: finish this function
-        secint = mpc.SecInt(16)
-
-        # wait until all parties (user and signer) starts the mpc
-        await mpc.start()
-
-        # accept input from all parties
-        payload = input('Give your input here: ')
-
-        # TODO: check the type of input (message or sk) and use check_type() to determine the secure object
-        payloads = mpc.input(secint(int(payload)))
-
-        # TODO: process both inputs from parties and sign the message with the sk
-        for i in range(len(payloads)):
-            print(payloads[i])
-        print("There's the payload")
-
-        # TODO: outputs the blind signature before shutting down
-        await mpc.shutdown()
-
+        SK1, SK2, Q = SK
+        R = self.Frand(M, SK2)
+        R1, R2 = R[:self.n // 8], R[self.n // 8:]
+        D = self.Hdigest(R1, M)
+        i = int.from_bytes(R2, byteorder='big')
+        i >>= self.n - self.h
+        subh = self.h // self.d
+        a = {'level': self.d,
+             'subtree': i >> subh,
+             'leaf': i & ((1 << subh) - 1)}
+        a_horst = self.address(**a)
+        seed_horst = self.Fa(a_horst, SK1)
+        sig_horst, pk_horst = self.horst.sign(D, seed_horst, Q)
+        pk = pk_horst
+        sig = [i, R1, sig_horst]
+        for level in range(self.d):
+            a['level'] = level
+            a_wots = self.address(**a)
+            seed_wots = self.Fa(a_wots, SK1)
+            wots_sig = self.wots.sign(pk, seed_wots, Q)
+            sig.append(wots_sig)
+            path, pk = self.wots_path(a, SK1, Q, subh)
+            sig.append(path)
+            a['leaf'] = a['subtree'] & ((1 << subh) - 1)
+            a['subtree'] >>= subh
+        return tuple(sig)

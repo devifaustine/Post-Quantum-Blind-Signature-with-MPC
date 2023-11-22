@@ -55,6 +55,7 @@ for i in range(len(messages)):
     public_key, secret_key = pyspx.shake_128f.generate_keypair(seeds[0])
     end_key = time.time()
     time_key_128.append(end_key - start_key)
+    #print("secret key of SHA-128 is: ", secret_key)
 
     # sign the message
     start = time.time()
@@ -80,6 +81,7 @@ for i in range(len(messages)):
     public_key, secret_key = pyspx.shake_256f.generate_keypair(seeds[1])
     end_key_2 = time.time()
     time_key_256.append(end_key_2 - start_key_2)
+    #print("secret key of SHA-256 is: ", secret_key)
 
     # sign the message using SHA256
     start = time.time()
