@@ -95,6 +95,7 @@ class SPHINCS(object):
         :param SK: secret key
         :return: signature sign(M, SK)
         """
+        # TODO: modify these so it works on secure object
         SK1, SK2, Q = SK
         R = self.Frand(M, SK2)
         R1, R2 = R[:self.n // 8], R[self.n // 8:]
