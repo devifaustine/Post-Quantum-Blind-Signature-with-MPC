@@ -2,9 +2,12 @@
 from signmpyc import SPHINCS
 import time
 from mpyc.runtime import mpc
+import numpy as np 
 
+# TODO: change SPHINCS to SPHINCS+ in implementation!
 
 sphincs = SPHINCS()
+secfld = mpc.SecFld(2)
 
 # generate public and private key pair
 start = time.time()
@@ -61,10 +64,12 @@ def check_type(x):
     """
     # case x is secret key
     if x[0] == '(' and x[-1] == ')':
+        print("It's the secret key!")
         return True
     # case x is a message, messages always starts with 'b/'
     # elif x[0] == 'b' and ord(x[1]) == 92:
     else:
+        print("It's the message!")
         return False
     # raise ValueError("This is neither a message, nor a secret key!")
 
@@ -80,21 +85,31 @@ async def main():
     payload = input('Give your input here: ')
 
     print("type of payload is: ", type(payload))
-    print(payload)
+    print("you entered: ", payload)
+
+    print(check_type(payload))
 
     try:
         if check_type(payload):
             # payload is a secret key
             sk1, sk2, q = split_sk(payload)
+            sk = (sk1, sk2, q)
+            await mpc.transfer("signer has given their input")
             # TODO:  convert each element of sk into secure obj (SecFld and array)
+            sk1_bit = np.array([(b >> 1) & 1 for b in sk1 for i in range(8)])
             #x = np.array([(b >> i) & 1 for b in X for i in range(8)])  # bytes to bits
             #x = secfld.array(x)  # secret-shared input bits
         else:
             # payload is a message
             m = payload # TODO: but as secure object of type SecFld array of bytes
+
+            await mpc.transfer("user has given their input")
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
         await mpc.shutdown()
+
+    print()
+    await mpc.transfer("Signing process begins now...")
 
     sig = sphincs.sign(m, sk)
 
