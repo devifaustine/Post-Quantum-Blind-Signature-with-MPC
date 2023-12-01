@@ -8,6 +8,6 @@ The signature can then be verified using the signer's public key.
 
 We use the [SPHINCS+](https://sphincs.org/) signature scheme, which is stateless and hash-based as the base scheme for the blind signature. 
 
-This implementation uses the help of [SPHINCS-256-py](https://github.com/joostrijneveld/SPHINCS-256-py) library as reference, and also [MPyC](https://github.com/lschoe/mpyc), which is described [here](https://mpyc.readthedocs.io/en/latest/mpyc.html).
+This implementation uses the help of [PySPX](https://github.com/sphincs/pyspx) library as reference, and also [MPyC](https://github.com/lschoe/mpyc), which is described [here](https://mpyc.readthedocs.io/en/latest/mpyc.html).
 
 The goal is to benchmark this new scheme and determine if it is efficient in practice and can be used as a blind signature scheme.
