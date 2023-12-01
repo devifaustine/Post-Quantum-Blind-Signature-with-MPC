@@ -24,7 +24,7 @@ def generate_hash(message: bytearray) -> bytearray:
         raise TypeError
 
     # Padding
-    length = len(message) * 8 # len(message) is number of BYTES!!!
+    length = len(message) * 8 # len(message) is number of BYTES!!! need to be in bits so times 8
     message.append(0x80)
     while (len(message) * 8 + 64) % 512 != 0:
         message.append(0x00)
