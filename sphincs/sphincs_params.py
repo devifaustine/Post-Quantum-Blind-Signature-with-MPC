@@ -44,3 +44,17 @@ SPX_PK_BYTES = 2 * SPX_N
 SPX_SK_BYTES = 2 * SPX_N + SPX_PK_BYTES
 
 # You can use these constants in other parts of your Python code as needed.
+
+# Extra parameters, used in sha2.h and sha2.c original code 
+
+SPX_SHA256_BLOCK_BYTES = 64
+SPX_SHA256_OUTPUT_BYTES = 32  # This does not necessarily equal SPX_N
+
+SPX_SHA512_BLOCK_BYTES = 128
+SPX_SHA512_OUTPUT_BYTES = 64
+
+# Check if SPX_SHA256_OUTPUT_BYTES is less than SPX_N
+if SPX_SHA256_OUTPUT_BYTES < SPX_N:
+    raise ValueError("Linking against SHA-256 with N larger than 32 bytes is not supported")
+
+SPX_SHA256_ADDR_BYTES = 22
