@@ -47,6 +47,22 @@ time_ver_128 = []
 # list of elapsed time for verify SPHINCS using SHA256
 time_ver_256 = []
 
+# Testing split messages
+message = b'Hello World'
+pk, sk = pyspx.shake_256f.generate_keypair(seeds[1])
+m1 = message[:len(message)//2]
+m2 = message[len(message)//2:]
+print("m1 = ", m1)
+print("m2 = ", m2)
+sig1 = pyspx.shake_256f.sign(m1, sk)
+sig2 = pyspx.shake_256f.sign(m2, sk)
+sig = pyspx.shake_256f.sign(message, sk)
+print()
+print("sig1 = ", sig1)
+print("sig2 = ", sig2)
+print("sig = ", sig)
+print()
+
 # benchmark the keygen(), sign() and verify()
 for i in range(len(messages)):
     # Signing using SHA-128
