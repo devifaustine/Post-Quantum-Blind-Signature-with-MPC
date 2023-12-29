@@ -78,6 +78,7 @@ print()
 
 # benchmark the keygen(), sign() and verify()
 for i in range(len(messages)):
+    # TODO: for now the public private key pairs are the same as the seed is not renewed
     # Signing using SHA-128
     # generate public and private key pair
     start_key = time.time()
@@ -162,6 +163,8 @@ print()
 print("here's the time for verify() using SHA128: ", time_ver_128)
 print()
 print("here's the time for verify() using SHA256: ", time_ver_256)
+
+print(messages)
 """
 
 # Average Time
