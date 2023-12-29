@@ -2,17 +2,26 @@
 from signmpyc import SPHINCS
 import time
 from mpyc.runtime import mpc
-import numpy as np 
+import numpy as np
+import random
+import string
 
 # TODO: change SPHINCS to SPHINCS+ in implementation!
 
 sphincs = SPHINCS()
 secfld = mpc.SecFld(2)
 
+# seed for SPHINCS+ with SHA-256 has to be 96 bytes long
+seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
+# Convert the string to bytes
+seed_bytes = seed.encode('utf-8')
+
 # generate public and private key pair
 start = time.time()
-key = sphincs.keygen()
+key = sphincs.keygen(seed_bytes)
 end = time.time()
+
+print(key)
 
 elapsed = end - start
 print("time taken to generate the key: %d seconds" % elapsed)
@@ -63,15 +72,13 @@ def check_type(x):
     :return: True/False
     """
     # case x is secret key
-    if x[0] == '(' and x[-1] == ')':
-        print("It's the secret key!")
+    if x[0] == 'b' and x[1] == "'" and x[-1] == "'":
         return True
     # case x is a message, messages always starts with 'b/'
     # elif x[0] == 'b' and ord(x[1]) == 92:
     else:
-        print("It's the message!")
         return False
-    # raise ValueError("This is neither a message, nor a secret key!")
+    # TODO: raise ValueError("This is neither a message, nor a secret key!")
 
 async def main():
     # run the sign() function build from mpyc and time it
