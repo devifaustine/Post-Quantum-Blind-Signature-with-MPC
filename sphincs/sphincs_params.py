@@ -45,7 +45,7 @@ SPX_SK_BYTES = 2 * SPX_N + SPX_PK_BYTES
 
 # You can use these constants in other parts of your Python code as needed.
 
-# Extra parameters, used in sha2.h and sha2.c original code 
+# Extra parameters, used in sha2.h and sha2.c original code
 
 SPX_SHA256_BLOCK_BYTES = 64
 SPX_SHA256_OUTPUT_BYTES = 32  # This does not necessarily equal SPX_N
