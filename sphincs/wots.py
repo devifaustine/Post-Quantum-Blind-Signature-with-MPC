@@ -1,17 +1,9 @@
 from address import *
 from sphincs_params import *
 from hash_sha2 import *
-
-#include "utils.h"
-#include "utilsx8.h"
-#include "hash.h"
-#include "hashx8.h"
-#include "thash.h"
-#include "thashx8.h"
-#include "wots.h"
-#include "wotsx8.h"
-#include "address.h"
-#include "params.h"
+from utils import *
+from thash_sha2_simple import *
+from thashx8 import *
 
 #TODO clarify address expectations, and make them more uniform.
 #TODO i.e. do we expect types to be set already?
@@ -98,17 +90,7 @@ def gen_chains(out, _in, start, steps, ctx, addr):
                     bufs[0], bufs[1], bufs[2], bufs[3],
                     bufs[4], bufs[5], bufs[6], bufs[7], 1, ctx, addrs)
 
-/**
- * Computes up the chains
- */
-static void gen_chains(
-        unsigned char *out,
-        const unsigned char *in,
-        unsigned int start[SPX_WOTS_LEN],
-        unsigned int steps[SPX_WOTS_LEN],
-        const spx_ctx *ctx,
-        uint32_t addr[8])
-{
+
     uint32_t i, j, k, idx, watching;
     int done;
     unsigned char empty[SPX_N];

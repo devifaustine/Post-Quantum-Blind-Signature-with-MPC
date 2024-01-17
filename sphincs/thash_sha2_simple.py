@@ -2,7 +2,7 @@ from sphincs_params import *
 from address import *
 from utils import *
 
-#TODO: define EXPAND_32 
+#TODO: define EXPAND_32
 
 def ROTR_32(x, c):
     return (x >> c) | (x << (32 - c))
