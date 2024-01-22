@@ -1,8 +1,22 @@
 # test secure object in MPyC
 import numpy as np
 from mpyc.runtime import mpc
+from mpyc.runtime import Runtime
 from mpyc.gfpx import GFpX
 from hashlib import sha3_224, sha3_256, sha3_384, sha3_512
+
+# concatenate two arrays of secure objects
+async def concatenate(array1, array2):
+    print(type(array1))
+    print(type(array2))
+    return np.concatenate((array1, array2))
+
+class Runtime2(Runtime):
+    def __init__(self):
+        super().__init__()
+
+    def np_concatenate(self, arrays):
+        return np.concatenate(arrays)
 
 # variables for main5()
 secfld = mpc.SecFld(2)
@@ -87,10 +101,121 @@ async def main3():
 
     #res = mpc.secint(tmp)
     print("0-1: ", await mpc.output(tmp))
-    print("Number 0: ", await mpc.output(ages[0]))
     print("Number 1: ", await mpc.output(ages[1]))
+    print("Number 0: ", await mpc.output(ages[0]))
 
     # why is tmp == -42? because 3 * -14 = -42 = 14 * -3
+
+    await mpc.shutdown()
+
+
+# test subtraction of 2 numbers for (the first) 2 parties
+# index of ages represent -I in the command line (not from who is the first to give the input)
+async def main6():
+    secint = mpc.SecInt(16)
+    secfld = mpc.SecFld(2)
+    await mpc.start()
+
+    n = 1
+    my_age = input("Enter your number: ")
+    # convert input from bytes to bits
+    X = my_age.encode() * n
+    print("X is type: ", type(X))
+    print(f'Input: {X}')
+    x = np.array([(b >> i) & 1 for b in X for i in range(8)])  # bytes to bits
+    y = secfld.array(x)  # secret-shared input bits
+    print("my age: ", y)
+    #ages = mpc.input(secfld.array(my_age))
+    ages = mpc.input(y)
+    print(type(ages))
+
+    concat = mpc.np_concatenate(ages)
+    #concat = mpc.np_concatenate((ages[0], ages[1]))
+
+    seclist = mpc.seclist([ages[0], ages[1]])
+    print("type list: ", type(seclist))
+
+    #TODO: convert seclist to secarray
+
+    print("Concat: ", concat)
+    print("input1: ", await mpc.output(ages[0]))
+    print("input2: ", await mpc.output(ages[1]))
+    print("Array 1: ", await mpc.output(concat))
+    #print("List 1: ", await mpc.output(seclist[0]))
+    #pint("List 2: ", await mpc.output(seclist[1]))
+
+    await mpc.shutdown()
+
+# attempting sha3 with concatenated inputs of 2 parties
+async def main7():
+    secfld = mpc.SecFld(2)
+
+    await mpc.start()
+
+    # pre-defined variables for sha3
+    n = 1
+    c = 512
+    d = c//2
+    F = sha3
+    f = {224: sha3_224, 256: sha3_256, 384: sha3_384, 512: sha3_512}[d]
+    e = ()
+
+    # receive inputs from command line
+    in_ = input("Enter your number: ")
+
+    # convert string to bytes
+    X = in_.encode() * n
+    print(f'Input: {X}')#
+
+    # convert bytes to bits (array)
+    if in_ == "123":
+        import numpy as np2
+        x = np2.array([(b >> i) & 1 for b in X for i in range(8)])  # bytes to bits
+    else:
+        x = np.array([(b >> i) & 1 for b in X for i in range(8)])  # bytes to bits
+
+    # share inputs with parties using SSS
+    inputs = mpc.input(secfld.array(x))
+
+    # concatenating the inputs
+    concat = mpc.np_concatenate((inputs[0], inputs[1]))
+
+    # computing sha3 of the concatenated input
+    y = F(concat, d, c)  # secret-shared output bits
+    print("sha3 result: ", await mpc.output(y))
+    #Y = await xprint('Output:', y)
+    #assert Y == f(X).hexdigest(*e)
+
+    await mpc.shutdown()
+
+# test mpc.np_concatenate for two arrays a and b
+async def main8():
+    secint = mpc.SecInt(16)
+    secfld = mpc.SecFld(2)
+    await mpc.start()
+
+    in_ = int(input("Give your input: "))
+
+    if in_ == 1:
+        import numpy as np2
+        a = np2.array([in_])
+    else:
+        a = np.array([in_])
+    b = np.array([4,5,6,7,8])
+
+    inputs = mpc.input(secfld.array(a))
+    print(inputs)
+
+    # TODO: how to fix this?
+    # if seca = inputs[1], the process will hang at this point and does not continue with the program
+    # loops infinitely.
+    seca = inputs[0]
+    print(type(seca))
+    secb = secfld.array(b)
+
+    concat = mpc.np_concatenate((seca, secb))
+
+    print("concatenated: ", await mpc.output(concat))
 
     await mpc.shutdown()
 
@@ -204,32 +329,70 @@ async def main5():
 
     i = input("Give your input: ")
     X = i.encode() * n
+    print("X is type: ", type(X))
     print(f'Input: {X}')
     x = np.array([(b >> i) & 1 for b in X for i in range(8)])  # bytes to bits
+    Q = b'123'
+    q = np.array([(b >> i) & 1 for b in Q for i in range(8)])  # bytes to bits
+
+    print("type x before secfld.array: ", type(x))
     x = secfld.array(x)  # secret-shared input bits
+    print("type x after secfld.array: ", type(x))
+
+    baba = mpc.np_concatenate((x, q))
+    print("baba is of type: ", type(baba))
+
+    #TODO: resize array into same shape as same size (e.g. 256 bits)
 
     inputs = mpc.input(x)
     print(type(inputs[0]))
+    print("inputs[1] is of type: ", type(inputs[1]))
 
-    # convert bits to bytes again for concatenation
-    x_bytes = np.packbits(await mpc.output(inputs[0]))
+    bibi = mpc.np_concatenate((inputs[1], inputs[1]))
+    print("bibi is of type: ", type(bibi))
+
+    i = mpc.np_concatenate((inputs[0], inputs[1]))
+    #i = mpc.np_append(inputs[0], inputs[1])
+#
+ #   inputs_array = np.array(inputs)
+  #  print("type inputsarray: ", type(inputs_array))
+#
+ #   inputs_array = secfld.array(inputs_array)
+#
+ #   print("type inputsarray: ", type(inputs_array))
+    #inputs_array = mpc.SecureArray(inputs_array)
+  #  print("isinstance array", isinstance(inputs_array, mpc.SecureArray))
+   # print("now inputs is of type: ", type(inputs_array))
+    # converting bits to bytes again for concatenation will not work as it is still Future and pending
+    # this value will be determined once the program is done
+    # x_bytes = np.packbits(await mpc.output(inputs[0]))
 
     #i = mpc.np_append(inputs[0], inputs[1])
     #i = mpc.np_concatenate(inputs[0], inputs[1])
-    i = mpc.np_concatenate(inputs)
+    # concatenate inputs of (2) parties
+    #i = concatenate(inputs[0], inputs[1])
+#    i = mpc.np_concatenate(inputs_array)
 
-    #print("inputs concatenated: ", await mpc.output(i))
+    #TODO: change x with i - concatenation of the inputs
 
-    y = F(i, d, c)  # secret-shared output bits
-    Y = await xprint('Output:', y)
-    assert Y == f(X).hexdigest(*e)
 
+    #y = F(i, d, c)  # secret-shared output bits
+    #Y = await xprint('Output sha3 of your inputs is:', y)
+    #assert Y == f(X).hexdigest(*e)
+
+    print("same inputs? ", mpc.np_equal(inputs[0], inputs[1]))
     print("input0: ", await mpc.output(inputs[0]))
+    print("inputs concatenated: ", await mpc.output(bibi))
+    print("i: ", await mpc.output(i))
     print("input1: ", await mpc.output(inputs[1]))
-    mpc.shutdown()
+    await mpc.shutdown()
 
 # run this program with: python3 test_secobj.py -M2 -I0
 # M indicates the number of parties
 # I indicates the index of the current party
 
-mpc.run(main5())
+# TODO: Fix the following problem or find a solution for this 
+# main8 was successful as long as the second numpy is not used for some reasons
+#mpc.run(main8())
+
+mpc.run(main7())
