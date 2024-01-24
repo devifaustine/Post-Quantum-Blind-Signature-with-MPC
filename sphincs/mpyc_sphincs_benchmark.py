@@ -95,11 +95,11 @@ async def main():
     # accept input from both user and signer
     payload = input('Give your input here: ')
 
-    print("type of payload is: ", type(payload))
-    print("you entered: ", payload)
+    # payload is of type string (str)
 
-    print(check_type(payload))
+    # TODO: find out if secfld can be used as np.array results in error
 
+    # check the type of payload (either message or secret key) and convert it to secure object
     try:
         if check_type(payload):
             # payload is a secret key
@@ -121,7 +121,7 @@ async def main():
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
         await mpc.shutdown()
 
-    # parties share their inputs
+    # both parties share their inputs using mpc.input() - Shamir's Secret Sharing Scheme
     inputs = mpc.input(payload)
 
     # inputs[0] = message
