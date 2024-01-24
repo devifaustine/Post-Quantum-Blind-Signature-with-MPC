@@ -9,7 +9,7 @@ from sphincs_params import *
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
 seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
 
-class SPHINCS(object): 
+class SPHINCS(object):
     # TODO: make the variables accessible and changable from main() in mpyc_sphincs_benchmark.py
     def __init__(self, n=32, m=512, h=9, d=17, w=16, tau=16, k=32):
         """Initializes SPHINCS (default to SPHINCS-256)
