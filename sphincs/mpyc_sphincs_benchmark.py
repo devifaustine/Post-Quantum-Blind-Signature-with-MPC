@@ -11,6 +11,8 @@ import string
 sphincs = SPHINCS()
 secfld = mpc.SecFld(2)
 
+# TODO: move the key generation to the script so sk can be given as input to the command line
+
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
 seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
 # Convert the string to bytes
@@ -51,19 +53,18 @@ def q_split(q):
 
 def split_sk(sk):
     """
-    split secret key sk (type = bytestring) into its components of type tuple
+    sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
     :param sk: secret key
-    :return: (sk1, sk2, q)
+    :return: (pk, (sk1, sk2, q))
     """
-    sk = sk.strip("()")  # Remove parentheses
-    sk_split_str = sk.split(", ")
+    pk, sk_eval = eval(sk)
 
-    sk1 = eval(sk_split_str[0])  # Using eval to convert the string back to bytes
-    sk2 = eval(sk_split_str[1])
-    q_str = sk_split_str[2:]
+    sk1 = eval(sk_eval[0])  # Using eval to convert the string back to bytes
+    sk2 = eval(sk_eval[1])
+    q_str = sk_eval[2:]
     q = q_split(q_str)
 
-    return sk1, sk2, q
+    return pk, (sk1, sk2, q)
 
 def check_type(x):
     """
@@ -102,20 +103,20 @@ async def main():
     # check the type of payload (either message or secret key) and convert it to secure object
     try:
         if check_type(payload):
+            print("The given input is a secret key!")
             # payload is a secret key
             sk1, sk2, q = split_sk(payload)
             sk = (sk1, sk2, q)
-            print("The given input is a secret key!")
             # TODO: convert each element of sk into secure obj (SecFld and array)
             # TODO: new! overwrite payload with secure object (to be transfered with mpc.input())
             sk1_bit = np.array([(b >> 1) & 1 for b in sk1 for i in range(8)])
             #x = np.array([(b >> i) & 1 for b in X for i in range(8)])  # bytes to bits
-            #x = secfld.array(x)  # secret-shared input bits
+            #x = secfld.array(x)      # secret-shared input bits
         else:
+            print("The given input is a message!")
             # payload is a message
             # TODO: new! overwrite payload with secure object (to be transfered with mpc.input())
             m = payload # TODO: but as secure object of type SecFld array of bytes
-            print("The given input is a message!")
 
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
