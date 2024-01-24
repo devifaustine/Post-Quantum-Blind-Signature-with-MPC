@@ -80,6 +80,10 @@ def check_type(x):
         return False
     # TODO: raise ValueError("This is neither a message, nor a secret key!")
 
+# note: first party (with index = 0) is always the user
+# and second party (index = 1) is always the signer for simplicity
+# this can be changed and can be checked before the signing function is executed
+
 async def main():
     # run the sign() function build from mpyc and time it
 
@@ -101,26 +105,37 @@ async def main():
             # payload is a secret key
             sk1, sk2, q = split_sk(payload)
             sk = (sk1, sk2, q)
-            await mpc.transfer("signer has given their input")
-            # TODO:  convert each element of sk into secure obj (SecFld and array)
+            print("The given input is a secret key!")
+            # TODO: convert each element of sk into secure obj (SecFld and array)
+            # TODO: new! overwrite payload with secure object (to be transfered with mpc.input())
             sk1_bit = np.array([(b >> 1) & 1 for b in sk1 for i in range(8)])
             #x = np.array([(b >> i) & 1 for b in X for i in range(8)])  # bytes to bits
             #x = secfld.array(x)  # secret-shared input bits
         else:
             # payload is a message
+            # TODO: new! overwrite payload with secure object (to be transfered with mpc.input())
             m = payload # TODO: but as secure object of type SecFld array of bytes
+            print("The given input is a message!")
 
-            await mpc.transfer("user has given their input")
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
         await mpc.shutdown()
 
+    # parties share their inputs
+    inputs = mpc.input(payload)
+
+    # inputs[0] = message
+    # inputs[1] = secret key
+    # both of type secure objects
+
     print()
-    await mpc.transfer("Signing process begins now...")
+    print("Signing process begins now...")
 
-    sig = sphincs.sign(m, sk)
+    sig = sphincs.sign(inputs[0], inputs[1])
 
-    print("Here is the signature desired: ", sig)
+    print("Signature generated!\nHere is the signature: ", await mpc.output(sig))
+
+    # TODO: assert verify the signature before shutting down
 
     await mpc.shutdown()
 
