@@ -5,14 +5,16 @@
 #sizes=(100 200 300)
 
 # number of iteration for n key pairs
-n={1..5}
+# TODO: note n is a list in python, find out what datatype it is in bash
+keys=$(python3 gen_keys_bench.py -n 3)
 # number of iteration for n2 messages (for a key pair i)
-n2={1..10}
+mes=$(python3 gen_m_bench.py -n 5)
 
-for i in n; do
-  for j in n2; do
-    python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0&
-    python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1&
+for key in keys; do
+  for m in mes; do
+    python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0 <<< m&
+    # note: key has to be just the secret key, therefore public key has to be stored somewhere for verification
+    python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< key&
     # TODO: give the private inputs once asked
   done
 done
