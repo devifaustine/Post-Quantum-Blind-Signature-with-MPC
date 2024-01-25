@@ -1,4 +1,4 @@
-# This file executes the benchmark for SPHINCS build from MPC using the help of MPyC library
+# This file executes the benchmark for SPHINCS+ build from MPC using the help of MPyC library
 from signmpyc import SPHINCS
 import time
 from mpyc.runtime import mpc
@@ -9,9 +9,12 @@ import string
 # TODO: change SPHINCS to SPHINCS+ in implementation!
 
 sphincs = SPHINCS()
+# a group field consisting of 2 elements 0 and 1
 secfld = mpc.SecFld(2)
 
-# TODO: move the key generation to the script so sk can be given as input to the command line
+# _________________________________________________________________________________________________
+# TODO: delete these as it has been moved to gen_keys_bench.py
+"""
 
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
 seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
@@ -30,6 +33,9 @@ print("time taken to generate the key: %d seconds" % elapsed)
 
 print("sk =", key[1])
 
+"""
+# _________________________________________________________________________________________________
+
 # runs the sign() function using MPC
 # maybe comment the time.time() and unnecessary code when using benchmarking tools from python later
 
@@ -39,6 +45,7 @@ def q_split(q):
     :param q: Q in SK
     :return: Q in its original form a list of bytestring
     """
+    #TODO: fix this function!
     res = []
     for i in range(len(q)):
         if i == 0:  # [ present at the first char
@@ -57,6 +64,7 @@ def split_sk(sk):
     :param sk: secret key
     :return: (pk, (sk1, sk2, q))
     """
+    #TODO: fix this function!
     pk, sk_eval = eval(sk)
 
     sk1 = eval(sk_eval[0])  # Using eval to convert the string back to bytes
@@ -73,8 +81,10 @@ def check_type(x):
     :return: True/False
     """
     # case x is secret key
-    if x[0] == 'b' and x[1] == "'" and x[-1] == "'":
-        return True
+    if x[0] == '(' and x[1] == "b" and x[-1] == ")":
+        if isinstance(eval(x), tuple):
+            return True
+        else: return False
     # case x is a message, messages always starts with 'b/'
     # elif x[0] == 'b' and ord(x[1]) == 92:
     else:
@@ -85,16 +95,21 @@ def check_type(x):
 # and second party (index = 1) is always the signer for simplicity
 # this can be changed and can be checked before the signing function is executed
 
+# run the sign() function build from mpyc and time it
 async def main():
-    # run the sign() function build from mpyc and time it
 
-    secfld = mpc.SecFld()
-
-    # wait until all parties (user and signer) starts the mpc
+    # wait until all parties starts the mpc and joins
     await mpc.start()
+
+    len_parties = len(mpc.__getattribute__("parties"))
+
+    # number of parties needs to be exactly 2 (user and signer)
+    if len_parties < 2 or len_parties > 2:
+        raise AttributeError("The number of parties needs to be exactly 2!")
 
     # accept input from both user and signer
     payload = input('Give your input here: ')
+    print("here's your payload: ", payload)
 
     # payload is of type string (str)
 
