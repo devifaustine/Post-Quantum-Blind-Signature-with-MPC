@@ -1,5 +1,5 @@
 # Generates key-pairs for the benchmark
-
+import argparse
 from signmpyc import SPHINCS
 import time
 import random
@@ -45,7 +45,7 @@ def gen_key(n=1, seed=seed1):
         elapsed.append(end-start)
 
     # keys need to be printed out as a tuple - for bash variable
-    print(tuple(keys))
+    print(keys)
 
     average = sum(elapsed) / len(elapsed)
     xprint("time taken to generate the key: %d seconds" % average)
@@ -53,5 +53,9 @@ def gen_key(n=1, seed=seed1):
 # _________________________________________________________________________________________________
 
 if __name__ == '__main__':
-    n = input("How many keys do you want generated?")
-    gen_key(n)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', type=int, metavar='N',
+                        help='number of times N (default 1) to create the key pairs')
+    parser.set_defaults(n=1)
+    args = parser.parse_args()
+    gen_key(args.n)
