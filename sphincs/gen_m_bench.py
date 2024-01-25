@@ -6,6 +6,15 @@ import string
 # set log variable to true for logging
 log = False
 
+def digest(list):
+    res = '('
+    for i in list:
+        res += '"'
+        res += str(i)
+        res += '"'
+        res += ' '
+    return res + ')'
+
 def xprint(string):
     if log:
         print(string)
@@ -31,11 +40,12 @@ def gen_message(n=1, size=0):
             length = random.randint(1, size)
         message = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
         # message is originally string, but converted into bytes
-        # TODO: check if converting to bytes is necessary for signing process! 
-        messages.append(bytes(message, 'ascii'))
+        # TODO: check if converting to bytes is necessary for signing process!
+        #messages.append(bytes(message, 'ascii'))
+        messages.append(message)
 
-    # messages need to be printed out - for bash variable
-    print(messages)
+    # messages need to be printed out - for bash variable - therefore digest
+    print(digest(messages))
 
 # _________________________________________________________________________________________________
 
