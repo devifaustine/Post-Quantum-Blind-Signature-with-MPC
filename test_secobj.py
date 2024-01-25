@@ -112,7 +112,6 @@ async def main3():
 # test subtraction of 2 numbers for (the first) 2 parties
 # index of ages represent -I in the command line (not from who is the first to give the input)
 async def main6():
-    secint = mpc.SecInt(16)
     secfld = mpc.SecFld(2)
     await mpc.start()
 
@@ -190,7 +189,6 @@ async def main7():
 
 # test mpc.np_concatenate for two arrays a and b
 async def main8():
-    secint = mpc.SecInt(16)
     secfld = mpc.SecFld(2)
     await mpc.start()
 
@@ -219,6 +217,24 @@ async def main8():
 
     await mpc.shutdown()
 
+# test bytes as field
+async def main9():
+    secfld = mpc.SecFld(256)
+
+    await mpc.start()
+
+    in_ = input("Give your input: ")
+
+    X = in_.encode()
+
+    X = int.from_bytes(X, 'big')
+    secobj = secfld(X)
+    inputs = mpc.input(secobj)
+
+    print("First input: ", await mpc.output(inputs[0]))
+    print("Second input: ", await mpc.output(inputs[1]))
+
+    await mpc.shutdown()
 # check homomorphism
 async def main4():
     secint = mpc.SecInt(16)
@@ -391,8 +407,8 @@ async def main5():
 # M indicates the number of parties
 # I indicates the index of the current party
 
-# TODO: Fix the following problem or find a solution for this 
+# TODO: Fix the following problem or find a solution for this
 # main8 was successful as long as the second numpy is not used for some reasons
 #mpc.run(main8())
-
-mpc.run(main7())
+mpc.run(main9())
+#mpc.run(main7())
