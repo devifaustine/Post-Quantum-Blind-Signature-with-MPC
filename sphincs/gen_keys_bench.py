@@ -8,6 +8,21 @@ import string
 # set log variable to true for logging
 log = False
 
+def digest(list):
+    res = ''
+    # TODO: reform this s.t. the output is accepted by bash script as an array of (pk, sk) for each element
+    for i in list:
+        # (pk, sk)
+        if isinstance(i, tuple):
+            res += '"('
+            res += str(i[0])
+            res += ','
+            res += str(i[1])
+            res += ')"'
+        res += ' '
+    return res
+
+
 def xprint(string):
     if log:
         print(string)
@@ -46,6 +61,7 @@ def gen_key(n=1, seed=seed1):
 
     # keys need to be printed out as a tuple - for bash variable
     print(keys)
+    print(digest(keys))
 
     average = sum(elapsed) / len(elapsed)
     xprint("time taken to generate the key: %d seconds" % average)
