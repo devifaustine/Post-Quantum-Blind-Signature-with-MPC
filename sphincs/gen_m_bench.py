@@ -10,7 +10,7 @@ def digest(list):
     """
     prints out the list to be used as a bash array
     :param list: list of objects
-    :return: none 
+    :return: none
     """
     for i in list:
         print(i)
