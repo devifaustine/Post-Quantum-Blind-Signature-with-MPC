@@ -7,13 +7,13 @@ import string
 log = False
 
 def digest(list):
-    res = '('
+    """
+    prints out the list to be used as a bash array
+    :param list: list of objects
+    :return: none 
+    """
     for i in list:
-        res += '"'
-        res += str(i)
-        res += '"'
-        res += ' '
-    return res + ')'
+        print(i)
 
 def xprint(string):
     if log:
@@ -45,7 +45,7 @@ def gen_message(n=1, size=0):
         messages.append(message)
 
     # messages need to be printed out - for bash variable - therefore digest
-    print(digest(messages))
+    digest(messages)
 
 # _________________________________________________________________________________________________
 
