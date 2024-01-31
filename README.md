@@ -11,3 +11,9 @@ We use the [SPHINCS+](https://sphincs.org/) signature scheme, which is stateless
 This implementation uses the help of [PySPX](https://github.com/sphincs/pyspx) library as reference, and also [MPyC](https://github.com/lschoe/mpyc), which is described [here](https://mpyc.readthedocs.io/en/latest/mpyc.html).
 
 The goal is to benchmark this new scheme and determine if it is efficient in practice and can be used as a blind signature scheme.
+
+To run the benchmark, run the following command:
+```
+./bench_mpc_sphincs.sh
+```
+This will run the benchmark for the MPC SPHINCS+ signature scheme, and output the results in the `results` folder.
