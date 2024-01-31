@@ -236,7 +236,9 @@ async def main10():
 
     inputs = mpc.input(secfld.array(np.array(in_bit_list)))
 
-    print("input: ", await mpc.output(inputs))
+    x = mpc.np_concatenate(inputs)
+
+    print("concatenated: ", await mpc.output(x))
 
     await mpc.shutdown()
 
