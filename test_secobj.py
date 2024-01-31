@@ -217,22 +217,48 @@ async def main8():
 
     await mpc.shutdown()
 
-# test bytes as field
-async def main9():
-    secfld = mpc.SecFld(256)
+# TODO: try to create your own concatenate function for securearrays and not use np_concatenate from mpyc
 
+# test bytestring as secure object
+async def main10():
+    secfld = mpc.SecFld(2)
     await mpc.start()
 
     in_ = input("Give your input: ")
+    # encode() converts string to bytes
 
-    X = in_.encode()
+    in_bit = ''.join(format(ord(i), '08b') for i in in_)
+    print(in_bit)
 
-    X = int.from_bytes(X, 'big')
-    secobj = secfld(X)
-    inputs = mpc.input(secobj)
 
-    print("First input: ", await mpc.output(inputs[0]))
-    print("Second input: ", await mpc.output(inputs[1]))
+    in_bit_list = [int(i) for i in in_bit]
+    print(in_bit_list)
+
+    inputs = mpc.input(secfld.array(np.array(in_bit_list)))
+
+    print("input: ", await mpc.output(inputs))
+
+    await mpc.shutdown()
+
+# test to_bytes function
+async def main9():
+    secint = mpc.SecInt(256)
+
+    await mpc.start()
+
+    in_ = input("Give your number: ")
+    num = secint(int(in_))
+
+    byt_num = mpc.to_bits(num)  # byt_num is a real list of secints
+    print("length of number of the list: ", len(byt_num))
+
+    inputs = mpc.input(num)
+
+    sum = mpc.sum(inputs)
+
+    print("bits: ", await mpc.output(byt_num))
+    print("sum: ", await mpc.output(sum))
+    print("bit sum: ", await mpc.output(mpc.to_bits(sum)))
 
     await mpc.shutdown()
 # check homomorphism
@@ -410,5 +436,6 @@ async def main5():
 # TODO: Fix the following problem or find a solution for this
 # main8 was successful as long as the second numpy is not used for some reasons
 #mpc.run(main8())
-mpc.run(main9())
+#mpc.run(main9())
 #mpc.run(main7())
+mpc.run(main10())
