@@ -19,4 +19,4 @@ for key in "${keys[@]}"; do
     # note: key has to be just the secret key, therefore public key has to be stored somewhere for verification
     python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< "$key"&
   done
-done
+done > results.txt
