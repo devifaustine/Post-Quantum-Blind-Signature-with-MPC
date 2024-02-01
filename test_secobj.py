@@ -219,10 +219,13 @@ async def main8():
 
 # TODO: try to create your own concatenate function for securearrays and not use np_concatenate from mpyc
 
+# mpyc updated, problem fixed
+# numpy also updated to fix the problem with np_concatenate
 async def main11():
     secfld = mpc.SecFld(2)
     await mpc.start()
 
+    # input has to be of same length so array works? (e.g. 10)
     in_ = input("Give your input: ")
 
     # pad the input to max length
