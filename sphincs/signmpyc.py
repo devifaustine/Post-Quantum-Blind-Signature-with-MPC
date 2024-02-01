@@ -4,6 +4,7 @@ from math import ceil, log
 import pyspx.shake_256f
 import random
 import string
+import math
 from sphincs_params import *
 
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
@@ -15,7 +16,7 @@ RANDOMIZE = 0
 class SPHINCS(object):
     # TODO: make the variables accessible and changable from main() in mpyc_sphincs_benchmark.py
     def __init__(self, n=32, m=512, h=68, d=17, w=16, tau=16, k=35):
-        """Initializes SPHINCS+-256f
+        """Initializes SPHINCS+-256f according to docs
 
         n -- length of hash in WOTS / HORST (in bits)
         m -- length of message hash (in bits)
@@ -37,6 +38,7 @@ class SPHINCS(object):
         self.tau = tau
         self.t = 1 << tau
         self.k = k
+        self.a = log(self.t)
         SPX_N = 32
         SPX_FULL_HEIGHT = 68
         SPX_FORS_HEIGHT = 9
@@ -65,7 +67,7 @@ class SPHINCS(object):
         if SPX_TREE_HEIGHT * SPX_D != SPX_FULL_HEIGHT:
             raise ValueError("SPX_D should always divide SPX_FULL_HEIGHT")
 
-# key generation is the same as the original SPHINCS+ implementation
+    # key generation is the same as the original SPHINCS+ implementation - pyspx library
     def keygen(self, seed):
         """
         generate a public and private key pair according to pyspx library
@@ -74,25 +76,55 @@ class SPHINCS(object):
         pk, sk = pyspx.shake_256f.generate_keypair(seed)
         return pk, sk
 
-    async def toByte(self, x, y):
+    # verify should function the same as described in pyspx library
+    def verify(self, pk, sig, msg):
+        """
+        verify the signature of the message
+        :param pk: public key
+        :param sig: signature
+        :param msg: message
+        :return: True/False
+        """
+        return pyspx.shake_256f.verify(sig, msg, pk)
+
+    def toByte(self, x, y):
         """
         returns a y-byte string containing binary representation of x in big endian order
         :param x: non-negative integer
         :param y: non-negative integer
         :return: bytestring of length y
         """
-        res = bytearray(y)
-        for i in range(y):
-            res[i] = x % 256
-            x //= 256
-        return res
+        return x.to_bytes(y, byteorder='big')
+
+    async def PRF_msg(self, sk, opt, msg):
+        """
+        pseudorandom function to generate randomness for the message compression
+        :param sk: SK.prf
+        :param opt: randomizer
+        :param msg: message in Secure Object type
+        :return: SHAKE256(sk || opt || msg, 8n)
+        """
+        # TODO: Implement the function using SHA2 or SHAKE256
+        raise NotImplementedError("PRF_msg function not implemented yet!")
+
+    async def H_msg(self, R, pkseed, pkroot, msg):
+        """
+        hash function to generate the message digest and index
+        :param R: randomness from PRF_msg
+        :param pkseed: PK.seed
+        :param pkroot: PK.root
+        :param msg: message in Secure Object type
+        :return: digest and index
+        """
+        # TODO: implement hash message to digest the message
+        raise NotImplementedError("H_msg function not implemented yet!")
 
     async def sign(self, M, SK):
         """
         sign the message M using secret key SK (All done using MPyC functions)
         :param M: message (secure object)
         :param SK: tuple of (SK.seed, SK.prf, PK.seed, PK.root) all of type secure objects
-        :return: signature sign(M, SK) - still secure object
+        :return: signature sign(M, SK) - still of secure object
         """
         # TODO: determine which type of secure object M and SK have to be
         # TODO: implement the method from SPHINCS+!
@@ -105,13 +137,48 @@ class SPHINCS(object):
         # SK = (SK.seed, SK.prf, PK.seed, PK.root)
         skseed, skprf, pkseed, pkroot = SK
 
-        # generate randomizer
+        # generate randomizer - default to pkseed and not randomized
         opt = pkseed
         if RANDOMIZE:
             opt = random.randint(0, 2**SPX_N)
 
+        R = self.PRF_msg(skprf, opt, M)
+
+        # TODO: R has to be of type array so concatenate works?
+        s = mpc.np_concatenate((s, R))
+
+        # compute message digest and index
+        digest = self.H_msg(R, pkseed, pkroot, M)
+
+        tmp_md = mpc.np_split(digest, math.floor((self.k * self.a + 7) / 8))
+        tmp_idx_tree = mpc.np_split(digest, math.floor((self.h - (self.h / self.d) + 7) / 8))
+        tmp_idx_leaf = mpc.np_split(digest, math.floor(((self.h / self.d) + 7) / 8))
+
+        md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
+        idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
+        idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
+
+        # FORS sign
+        # TODO: implement ADRS and its functions!
+        ADRS.setLayerAddress(0)
+        ADRS.setTreeAddress(idx_tree)
+        ADRS.setType(FORS_TREE)
+        ADRS.setKeyPairAddress(idx_leaf)
+
+        SIG_FORS = fors_sign(md, skseed, pkseed, ADRS)
+        # TODO: pay attention to type of SIG_FORS and make sure concat works!
+        s = mpc.np_concatenate((s, SIG_FORS))
+
+        # get FORS public key
+        PK_FORS = fors_pkFromSig(SIG_FORS, md, pkseed, ADRS)
+
+        # sign FORS public key with HT
+        ADRS.setType(TREE)
+        SIG_HT = ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
+        s = mpc.np_concatenate((s, SIG_HT))
+
         raise NotImplementedError("Signing function not implemented yet!")
 
-        # signature is a tuple of (Sig, Auth.Path)
+        # signature consists of R, SIG_FORS, SIG_HT - all of type secure object
         sig = (s, M)
-        return tuple(sig)
+        return sig
