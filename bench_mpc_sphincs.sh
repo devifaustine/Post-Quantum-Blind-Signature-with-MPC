@@ -20,3 +20,5 @@ for key in "${keys[@]}"; do
     python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< "$key"&
   done
 done > results.txt
+# TODO: make a table output in the command line for the results
+#  or put the result table benhcmakr in the results.txt file

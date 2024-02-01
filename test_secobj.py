@@ -219,6 +219,40 @@ async def main8():
 
 # TODO: try to create your own concatenate function for securearrays and not use np_concatenate from mpyc
 
+async def main11():
+    secfld = mpc.SecFld(2)
+    await mpc.start()
+
+    in_ = input("Give your input: ")
+
+    # pad the input to max length
+    max = 10
+    if len(in_) > max:
+        raise ValueError("Input too long!")
+    if len(in_) < max:
+        in_ = pad(in_, max)
+
+    assert len(in_) == max
+
+    in_bit = ''.join(format(ord(i), '08b') for i in in_)
+    print(in_bit)
+
+    in_bit_list = [int(i) for i in in_bit]
+    print(in_bit_list)
+
+    inputs = mpc.input(secfld.array(np.array(in_bit_list)))
+
+    # mpc.output() does not support outputting list
+    for i in range(len(inputs)):
+        print("input ", i, ": ", await mpc.output(inputs[i]))
+
+    await mpc.shutdown()
+
+def pad(string, length):
+    while len(string) < length:
+        string += " "
+    return string
+
 # test bytestring as secure object
 async def main10():
     secfld = mpc.SecFld(2)
@@ -226,6 +260,12 @@ async def main10():
 
     in_ = input("Give your input: ")
     # encode() converts string to bytes
+
+    # inputs have to be of the same length
+    max_len = 10
+
+    if len(in_) < max_len:
+        in_ = pad(in_, max_len)
 
     in_bit = ''.join(format(ord(i), '08b') for i in in_)
     print(in_bit)
@@ -237,7 +277,7 @@ async def main10():
     inputs = mpc.input(secfld.array(np.array(in_bit_list)))
 
     x = mpc.np_concatenate(inputs)
-
+    print(type(x))
     print("concatenated: ", await mpc.output(x))
 
     await mpc.shutdown()
@@ -440,4 +480,5 @@ async def main5():
 #mpc.run(main8())
 #mpc.run(main9())
 #mpc.run(main7())
-mpc.run(main10())
+#mpc.run(main10())
+mpc.run(main11())
