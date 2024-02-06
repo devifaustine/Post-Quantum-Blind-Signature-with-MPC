@@ -1,78 +1,16 @@
 # This file executes the benchmark for SPHINCS+ build from MPC using the help of MPyC library
 from signmpyc import SPHINCS
-import time
 from mpyc.runtime import mpc
 import numpy as np
-import random
-import string
-
-# TODO: change SPHINCS to SPHINCS+ in implementation!
 
 sphincs = SPHINCS()
 # a group field consisting of 2 elements 0 and 1
 secfld = mpc.SecFld(2)
 
 # _________________________________________________________________________________________________
-# TODO: delete these as it has been moved to gen_keys_bench.py
-"""
-
-# seed for SPHINCS+ with SHA-256 has to be 96 bytes long
-seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
-# Convert the string to bytes
-seed_bytes = seed.encode('utf-8')
-
-# generate public and private key pair
-start = time.time()
-key = sphincs.keygen(seed_bytes)
-end = time.time()
-
-print(key)
-
-elapsed = end - start
-print("time taken to generate the key: %d seconds" % elapsed)
-
-print("sk =", key[1])
-
-"""
-# _________________________________________________________________________________________________
 
 # runs the sign() function using MPC
 # maybe comment the time.time() and unnecessary code when using benchmarking tools from python later
-
-def q_split(q):
-    """
-    function to parse q in form of string
-    :param q: Q in SK
-    :return: Q in its original form a list of bytestring
-    """
-    #TODO: fix this function!
-    res = []
-    for i in range(len(q)):
-        if i == 0:  # [ present at the first char
-            res.append(eval(q[i][1:]))
-            print(res[i])
-        elif i == len(q) - 1:
-            res.append(eval(q[i][:-1]))
-        else:
-            res.append(eval(q[i]))
-    return res
-
-
-def split_sk(sk):
-    """
-    sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
-    :param sk: secret key
-    :return: (pk, (sk1, sk2, q))
-    """
-    #TODO: fix this function!
-    pk, sk_eval = eval(sk)
-
-    sk1 = eval(sk_eval[0])  # Using eval to convert the string back to bytes
-    sk2 = eval(sk_eval[1])
-    q_str = sk_eval[2:]
-    q = q_split(q_str)
-
-    return pk, (sk1, sk2, q)
 
 def check_type(x):
     """
@@ -112,33 +50,27 @@ async def main():
     print("here's your payload: ", payload)
 
     # payload is of type string (str)
+    # TODO: remember to pad the payload
 
-    # TODO: find out if secfld can be used as np.array results in error
-
-    # check the type of payload (either message or secret key) and convert it to secure object
+    # check the type of payload (either message or secret key) and convert it to secure objects
     try:
         if check_type(payload):
             print("The given input is a secret key!")
             # payload is a secret key
-            sk1, sk2, q = split_sk(payload)
-            sk = (sk1, sk2, q)
-            # TODO: convert each element of sk into secure obj (SecFld and array)
-            # TODO: new! overwrite payload with secure object (to be transfered with mpc.input())
-            sk1_bit = np.array([(b >> 1) & 1 for b in sk1 for i in range(8)])
-            #x = np.array([(b >> i) & 1 for b in X for i in range(8)])  # bytes to bits
-            #x = secfld.array(x)      # secret-shared input bits
+            # split function need to be done in signmpyc.py
+            sk_bit = ''.join(format(ord(i), '08b') for i in payload)
+            payload = [int(i) for i in sk_bit]      # secret-shared input sk bits in list
         else:
             print("The given input is a message!")
             # payload is a message
-            # TODO: new! overwrite payload with secure object (to be transfered with mpc.input())
-            m = payload # TODO: but as secure object of type SecFld array of bytes
-
+            mes_bit = ''.join(format(ord(i), '08b') for i in payload)
+            payload = [int(i) for i in mes_bit]      # secret-shared input message bits in list
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
         await mpc.shutdown()
 
     # both parties share their inputs using mpc.input() - Shamir's Secret Sharing Scheme
-    inputs = mpc.input(payload)
+    inputs = mpc.input(secfld.array(np.array(payload)))
 
     # inputs[0] = message
     # inputs[1] = secret key
@@ -147,7 +79,12 @@ async def main():
     print()
     print("Signing process begins now...")
 
-    sig = sphincs.sign(inputs[0], inputs[1])
+    # catch exceptions in case of errors
+    try:
+        sig = sphincs.sign(inputs[0], inputs[1])
+    except (NotImplementedError, AttributeError):
+        print("Error during signing process. Try Again!")
+        await mpc.shutdown()
 
     print("Signature generated!\nHere is the signature: ", await mpc.output(sig))
 
