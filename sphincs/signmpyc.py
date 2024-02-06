@@ -1,10 +1,8 @@
 from mpyc.runtime import mpc
-import os
-from math import ceil, log
+from math import ceil, log, floor
 import pyspx.shake_256f
 import random
 import string
-import math
 from sphincs_params import *
 
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
@@ -12,6 +10,41 @@ seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in ra
 
 # this can be set to 1 if you want the signature to be randomized (for security)
 RANDOMIZE = 0
+
+def q_split(q):
+    """
+    function to parse q in form of string
+    :param q: Q in SK
+    :return: Q in its original form a list of bytestring
+    """
+    #TODO: fix this function!
+    res = []
+    for i in range(len(q)):
+        if i == 0:  # [ present at the first char
+            res.append(eval(q[i][1:]))
+            print(res[i])
+        elif i == len(q) - 1:
+            res.append(eval(q[i][:-1]))
+        else:
+            res.append(eval(q[i]))
+    return res
+
+
+def split_sk(sk):
+    """
+    sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
+    :param sk: secret key
+    :return: (pk, (sk1, sk2, q))
+    """
+    #TODO: fix this function!
+    pk, sk_eval = eval(sk)
+
+    sk1 = eval(sk_eval[0])  # Using eval to convert the string back to bytes
+    sk2 = eval(sk_eval[1])
+    q_str = sk_eval[2:]
+    q = q_split(q_str)
+
+    return pk, (sk1, sk2, q)
 
 class SPHINCS(object):
     # TODO: make the variables accessible and changable from main() in mpyc_sphincs_benchmark.py
@@ -135,6 +168,7 @@ class SPHINCS(object):
         ADRS = self.toByte(0, 32)
 
         # SK = (SK.seed, SK.prf, PK.seed, PK.root)
+        # TODO: since SK is of type secure object, need to use np_split() from mpc library
         skseed, skprf, pkseed, pkroot = SK
 
         # generate randomizer - default to pkseed and not randomized
@@ -150,9 +184,9 @@ class SPHINCS(object):
         # compute message digest and index
         digest = self.H_msg(R, pkseed, pkroot, M)
 
-        tmp_md = mpc.np_split(digest, math.floor((self.k * self.a + 7) / 8))
-        tmp_idx_tree = mpc.np_split(digest, math.floor((self.h - (self.h / self.d) + 7) / 8))
-        tmp_idx_leaf = mpc.np_split(digest, math.floor(((self.h / self.d) + 7) / 8))
+        tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
+        tmp_idx_tree = mpc.np_split(digest, floor((self.h - (self.h / self.d) + 7) / 8))
+        tmp_idx_leaf = mpc.np_split(digest, floor(((self.h / self.d) + 7) / 8))
 
         md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
         idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
