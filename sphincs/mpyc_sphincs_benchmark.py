@@ -34,22 +34,42 @@ def q_split(q):
             res.append(eval(q[i]))
     return res
 
+def split_sk(key):
+    """
+    sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
+    :param key: public and private key pair in form (pk, sk1 || sk2 || pk || q)
+    :return: (sk.seed, sk.prf, pk.seed, pk.root) each of length
+    """
+    pk, sk_eval = eval(sk)
+
+    sk_seed = sk_eval[:32]
+    sk_prf = sk_eval[32:64]
+    pk_seed = sk_eval[64:96]
+    pk_root = sk_eval[96:128]
+    # TODO: is q a padding?
+    q = sk_eval[128:]
+
+    return sk_seed, sk_prf, pk_seed, pk_root, q
+
+
+pk, sk1 = split_sk(sk)
+print(pk)
 
 def split_sk(sk):
     """
     sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
-    :param sk: secret key
-    :return: (pk, (sk1, sk2, q))
+    :param sk: secret key in form (pk, sk1 || sk2 || q)
+    :return: (pk, sk1, sk2, q)
     """
-    #TODO: fix this function!
+    # TODO: fix this function!
     pk, sk_eval = eval(sk)
 
+    # TODO: separation of sk has to be checked and tested
     sk1 = eval(sk_eval[0])  # Using eval to convert the string back to bytes
     sk2 = eval(sk_eval[1])
     q_str = sk_eval[2:]
-    q = q_split(q_str)
 
-    return pk, sk1, sk2, q
+    return pk, sk1, sk2, q_str
 
 # _________________________________________________________________________________________________
 
