@@ -16,6 +16,41 @@ def xprint(s):
     if log:
         print(s)
 
+def q_split(q):
+    """
+    function to parse q in form of string
+    :param q: Q in SK
+    :return: Q in its original form a list of bytestring
+    """
+    #TODO: fix this function!
+    res = []
+    for i in range(len(q)):
+        if i == 0:  # [ present at the first char
+            res.append(eval(q[i][1:]))
+            print(res[i])
+        elif i == len(q) - 1:
+            res.append(eval(q[i][:-1]))
+        else:
+            res.append(eval(q[i]))
+    return res
+
+
+def split_sk(sk):
+    """
+    sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
+    :param sk: secret key
+    :return: (pk, (sk1, sk2, q))
+    """
+    #TODO: fix this function!
+    pk, sk_eval = eval(sk)
+
+    sk1 = eval(sk_eval[0])  # Using eval to convert the string back to bytes
+    sk2 = eval(sk_eval[1])
+    q_str = sk_eval[2:]
+    q = q_split(q_str)
+
+    return pk, sk1, sk2, q
+
 # _________________________________________________________________________________________________
 
 # runs the sign() function using MPC
@@ -36,7 +71,6 @@ def check_type(x):
     # elif x[0] == 'b' and ord(x[1]) == 92:
     else:
         return False
-    # TODO: raise ValueError("This is neither a message, nor a secret key!")
 
 # note: first party (with index = 0) is always the user
 # and second party (index = 1) is always the signer for simplicity
@@ -55,24 +89,33 @@ async def main():
         raise AttributeError("The number of parties needs to be exactly 2!")
 
     # accept input from both user and signer
-    payload = input('Give your input here: ')
-    print("here's your payload: ", payload)
+    in_ = input('Give your input here: ')
+    print("here's your payload: ", in_)
 
     # payload is of type string (str)
     # TODO: remember to pad the payload
 
     # check the type of payload (either message or secret key) and convert it to secure objects
     try:
-        if check_type(payload):
+        if check_type(in_):
             print("The given input is a secret key!")
             # payload is a secret key
-            # split function need to be done in signmpyc.py
-            sk_bit = ''.join(format(ord(i), '08b') for i in payload)
-            payload = [int(i) for i in sk_bit]      # secret-shared input sk bits in list
+            # split the sk into its elements
+            pk, sk1, sk2, q = split_sk(in_)
+            pk_bit = ''.join(format(ord(i), '08b') for i in pk)
+            sk1_bit = ''.join(format(ord(i), '08b') for i in sk1)
+            sk2_bit = ''.join(format(ord(i), '08b') for i in sk2)
+            q_bit = ''.join(format(ord(i), '08b') for i in q)
+            # payload is a list of secure objects containing the elements of sk
+            payload = []
+            payload.append([int(i) for i in pk_bit])      # secret-shared input sk bits in list
+            payload.append([int(i) for i in sk1_bit])
+            payload.append([int(i) for i in sk2_bit])
+            payload.append([int(i) for i in q_bit])
         else:
             print("The given input is a message!")
             # payload is a message
-            mes_bit = ''.join(format(ord(i), '08b') for i in payload)
+            mes_bit = ''.join(format(ord(i), '08b') for i in in_)
             payload = [int(i) for i in mes_bit]      # secret-shared input message bits in list
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
@@ -98,6 +141,8 @@ async def main():
     print("Signature generated!\nHere is the signature: ", await mpc.output(sig))
 
     # TODO: assert verify the signature before shutting down
+    # TODO: inputs[0] and inputs[1] needs to be bytes and not secure objects
+    assert await sphincs.verify(sig, inputs[0], inputs[1])
 
     await mpc.shutdown()
 
