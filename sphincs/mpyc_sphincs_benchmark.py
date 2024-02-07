@@ -7,6 +7,15 @@ sphincs = SPHINCS()
 # a group field consisting of 2 elements 0 and 1
 secfld = mpc.SecFld(2)
 
+# set log to True to print the output
+log = True
+
+def xprint(s):
+    # TODO: determine if this function is necessary
+    # TODO: what if xprint receives 2 or more arguments? how do we handle that?
+    if log:
+        print(s)
+
 # _________________________________________________________________________________________________
 
 # runs the sign() function using MPC
