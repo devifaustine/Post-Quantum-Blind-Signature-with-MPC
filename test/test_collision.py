@@ -1,6 +1,5 @@
 # test collision in SPHINCS+ first using SHA256
 
-import importlib
 import pyspx.shake_256f
 import string
 import random
