@@ -251,6 +251,53 @@ async def main11():
 
     await mpc.shutdown()
 
+# test convert bit array back to bytes
+async def main12():
+    secfld = mpc.SecFld(2)
+    await mpc.start()
+
+    # input has to be of same length so array works? (e.g. 10)
+    in_ = input("Give your input: ")
+
+    # pad the input to max length
+    max = 10
+    if len(in_) > max:
+        raise ValueError("Input too long!")
+    if len(in_) < max:
+        in_ = pad(in_, max)
+
+    assert len(in_) == max
+
+    in_bit = ''.join(format(ord(i), '08b') for i in in_)
+    print(in_bit)
+
+    in_bit_list = [int(i) for i in in_bit]
+    print(in_bit_list)
+
+    inputs = mpc.input(secfld.array(np.array(in_bit_list)))
+
+    # mpc.output() does not support outputting list
+    for i in range(len(inputs)):
+        print("input ", i, ": ", await mpc.output(inputs[i]))
+
+
+    # converting bits to bytes
+    concat = mpc.np_concatenate(inputs)
+    s = await mpc.output(concat)
+    s = np.fliplr(s.reshape(-1, 8)).reshape(-1)  # reverse bits for each byte
+    d = len(s)
+    s_binary = f'{int("".join(str(int(b)) for b in s), 2):0{d // 4}x}'  # Convert binary string to hexadecimal string
+    s_bytes = bytes.fromhex(s_binary)  # Convert hexadecimal string to bytes
+
+    print(type(s_bytes))
+
+    print("concatenated byte: ", s_bytes)
+
+    # decoding mostly results in unicode error
+    #print("concatenated string: ", s_bytes.decode('utf-32'))
+
+    await mpc.shutdown()
+
 def pad(string, length):
     while len(string) < length:
         string += " "
@@ -484,4 +531,5 @@ async def main5():
 #mpc.run(main9())
 #mpc.run(main7())
 #mpc.run(main10())
-mpc.run(main11())
+#mpc.run(main11())
+mpc.run(main12())
