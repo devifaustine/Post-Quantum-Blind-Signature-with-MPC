@@ -1,5 +1,5 @@
 from mpyc.runtime import mpc
-from math import ceil, log, floor
+from math import log, floor
 import pyspx.shake_256f
 import random
 import string
@@ -10,41 +10,6 @@ seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in ra
 
 # this can be set to 1 if you want the signature to be randomized (for security)
 RANDOMIZE = 0
-
-def q_split(q):
-    """
-    function to parse q in form of string
-    :param q: Q in SK
-    :return: Q in its original form a list of bytestring
-    """
-    #TODO: fix this function!
-    res = []
-    for i in range(len(q)):
-        if i == 0:  # [ present at the first char
-            res.append(eval(q[i][1:]))
-            print(res[i])
-        elif i == len(q) - 1:
-            res.append(eval(q[i][:-1]))
-        else:
-            res.append(eval(q[i]))
-    return res
-
-
-def split_sk(sk):
-    """
-    sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
-    :param sk: secret key
-    :return: (pk, (sk1, sk2, q))
-    """
-    #TODO: fix this function!
-    pk, sk_eval = eval(sk)
-
-    sk1 = eval(sk_eval[0])  # Using eval to convert the string back to bytes
-    sk2 = eval(sk_eval[1])
-    q_str = sk_eval[2:]
-    q = q_split(q_str)
-
-    return pk, (sk1, sk2, q)
 
 class SPHINCS(object):
     # TODO: make the variables accessible and changable from main() in mpyc_sphincs_benchmark.py
@@ -103,9 +68,10 @@ class SPHINCS(object):
     # key generation is the same as the original SPHINCS+ implementation - pyspx library
     def keygen(self, seed):
         """
-        generate a public and private key pair according to pyspx library
+        generate a public and private key pair according to pyspx library shake_256f
         :return: public key, private key
         """
+        # expected sizes of (pk ,sk, sig): [64, 128, 49856]
         pk, sk = pyspx.shake_256f.generate_keypair(seed)
         return pk, sk
 
@@ -169,7 +135,7 @@ class SPHINCS(object):
 
         # SK = (SK.seed, SK.prf, PK.seed, PK.root)
         # TODO: since SK is of type secure object, need to use np_split() from mpc library
-        skseed, skprf, pkseed, pkroot = SK
+        skseed, skprf, pkseed, pkroot = split_sk(SK)
 
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed
