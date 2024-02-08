@@ -10,29 +10,15 @@ secfld = mpc.SecFld(2)
 # set log to True to print the output
 log = True
 
-def xprint(s):
-    # TODO: determine if this function is necessary
-    # TODO: what if xprint receives 2 or more arguments? how do we handle that?
+def xprint(s, d=''):
+    """
+    function to print the output if global variable log is set to True
+    :param s: string
+    :param d: optional string
+    :return: none
+    """
     if log:
         print(s)
-
-def q_split(q):
-    """
-    function to parse q in form of string
-    :param q: Q in SK
-    :return: Q in its original form a list of bytestring
-    """
-    #TODO: fix this function!
-    res = []
-    for i in range(len(q)):
-        if i == 0:  # [ present at the first char
-            res.append(eval(q[i][1:]))
-            print(res[i])
-        elif i == len(q) - 1:
-            res.append(eval(q[i][:-1]))
-        else:
-            res.append(eval(q[i]))
-    return res
 
 def split_sk(key):
     """
@@ -40,36 +26,16 @@ def split_sk(key):
     :param key: public and private key pair in form (pk, sk1 || sk2 || pk || q)
     :return: (sk.seed, sk.prf, pk.seed, pk.root) each of length
     """
-    pk, sk_eval = eval(sk)
+    pk, sk_eval = eval(key)
 
     sk_seed = sk_eval[:32]
     sk_prf = sk_eval[32:64]
     pk_seed = sk_eval[64:96]
-    pk_root = sk_eval[96:128]
+    pk_root = sk_eval[96:]
+    #pk_root = sk_eval[96:128]
     # TODO: is q a padding?
-    q = sk_eval[128:]
-
-    return sk_seed, sk_prf, pk_seed, pk_root, q
-
-
-pk, sk1 = split_sk(sk)
-print(pk)
-
-def split_sk(sk):
-    """
-    sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
-    :param sk: secret key in form (pk, sk1 || sk2 || q)
-    :return: (pk, sk1, sk2, q)
-    """
-    # TODO: fix this function!
-    pk, sk_eval = eval(sk)
-
-    # TODO: separation of sk has to be checked and tested
-    sk1 = eval(sk_eval[0])  # Using eval to convert the string back to bytes
-    sk2 = eval(sk_eval[1])
-    q_str = sk_eval[2:]
-
-    return pk, sk1, sk2, q_str
+    #q = sk_eval[128:]
+    return sk_seed, sk_prf, pk_seed, pk_root #, q
 
 # _________________________________________________________________________________________________
 
@@ -115,34 +81,37 @@ async def main():
     # payload is of type string (str)
     # TODO: remember to pad the payload
 
+    payload = None
+
     # check the type of payload (either message or secret key) and convert it to secure objects
     try:
         if check_type(in_):
-            print("The given input is a secret key!")
+            xprint("The given input is a secret key!")
             # payload is a secret key
             # split the sk into its elements
-            pk, sk1, sk2, q = split_sk(in_)
-            pk_bit = ''.join(format(ord(i), '08b') for i in pk)
-            sk1_bit = ''.join(format(ord(i), '08b') for i in sk1)
-            sk2_bit = ''.join(format(ord(i), '08b') for i in sk2)
-            q_bit = ''.join(format(ord(i), '08b') for i in q)
+            sk_seed, sk_prf, pk_seed, pk_root, q = split_sk(in_)
+            pkseed_bit = ''.join(format(ord(i), '08b') for i in str(pk_seed))
+            pkroot_bit = ''.join(format(ord(i), '08b') for i in str(pk_root))
+            skseed_bit = ''.join(format(ord(i), '08b') for i in str(sk_seed))
+            skprf_bit = ''.join(format(ord(i), '08b') for i in str(sk_prf))
+            #q_bit = ''.join(format(ord(i), '08b') for i in str(q))
+
             # payload is a list of secure objects containing the elements of sk
-            payload = []
-            payload.append([int(i) for i in pk_bit])      # secret-shared input sk bits in list
-            payload.append([int(i) for i in sk1_bit])
-            payload.append([int(i) for i in sk2_bit])
-            payload.append([int(i) for i in q_bit])
+            payload = [secfld.array(np.array([int(i) for i in skseed_bit])),
+                       secfld.array(np.array([int(i) for i in skprf_bit])),
+                       secfld.array(np.array([int(i) for i in pkseed_bit])),
+                       secfld.array(np.array([int(i) for i in pkroot_bit]))]
         else:
-            print("The given input is a message!")
+            xprint("The given input is a message!")
             # payload is a message
             mes_bit = ''.join(format(ord(i), '08b') for i in in_)
-            payload = [int(i) for i in mes_bit]      # secret-shared input message bits in list
+            payload = secfld.array(np.array([int(i) for i in mes_bit]))      # secret-shared input message bits in list
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
         await mpc.shutdown()
 
     # both parties share their inputs using mpc.input() - Shamir's Secret Sharing Scheme
-    inputs = mpc.input(secfld.array(np.array(payload)))
+    inputs = mpc.input(payload)
 
     # inputs[0] = message
     # inputs[1] = secret key
