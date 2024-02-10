@@ -19,6 +19,6 @@ for key in "${keys[@]}"; do
     # note: key has to be just the secret key, therefore public key has to be stored somewhere for verification
     python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< "$key"&
   done
-done > results.txt
+done > log.txt
 # TODO: make a table output in the command line for the results
-#  or put the result table benhcmakr in the results.txt file
+#  or put the result table benhcmakr in the log.txt file

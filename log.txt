@@ -1,0 +1,42 @@
+2024-02-10 23:36:37,650 Start MPyC runtime v0.9.8
+2024-02-10 23:36:37,657 Start MPyC runtime v0.9.8
+2024-02-10 23:36:37,661 All 2 parties connected.
+Give your input here: 2024-02-10 23:36:37,661 All 2 parties connected.
+Give your input here: here's your payload:  (b'U5FDV24IUO8GSH5Q6QG5Q0PW6W4JAOMF?}3x8bxbb$Px90xf9x83x12x0cxadtx99x12xafxf4tCY=x04x9axf2x1eOxbexdbxe3Ib', b'2J3IWEVKPFD70RF2EJUL8UFIF63S9KBN420BXMIDHU2X7CR6YLUWLHI2KKCYMZGYU5FDV24IUO8GSH5Q6QG5Q0PW6W4JAOMF?}3x8bxbb$Px90xf9x83x12x0cxadtx99x12xafxf4tCY=x04x9axf2x1eOxbexdbxe3Ib')
+The given input is a secret key!
+Payload invalid. check_type failed to recognize the pattern. Try Again!
+2024-02-10 23:36:37,661 Stop MPyC -- elapsed time: 0:00:00.000|bytes sent: 0
+here's your payload:  VCZ
+The given input is a message!
+
+Signing process begins now...
+2024-02-10 23:36:37,661 Unhandled exception in event loop
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 475, in <lambda>
+    task.add_done_callback(lambda t: _reconcile(decl, t))
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 399, in _reconcile
+    givn = task.result()
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 327, in _wrap_in_coro
+    return await awaitable
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 315, in __await__
+    val = self.coro.send(None)
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 515, in output
+    field = x[0].field
+AttributeError: 'coroutine' object has no attribute 'field'
+Traceback (enclosing MPyC coroutine call):
+2024-02-10 23:36:37,782 Exception in callback _SelectorSocketTransport._call_connection_lost(ConnectionRes...eset by peer'))
+handle: <Handle _SelectorSocketTransport._call_connection_lost(ConnectionRes...eset by peer'))>
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/usr/lib/python3.10/asyncio/selector_events.py", line 984, in _call_connection_lost
+    super()._call_connection_lost(exc)
+  File "/usr/lib/python3.10/asyncio/selector_events.py", line 742, in _call_connection_lost
+    self._protocol.connection_lost(exc)
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 143, in connection_lost
+    raise exc
+  File "/usr/lib/python3.10/asyncio/selector_events.py", line 862, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [Errno 104] Connection reset by peer
