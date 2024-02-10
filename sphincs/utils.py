@@ -21,8 +21,8 @@ async def bits_to_string(x):
     :param x: input of type secfld.array (secure array)
     :return: str(x)
     """
-    int i = 0
-    int j = 1
+    i = 0
+    j = 1
     # TODO - implement the function
     # check for loop for every 8 bits (1 byte = 8 bits) so i is lower counter and j is upper counter
     for a in x:
