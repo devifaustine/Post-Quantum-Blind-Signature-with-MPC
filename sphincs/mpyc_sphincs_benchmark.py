@@ -26,16 +26,18 @@ def split_sk(key):
     :param key: public and private key pair in form (pk, sk1 || sk2 || pk || q)
     :return: (sk.seed, sk.prf, pk.seed, pk.root) each of length
     """
-    pk, sk_eval = eval(key)
+    # every element has length 32 bytes
+    key_fixed = key.replace("x", '\\x')
+    pk, sk_eval = eval(key_fixed)
 
     sk_seed = sk_eval[:32]
     sk_prf = sk_eval[32:64]
     pk_seed = sk_eval[64:96]
     pk_root = sk_eval[96:]
-    #pk_root = sk_eval[96:128]
-    # TODO: is q a padding?
-    #q = sk_eval[128:]
-    return sk_seed, sk_prf, pk_seed, pk_root #, q
+
+    # inputs from bash script eliminates '\' in pk_root, so we have to fix it
+    assert len(pk_root) == 32
+    return sk_seed, sk_prf, pk_seed, pk_root
 
 # _________________________________________________________________________________________________
 
@@ -50,9 +52,10 @@ def check_type(x):
     """
     # case x is secret key
     if x[0] == '(' and x[1] == "b" and x[-1] == ")":
-        if isinstance(eval(x), tuple):
+        if x.__contains__(','):
             return True
-        else: return False
+        else:
+            raise ValueError("Invalid secret key format!")
     # case x is a message, messages always starts with 'b/'
     # elif x[0] == 'b' and ord(x[1]) == 92:
     else:
@@ -89,7 +92,7 @@ async def main():
             xprint("The given input is a secret key!")
             # payload is a secret key
             # split the sk into its elements
-            sk_seed, sk_prf, pk_seed, pk_root, q = split_sk(in_)
+            sk_seed, sk_prf, pk_seed, pk_root = split_sk(in_)
             pkseed_bit = ''.join(format(ord(i), '08b') for i in str(pk_seed))
             pkroot_bit = ''.join(format(ord(i), '08b') for i in str(pk_root))
             skseed_bit = ''.join(format(ord(i), '08b') for i in str(sk_seed))
@@ -123,7 +126,7 @@ async def main():
     # catch exceptions in case of errors
     try:
         sig = sphincs.sign(inputs[0], inputs[1])
-    except (NotImplementedError, AttributeError):
+    except (NotImplementedError, AttributeError, ValueError):
         print("Error during signing process. Try Again!")
         await mpc.shutdown()
 
