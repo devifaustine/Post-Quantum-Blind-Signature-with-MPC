@@ -251,6 +251,53 @@ async def main11():
 
     await mpc.shutdown()
 
+# test input 0 = int, input 1 = list of ints
+async def main13():
+    secint = mpc.SecInt(16)
+    await mpc.start()
+
+    # input has to be of same length so array works? (e.g. 10)
+    in_ = input("Give your input: ")
+    res = [[]]
+    try:
+        res = int(in_)
+        res = [secint(res), secint(0), secint(0)]
+    except ValueError:
+        lis = eval(in_)
+        res = []
+        for i in lis:
+            res.append(secint(i))
+
+    inputs = mpc.input(res)
+
+    print("input 0: ", await mpc.output(inputs[0]))
+    for i in inputs[1]:
+        print("input 1: ", await mpc.output(i))
+
+    x = await bigger(inputs[0][1], inputs[1])
+    y = (inputs[0][0]).__gt__(inputs[1][2])
+    print("input 0 > 1: ", await mpc.output(x))
+    print("bigger? ", await mpc.output(y))
+
+    await mpc.shutdown()
+
+secint = mpc.SecInt(16)
+
+async def bigger(a, b):
+    if type(a) == list:
+        tmp1 = secint(0)
+        for i in a:
+            tmp1 = mpc.add(tmp1, i)
+    else:
+        tmp1 = a
+    if type(b) == list:
+        tmp2 = secint(0)
+        for x in b:
+            tmp2 = mpc.add(tmp2, x)
+    print("tmp1: ", await mpc.output(tmp1))
+    print("tmp2: ", await mpc.output(tmp2))
+    return tmp1.__gt__(tmp2)
+
 # test convert bit array back to bytes
 async def main12():
     secfld = mpc.SecFld(2)
@@ -288,7 +335,7 @@ async def main12():
     d = len(s)
     s_binary = f'{int("".join(str(int(b)) for b in s), 2):0{d // 4}x}'  # Convert binary string to hexadecimal string
     s_bytes = bytes.fromhex(s_binary)  # Convert hexadecimal string to bytes
-
+    print(s)
     print(type(s_bytes))
 
     print("concatenated byte: ", s_bytes)
@@ -532,4 +579,5 @@ async def main5():
 #mpc.run(main7())
 #mpc.run(main10())
 #mpc.run(main11())
-mpc.run(main12())
+#mpc.run(main12())
+mpc.run(main13())
