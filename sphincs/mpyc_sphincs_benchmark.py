@@ -108,7 +108,11 @@ async def main():
             xprint("The given input is a message!")
             # payload is a message
             mes_bit = ''.join(format(ord(i), '08b') for i in in_)
-            payload = secfld.array(np.array([int(i) for i in mes_bit]))      # secret-shared input message bits in list
+            # payload is a list and the first element is the message, the rest is just an empty array - unused
+            payload = [secfld.array(np.array([int(i) for i in mes_bit])),
+                       secfld.array(np.array([])),
+                       secfld.array(np.array([])),
+                       secfld.array(np.array([]))]      # secret-shared input message bits in list
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
         await mpc.shutdown()
@@ -116,8 +120,10 @@ async def main():
     # both parties share their inputs using mpc.input() - Shamir's Secret Sharing Scheme
     inputs = mpc.input(payload)
 
-    # inputs[0] = message
-    # inputs[1] = secret key
+    print(inputs)
+
+    # inputs[0][0] = message
+    # inputs[1] = list of elements of the secret key
     # both of type secure objects
 
     print()
@@ -125,7 +131,7 @@ async def main():
 
     # catch exceptions in case of errors
     try:
-        sig = sphincs.sign(inputs[0], inputs[1])
+        sig = sphincs.sign(inputs[0][0], inputs[1])
     except (NotImplementedError, AttributeError, ValueError):
         print("Error during signing process. Try Again!")
         await mpc.shutdown()
