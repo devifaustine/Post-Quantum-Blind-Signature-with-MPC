@@ -4,6 +4,7 @@ import pyspx.shake_256f
 import random
 import string
 from sphincs_params import *
+from address import *
 
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
 seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
@@ -121,11 +122,10 @@ class SPHINCS(object):
     async def sign(self, M, SK):
         """
         sign the message M using secret key SK (All done using MPyC functions)
-        :param M: message (secure object)
-        :param SK: tuple of (SK.seed, SK.prf, PK.seed, PK.root) all of type secure objects
+        :param M: message (secure object - secfld.array)
+        :param SK: list of (SK.seed, SK.prf, PK.seed, PK.root) all of type secure objects
         :return: signature sign(M, SK) - still of secure object
         """
-        # TODO: determine which type of secure object M and SK have to be
         # TODO: implement the method from SPHINCS+!
         # s is the signature for message M
         s = 0
@@ -135,7 +135,7 @@ class SPHINCS(object):
 
         # SK = (SK.seed, SK.prf, PK.seed, PK.root)
         # TODO: since SK is of type secure object, need to use np_split() from mpc library
-        skseed, skprf, pkseed, pkroot = split_sk(SK)
+        skseed, skprf, pkseed, pkroot = SK
 
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed
