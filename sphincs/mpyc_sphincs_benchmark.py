@@ -97,7 +97,6 @@ async def main():
             pkroot_bit = ''.join(format(ord(i), '08b') for i in str(pk_root))
             skseed_bit = ''.join(format(ord(i), '08b') for i in str(sk_seed))
             skprf_bit = ''.join(format(ord(i), '08b') for i in str(sk_prf))
-            #q_bit = ''.join(format(ord(i), '08b') for i in str(q))
 
             # payload is a list of secure objects containing the elements of sk
             payload = [secfld.array(np.array([int(i) for i in skseed_bit])),
@@ -139,8 +138,12 @@ async def main():
     print("Signature generated!\nHere is the signature: ", await mpc.output(sig))
 
     # TODO: assert verify the signature before shutting down
-    # TODO: inputs[0] and inputs[1] needs to be bytes and not secure objects
-    assert await sphincs.verify(sig, inputs[0], inputs[1])
+    # verify() accepts the signature, message and public key as bytes not SecObj
+    # TODO: convert pkseed and pkroot to bytes (use function in utils)
+    pkseed = inputs[1][2]
+    pkroot = inputs[1][3]
+    pk = pkseed + pkroot # public key in bytes
+    assert await sphincs.verify(sig, inputs[0][0], pk)
 
     await mpc.shutdown()
 
