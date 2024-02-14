@@ -77,14 +77,15 @@ class SPHINCS(object):
         return pk, sk
 
     # verify should function the same as described in pyspx library
-    def verify(self, pk, sig, msg):
+    def verify(self, sig, msg, pk):
         """
         verify the signature of the message
-        :param pk: public key
+        :param pk: public key - list of pk.seed and pk.root
         :param sig: signature
         :param msg: message
         :return: True/False
         """
+        pk = (pk[0], pk[1])
         return pyspx.shake_256f.verify(sig, msg, pk)
 
     def toByte(self, x, y):
