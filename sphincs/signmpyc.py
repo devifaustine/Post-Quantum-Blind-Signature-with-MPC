@@ -3,6 +3,9 @@ from math import log, floor
 import pyspx.shake_256f
 import random
 import string
+import numpy as np
+from mpyc.gfpx import GFpX
+from shake import SHAKE
 from sphincs_params import *
 from address import *
 
@@ -11,6 +14,8 @@ seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in ra
 
 # this can be set to 1 if you want the signature to be randomized (for security)
 RANDOMIZE = 0
+shake = SHAKE()
+secfld = mpc.SecFld(2)
 
 class SPHINCS(object):
     # TODO: make the variables accessible and changable from main() in mpyc_sphincs_benchmark.py
@@ -103,10 +108,11 @@ class SPHINCS(object):
         :param sk: SK.prf
         :param opt: randomizer
         :param msg: message in Secure Object type
-        :return: SHAKE256(sk || opt || msg, 8n)
+        :return: SHAKE(sk || opt || msg, 8n)
         """
-        # TODO: Implement the function using SHA2 or SHAKE256
-        raise NotImplementedError("PRF_msg function not implemented yet!")
+        # TODO: check this function
+        mes = mpc.np_concatenate((sk, opt, msg))
+        return shake.shake(mes, 8 * self.n, 512)
 
     async def H_msg(self, R, pkseed, pkroot, msg):
         """
@@ -115,10 +121,22 @@ class SPHINCS(object):
         :param pkseed: PK.seed
         :param pkroot: PK.root
         :param msg: message in Secure Object type
-        :return: digest and index
+        :return: digest and index - SHAKE(R || PK.seed || PK.root || msg, 8m)
         """
-        # TODO: implement hash message to digest the message
-        raise NotImplementedError("H_msg function not implemented yet!")
+        # TODO: check this function
+        mes = mpc.np_concatenate((R, pkseed, pkroot, msg))
+        return shake.shake(mes, 8 * self.m, 512)
+
+    def PRF(self, pkseed, skseed, adrs):
+        """
+
+        :param pkseed:
+        :param skseed:
+        :param adrs:
+        :return:
+        """
+        mes = mpc.concatenate((pkseed, adrs, skseed))
+        return shake.shake(mes, 8 * self.n, 512)
 
     async def sign(self, M, SK):
         """
@@ -127,9 +145,8 @@ class SPHINCS(object):
         :param SK: list of (SK.seed, SK.prf, PK.seed, PK.root) all of type secure objects
         :return: signature sign(M, SK) - still of secure object
         """
-        # TODO: implement the method from SPHINCS+!
         # s is the signature for message M
-        s = 0
+        s = None
 
         # initialization
         ADRS = self.toByte(0, 32)
@@ -163,7 +180,7 @@ class SPHINCS(object):
         # TODO: implement ADRS and its functions!
         ADRS.setLayerAddress(0)
         ADRS.setTreeAddress(idx_tree)
-        ADRS.setType(FORS_TREE)
+        ADRS.setType(SPX_FORS_TREES)
         ADRS.setKeyPairAddress(idx_leaf)
 
         SIG_FORS = fors_sign(md, skseed, pkseed, ADRS)
