@@ -82,7 +82,7 @@ async def main():
     print("here's your payload: ", in_)
 
     # payload is of type string (str)
-    # TODO: remember to pad the payload
+    # TODO: remember to pad the message as it is not of length n (?) do we need to pad here or in signmpyc? - check
 
     payload = None
 
