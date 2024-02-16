@@ -7,7 +7,9 @@ import numpy as np
 from mpyc.gfpx import GFpX
 from shake import SHAKE
 from sphincs_params import *
-from address import *
+from address import ADRS
+from utils import UTILS
+from fors import FORS
 
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
 seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
@@ -16,6 +18,7 @@ seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in ra
 RANDOMIZE = 0
 shake = SHAKE()
 secfld = mpc.SecFld(2)
+util = UTILS()
 
 class SPHINCS(object):
     # TODO: make the variables accessible and changable from main() in mpyc_sphincs_benchmark.py
@@ -138,6 +141,16 @@ class SPHINCS(object):
         mes = mpc.concatenate((pkseed, adrs, skseed))
         return shake.shake(mes, 8 * self.n, 512)
 
+    def pad(self, arr):
+        """
+        pad the array to the same length
+        :param arr: list of Secure Arrays (Secure Objects)
+        :return: list of padded arrays
+        """
+        max_len = max([len(i) for i in arr])
+        #padding = util.to_secarray(arr)
+        return [np.pad(i, (0, max_len - len(i)), 'constant') for i in arr]
+
     async def sign(self, M, SK):
         """
         sign the message M using secret key SK (All done using MPyC functions)
@@ -146,13 +159,13 @@ class SPHINCS(object):
         :return: signature sign(M, SK) - still of secure object
         """
         # s is the signature for message M
-        s = None
+        s = secfld.array(np.array([]))
 
         # initialization
-        ADRS = self.toByte(0, 32)
+        adrs = ADRS(self.toByte(0, 32))
+        fors = FORS(self.n, self.k, self.t)
 
-        # SK = (SK.seed, SK.prf, PK.seed, PK.root)
-        # TODO: since SK is of type secure object, need to use np_split() from mpc library
+        # SK = [SK.seed, SK.prf, PK.seed, PK.root]
         skseed, skprf, pkseed, pkroot = SK
 
         # generate randomizer - default to pkseed and not randomized
@@ -160,12 +173,14 @@ class SPHINCS(object):
         if RANDOMIZE:
             opt = random.randint(0, 2**SPX_N)
 
-        R = self.PRF_msg(skprf, opt, M)
+        R = await self.PRF_msg(skprf, opt, M)
 
-        # TODO: R has to be of type array so concatenate works?
-        s = mpc.np_concatenate((s, R))
+        # TODO: pad to the same length s.t. concat works - check if this is necessary
+        s, R = self.pad([s, R]) # pad to the same length
+        s = np.concatenate((s, R))
+        print("HERE'S s: ", s)
 
-        # compute message digest and index
+        # compute message digest and index, digest is of type SecObj
         digest = self.H_msg(R, pkseed, pkroot, M)
 
         tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
@@ -178,20 +193,20 @@ class SPHINCS(object):
 
         # FORS sign
         # TODO: implement ADRS and its functions!
-        ADRS.setLayerAddress(0)
-        ADRS.setTreeAddress(idx_tree)
-        ADRS.setType(SPX_FORS_TREES)
-        ADRS.setKeyPairAddress(idx_leaf)
+        adrs.set_layer_addr(0)
+        adrs.set_tree_addr(idx_tree)
+        adrs.set_type(SPX_FORS_TREES)
+        adrs.set_keypair_addr(idx_leaf)
 
-        SIG_FORS = fors_sign(md, skseed, pkseed, ADRS)
+        SIG_FORS = fors_sign(md, skseed, pkseed, adrs)
         # TODO: pay attention to type of SIG_FORS and make sure concat works!
         s = mpc.np_concatenate((s, SIG_FORS))
 
         # get FORS public key
-        PK_FORS = fors_pkFromSig(SIG_FORS, md, pkseed, ADRS)
+        PK_FORS = fors_pkFromSig(SIG_FORS, md, pkseed, adrs)
 
         # sign FORS public key with HT
-        ADRS.setType(TREE)
+        adrs.setType(TREE)
         SIG_HT = ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
         s = mpc.np_concatenate((s, SIG_HT))
 
