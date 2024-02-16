@@ -198,15 +198,15 @@ class SPHINCS(object):
         adrs.set_type(SPX_FORS_TREES)
         adrs.set_keypair_addr(idx_leaf)
 
-        SIG_FORS = fors_sign(md, skseed, pkseed, adrs)
+        SIG_FORS = fors.fors_sign(md, skseed, pkseed, adrs)
         # TODO: pay attention to type of SIG_FORS and make sure concat works!
         s = mpc.np_concatenate((s, SIG_FORS))
 
         # get FORS public key
-        PK_FORS = fors_pkFromSig(SIG_FORS, md, pkseed, adrs)
+        PK_FORS = fors.fors_pkFromSig(SIG_FORS, md, pkseed, adrs)
 
         # sign FORS public key with HT
-        adrs.setType(TREE)
+        adrs.set_type(TREE)
         SIG_HT = ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
         s = mpc.np_concatenate((s, SIG_HT))
 
