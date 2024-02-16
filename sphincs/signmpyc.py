@@ -141,15 +141,21 @@ class SPHINCS(object):
         mes = mpc.concatenate((pkseed, adrs, skseed))
         return shake.shake(mes, 8 * self.n, 512)
 
-    def pad(self, arr):
+    def pad(self, x):
         """
         pad the array to the same length
-        :param arr: list of Secure Arrays (Secure Objects)
+        :param x: list of Secure Arrays (Secure Objects)
         :return: list of padded arrays
         """
-        max_len = max([len(i) for i in arr])
+        # TODO: fix this function 
+        max_len = max([i.size for i in x])
         #padding = util.to_secarray(arr)
-        return [np.pad(i, (0, max_len - len(i)), 'constant') for i in arr]
+        res = []
+        for i in x:
+            if len(i) < max_len:
+                mpc.np_concatenate((i, np.array([0]*(max_len - i.size))))
+            res.append(i)
+        return res
 
     async def sign(self, M, SK):
         """
@@ -158,6 +164,7 @@ class SPHINCS(object):
         :param SK: list of (SK.seed, SK.prf, PK.seed, PK.root) all of type secure objects
         :return: signature sign(M, SK) - still of secure object
         """
+
         # s is the signature for message M
         s = secfld.array(np.array([]))
 
@@ -175,14 +182,13 @@ class SPHINCS(object):
 
         R = await self.PRF_msg(skprf, opt, M)
 
-        # TODO: pad to the same length s.t. concat works - check if this is necessary
-        s, R = self.pad([s, R]) # pad to the same length
-        s = np.concatenate((s, R))
-        print("HERE'S s: ", s)
+        # R should be concatenated to s, but since s is empty, we could just assign it directly
+        s = mpc.np_copy(R)
 
         # compute message digest and index, digest is of type SecObj
         digest = self.H_msg(R, pkseed, pkroot, M)
 
+        # TODO: check np_split function how it is used
         tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
         tmp_idx_tree = mpc.np_split(digest, floor((self.h - (self.h / self.d) + 7) / 8))
         tmp_idx_leaf = mpc.np_split(digest, floor(((self.h / self.d) + 7) / 8))
