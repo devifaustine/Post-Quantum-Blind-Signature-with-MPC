@@ -113,7 +113,7 @@ class SHAKE:
     def keccak(self, c, N, d):
         """Keccak function with given capacity c and output length d applied to bit string N."""
         r = 1600 - c  # rate r satisfying r + c = b = 1600
-        return sponge(r, N, d)
+        return self.sponge(r, N, d)
 
 
     def sha3(self, M, d=256, c=128):
