@@ -32,7 +32,7 @@ async def test_bits_to_bytestring(byte = b"hello"):
     x = secfld.array(np.array([int(i) for i in string_bit]))
     print("original byte: ", byte)
 
-    converted_byte = mpc.convert()
+    converted_byte = mpc.convert(x, mpc.SecureFiniteFieldArray)
     print(converted_byte)
 
     #convert the bits to bytes
