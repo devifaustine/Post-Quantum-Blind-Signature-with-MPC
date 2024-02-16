@@ -1,8 +1,8 @@
 from sha2_offsets import *
 from sphincs_params import *
 
-#TODO: reform this to suit secure objects
-
+# TODO: reform this to suit secure objects
+# TODO: remove these offsets as it is already in sha2 offsets
 SPX_OFFSET_LAYER = 0   # The byte used to specify the Merkle tree layer
 SPX_OFFSET_TREE = 1   # The start of the 8 byte field used to specify the tree
 SPX_OFFSET_TYPE = 9   # The byte used to specify the hash type (reason)

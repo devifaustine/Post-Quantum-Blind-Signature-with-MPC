@@ -1,16 +1,14 @@
-2024-02-10 23:36:37,650 Start MPyC runtime v0.9.8
-2024-02-10 23:36:37,657 Start MPyC runtime v0.9.8
-2024-02-10 23:36:37,661 All 2 parties connected.
-Give your input here: 2024-02-10 23:36:37,661 All 2 parties connected.
-Give your input here: here's your payload:  (b'U5FDV24IUO8GSH5Q6QG5Q0PW6W4JAOMF?}3x8bxbb$Px90xf9x83x12x0cxadtx99x12xafxf4tCY=x04x9axf2x1eOxbexdbxe3Ib', b'2J3IWEVKPFD70RF2EJUL8UFIF63S9KBN420BXMIDHU2X7CR6YLUWLHI2KKCYMZGYU5FDV24IUO8GSH5Q6QG5Q0PW6W4JAOMF?}3x8bxbb$Px90xf9x83x12x0cxadtx99x12xafxf4tCY=x04x9axf2x1eOxbexdbxe3Ib')
-The given input is a secret key!
-Payload invalid. check_type failed to recognize the pattern. Try Again!
-2024-02-10 23:36:37,661 Stop MPyC -- elapsed time: 0:00:00.000|bytes sent: 0
-here's your payload:  VCZ
+2024-02-16 22:06:54,798 Start MPyC runtime v0.9.8
+2024-02-16 22:06:54,812 Start MPyC runtime v0.9.8
+2024-02-16 22:06:54,906 All 2 parties connected.
+Give your input here: 2024-02-16 22:06:54,906 All 2 parties connected.
+Give your input here: here's your payload:  NWV1N8986ULLD
 The given input is a message!
+[[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accac0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accaf0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accc10>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7acc550>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7acc5b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accc40>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accbe0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accc70>]]
 
 Signing process begins now...
-2024-02-10 23:36:37,661 Unhandled exception in event loop
+Error during signing process. Try Again!
+2024-02-16 22:06:54,908 Unhandled exception in event loop
 Traceback (most recent call last):
   File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
     self._context.run(self._callback, *self._args)
@@ -22,21 +20,37 @@ Traceback (most recent call last):
     return await awaitable
   File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 315, in __await__
     val = self.coro.send(None)
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 515, in output
-    field = x[0].field
-AttributeError: 'coroutine' object has no attribute 'field'
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 463, in _distribute
+    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 463, in <listcomp>
+    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/finfields.py", line 1287, in reshape
+    return type(self)(self.value.reshape(*args, **kwargs), check=False)
+ValueError: cannot reshape array of size 280 into shape (104,)
 Traceback (enclosing MPyC coroutine call):
-2024-02-10 23:36:37,782 Exception in callback _SelectorSocketTransport._call_connection_lost(ConnectionRes...eset by peer'))
-handle: <Handle _SelectorSocketTransport._call_connection_lost(ConnectionRes...eset by peer'))>
+here's your payload:  (b'XHD7LGYT9OH5OZP72234NR5VWJZUVHVZ; xb6s=x04xe3x9bCx83d^8xcfx180~xf7bp)3Txe4r8Wm!x86J!', b'3LLS1OGCAXQ7FB9ELPI6ET8HMAHJU65PU9GBRKPQHQE3DSCBF5KIM1I4MQ5M74RWXHD7LGYT9OH5OZP72234NR5VWJZUVHVZ; xb6s=x04xe3x9bCx83d^8xcfx180~xf7bp)3Txe4r8Wm!x86J!')
+The given input is a secret key!
+[[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea5778460>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea57784c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea57784f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea5778520>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea5778490>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea5778580>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea57785b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea57785e0>]]
+
+Signing process begins now...
+Error during signing process. Try Again!
+2024-02-16 22:06:54,908 Unhandled exception in event loop
 Traceback (most recent call last):
   File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
     self._context.run(self._callback, *self._args)
-  File "/usr/lib/python3.10/asyncio/selector_events.py", line 984, in _call_connection_lost
-    super()._call_connection_lost(exc)
-  File "/usr/lib/python3.10/asyncio/selector_events.py", line 742, in _call_connection_lost
-    self._protocol.connection_lost(exc)
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 143, in connection_lost
-    raise exc
-  File "/usr/lib/python3.10/asyncio/selector_events.py", line 862, in _read_ready__data_received
-    data = self._sock.recv(self.max_size)
-ConnectionResetError: [Errno 104] Connection reset by peer
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 475, in <lambda>
+    task.add_done_callback(lambda t: _reconcile(decl, t))
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 399, in _reconcile
+    givn = task.result()
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 327, in _wrap_in_coro
+    return await awaitable
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 315, in __await__
+    val = self.coro.send(None)
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 463, in _distribute
+    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 463, in <listcomp>
+    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/finfields.py", line 1287, in reshape
+    return type(self)(self.value.reshape(*args, **kwargs), check=False)
+ValueError: cannot reshape array of size 104 into shape (280,)
+Traceback (enclosing MPyC coroutine call):

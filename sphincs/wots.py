@@ -1,6 +1,10 @@
 # Implements the WOTS+ class
 
 from math import log, ceil, floor
+from shake import SHAKE
+from sphincs_params import *
+
+shake = SHAKE()
 
 class WOTS:
     def __init__(self, n = 32, w = 16):
@@ -25,7 +29,30 @@ class WOTS:
         if ((i + s) > (self.w - 1)):
             return None
         tmp = self.chain(x, i, s - 1, pkseed, adrs)
-        adrs.setHashAddress(i + s - 1)
+        adrs.set_hash_addr(i + s - 1)
         tmp = self.F(pkseed, adrs, tmp)
         return tmp
 
+    def F(self, skseed, adrs, x):
+        """
+        computes shake256(sk.seed || adrs || x)
+        :param skseed:
+        :param adrs:
+        :param x:
+        :return:
+        """
+        # TODO: mes has to be adjusted accordingly as it is of type SecObj
+        mes = skseed + adrs + x
+        res = shake.shake(mes, 8 * self.n, 512)
+        return res
+
+    def wots_SKgen(self, skseed, adrs):
+        """
+        generates a WOTS+ secret key
+        :param skseed: secret seed SK.seed
+        :param adrs: address ADRS
+        :return: secret key sk of WOTS+
+        """
+        # TODO: fix copy deep / shallow and adjust accordingly
+        skAdrs = adrs.copy()
+        skAdrs.set_type(WOTS_PRF)

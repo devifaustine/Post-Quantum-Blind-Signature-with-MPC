@@ -147,7 +147,7 @@ class SPHINCS(object):
         :param x: list of Secure Arrays (Secure Objects)
         :return: list of padded arrays
         """
-        # TODO: fix this function 
+        # TODO: fix this function
         max_len = max([i.size for i in x])
         #padding = util.to_secarray(arr)
         res = []
