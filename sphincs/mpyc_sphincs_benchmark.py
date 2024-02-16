@@ -129,6 +129,10 @@ async def main():
     print()
     print("Signing process begins now...")
 
+    # initializing variables for time
+    start = None
+    end = None
+
     # catch exceptions in case of errors
     try:
         start = time.time()
@@ -140,8 +144,8 @@ async def main():
 
     print("Signature generated!\nHere is the signature: ", await mpc.output(sig))
     end_out = time.time()
-    elapsed1 = end - start # elapsed time until sign() is done
-    elapsed2 = end_out - start # elapsed time until output is printed
+    elapsed1 = end - start  # elapsed time until sign() is done
+    elapsed2 = end_out - start  # elapsed time until output is printed
 
     # write the elapsed time to bench_res.txt
     with open("bench_res.txt", "w") as file:
