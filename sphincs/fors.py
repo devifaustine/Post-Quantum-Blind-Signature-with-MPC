@@ -168,5 +168,5 @@ class FORS:
         :param adrs: address ADRS
         :return: PK seed of FORS
         """
-        # TODO: implement this function! 
+        # TODO: implement this function!
         raise NotImplementedError("Not yet implemented")
