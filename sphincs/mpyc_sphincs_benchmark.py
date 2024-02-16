@@ -2,6 +2,7 @@
 from signmpyc import SPHINCS
 from mpyc.runtime import mpc
 import numpy as np
+import time
 
 sphincs = SPHINCS()
 # a group field consisting of 2 elements 0 and 1
@@ -130,12 +131,22 @@ async def main():
 
     # catch exceptions in case of errors
     try:
+        start = time.time()
         sig = sphincs.sign(inputs[0][0], inputs[1])
+        end = time.time()
     except (NotImplementedError, AttributeError, ValueError):
         print("Error during signing process. Try Again!")
         await mpc.shutdown()
 
     print("Signature generated!\nHere is the signature: ", await mpc.output(sig))
+    end_out = time.time()
+    elapsed1 = end - start # elapsed time until sign() is done
+    elapsed2 = end_out - start # elapsed time until output is printed
+
+    # write the elapsed time to bench_res.txt
+    with open("bench_res.txt", "w") as file:
+        var = str(elapsed1) + " " + str(elapsed2) + '\n'
+        file.write(var)
 
     # TODO: assert verify the signature before shutting down
     # verify() accepts the signature, message and public key as bytes not SecObj
