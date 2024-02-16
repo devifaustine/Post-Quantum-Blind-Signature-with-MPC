@@ -2,14 +2,12 @@
 
 from sphincs_params import *
 from address import ADRS
-from signmpyc import SPHINCS
 from shake import SHAKE
 from math import log, floor
 
 shake = SHAKE()
-sphincs = SPHINCS()
-# TODO: check if address needs to be initialized
-address = ADRS()
+y = 0
+address = ADRS(y.to_bytes(32, 'big'))
 
 # Note F(pkseed, adrs, m1) = shake256(pkseed||adrs||m1, 8n)
 
