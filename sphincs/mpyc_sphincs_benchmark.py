@@ -136,7 +136,7 @@ async def main():
     # catch exceptions in case of errors
     try:
         start = time.time()
-        sig = sphincs.sign(inputs[0][0], inputs[1])
+        sig = await sphincs.sign(inputs[0][0], inputs[1])
         end = time.time()
     except (NotImplementedError, AttributeError, ValueError):
         print("Error during signing process. Try Again!")
