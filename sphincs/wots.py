@@ -55,4 +55,49 @@ class WOTS:
         """
         # TODO: fix copy deep / shallow and adjust accordingly
         skAdrs = adrs.copy()
-        skAdrs.set_type(WOTS_PRF)
+        skAdrs.set_type(1)  # 1 is for WOTS+ public key compression address (type + keypairadr + padding 0)
+
+        raise NotImplementedError("Not yet implemented")
+
+    def wots_PKgen(self, skseed, pkseed, adrs):
+        """
+        generate WOTS+ public key
+        :param skseed: SPHINCS+ secret seed
+        :param pkseed: SPHINCS+ public seed
+        :param adrs: address ADRS
+        :return: WOTS+ public key
+        """
+        # TODO: check copy() function deep/shallow
+        wotspkAdrs = adrs.copy()  # copy address to create OTS pubkey address
+        skadrs = adrs.copy()  # copy address to create key gen address
+        skadrs.set_type(1)  # 1 is for WOTS+ public key compression address (type + keypairadr + padding 0)
+        skadrs.set_keypair_addr(adrs.get_keypair_addr())
+
+        # TODO: implement the function
+        raise NotImplementedError("Not yet implemented")
+
+    def wots_sign(self, m, skseed, pkseed, adrs):
+        """
+        creates WOTS+ signature
+        :param m: message to be signed
+        :param skseed: SPHINCS+ secret seed
+        :param pkseed: SPHINCS+ public seed
+        :param adrs: address ADRS
+        :return: WOTS+ signature sig
+        """
+        # TODO: implement the function
+        raise NotImplementedError("Not yet implemented")
+
+    def wots_pkFromSig(self, sig, m, pkseed, adrs):
+        """
+        derive WOTS+ public key from the signature
+        :param sig: WOTS+ signature
+        :param m: message
+        :param pkseed: SPHINCS+ public seed
+        :param adrs: address ADRS
+        :return: WOTS+ public key
+        """
+        # TODO: implement the function
+        raise NotImplementedError("Not yet implemented")
+
+    
