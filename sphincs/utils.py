@@ -1,11 +1,12 @@
 # this class contains utilities for the sphincs+ library
-import mpyc.runtime as mpc
+from mpyc.runtime import mpc
 import numpy as np
 
 class UTILS(object):
     def __init__(self):
         self.byte = 2
         self.int_ = 16
+        self.secfld = mpc.SecFld(self.byte)
 
     def to_secarray(self, x):
         """
