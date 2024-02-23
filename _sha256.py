@@ -1,5 +1,9 @@
 # This is an implementation of SHA-256
 
+import string
+import random
+from time import *
+
 K = [
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
     0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
@@ -151,5 +155,27 @@ def _rotate_right(num: int, shift: int, size: int = 32):
     """Rotate an integer right."""
     return (num >> shift) | (num << size - shift)
 
+def gen_mes(n: int, length: int):
+    """
+    generats a list of n messages of type string
+    :param n: number of messages
+    :param length: max length of each message
+    :return: list of messages
+    """
+    chars = string.ascii_letters + string.digits
+    res = []
+    for i in range(n):
+        mes = ''.join(random.choice(chars) for _ in range(n))
+        res.append(mes)
+    return res
+
 if __name__ == "__main__":
-    print(generate_hash("Hello").hex())
+    messages = gen_mes(100, 70)
+    elapsed_times = []
+    for i in range(len(messages)):
+        start = time()
+        generate_hash(messages[i])
+        end = time()
+        elapsed_times.append(end - start)
+
+    print("Elapsed times: ", elapsed_times)
