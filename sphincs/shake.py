@@ -1,6 +1,4 @@
 from mpyc.runtime import mpc
-import argparse
-from hashlib import sha3_224, sha3_256, sha3_512, shake_128, shake_256, sha3_384
 from mpyc.gfpx import GFpX
 import numpy as np
 
