@@ -6,6 +6,31 @@ from sphincs_params import *
 
 shake = SHAKE()
 
+def base_w(x, w, out_len):
+    """
+    converts an integer to base w
+    :param x: integer
+    :param w: winternitz parameter
+    :param out_len: output length
+    :return: out_len int array basew
+    """
+    # TODO: check this function and implement it
+    in_ = 0
+    out_ = 0
+    total = 0
+    bits = 0
+    basew = [0] * out_len
+
+    for consumed in range(out_len):
+        if bits == 0:
+            total = x[in_]
+            in_ += 1
+            bits += 8
+        bits -= int(log(w, 2))
+        basew[out_] = (total >> bits) & (w - 1)
+        out_ += 1
+    return basew
+
 class WOTS:
     def __init__(self, n = 32, w = 16):
         self.w = w # winternitz parameter - element of set {4, 16, 256}
@@ -73,6 +98,8 @@ class WOTS:
         skadrs.set_type(1)  # 1 is for WOTS+ public key compression address (type + keypairadr + padding 0)
         skadrs.set_keypair_addr(adrs.get_keypair_addr())
 
+        # TODO: find out what len is
+
         # TODO: implement the function
         raise NotImplementedError("Not yet implemented")
 
@@ -85,6 +112,11 @@ class WOTS:
         :param adrs: address ADRS
         :return: WOTS+ signature sig
         """
+        checksum = 0
+
+        # convert message to base w
+        msg = base_w(m, self.w, self.l1)
+
         # TODO: implement the function
         raise NotImplementedError("Not yet implemented")
 
@@ -100,4 +132,3 @@ class WOTS:
         # TODO: implement the function
         raise NotImplementedError("Not yet implemented")
 
-    

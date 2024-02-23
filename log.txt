@@ -1,14 +1,28 @@
-2024-02-16 22:06:54,798 Start MPyC runtime v0.9.8
-2024-02-16 22:06:54,812 Start MPyC runtime v0.9.8
-2024-02-16 22:06:54,906 All 2 parties connected.
-Give your input here: 2024-02-16 22:06:54,906 All 2 parties connected.
-Give your input here: here's your payload:  NWV1N8986ULLD
+Success
+2024-02-18 01:59:30,466 Start MPyC runtime v0.9.8
+2024-02-18 01:59:30,470 Start MPyC runtime v0.9.8
+2024-02-18 01:59:30,474 All 2 parties connected.
+Give your input here: 2024-02-18 01:59:30,474 All 2 parties connected.
+Give your input here: here's your payload:  1PXZ79KCLKW20AAM0202GUW58XSXOO1BPUBW8EVBGXWYKFZ6GHC3RNP01G7X7S
 The given input is a message!
-[[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accac0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accaf0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accc10>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7acc550>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7acc5b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accc40>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accbe0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f9dc7accc70>]]
-
-Signing process begins now...
-Error during signing process. Try Again!
-2024-02-16 22:06:54,908 Unhandled exception in event loop
+here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca63f5fb50>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca583e2f50>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca583e2fb0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca583e3100>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca584152d0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca58415300>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca58415420>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca58414cd0>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca58414d30>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca58415450>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca584153f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fca58415480>]]
+check:  [0 0 1 1 0 0 0 1 0 1 0 1 0 0 0 0 0 1 0 1 1 0 0 0 0 1 0 1 1 0 1 0 0 0 1 1 0
+ 1 1 1 0 0 1 1 1 0 0 1 0 1 0 0 1 0 1 1 0 1 0 0 0 0 1 1 0 1 0 0 1 1 0 0 0 1
+ 0 0 1 0 1 1 0 1 0 1 0 1 1 1 0 0 1 1 0 0 1 0 0 0 1 1 0 0 0 0 0 1 0 0 0 0 0
+ 1 0 1 0 0 0 0 0 1 0 1 0 0 1 1 0 1 0 0 1 1 0 0 0 0 0 0 1 1 0 0 1 0 0 0 1 1
+ 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 1 1 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 1 1 0
+ 0 1 1 0 1 0 1 0 0 1 1 1 0 0 0 0 1 0 1 1 0 0 0 0 1 0 1 0 0 1 1 0 1 0 1 1 0
+ 0 0 0 1 0 0 1 1 1 1 0 1 0 0 1 1 1 1 0 0 1 1 0 0 0 1 0 1 0 0 0 0 1 0 0 1 0
+ 1 0 0 0 0 0 1 0 1 0 1 0 1 0 1 0 0 0 0 1 0 0 1 0 1 0 1 1 1 0 0 1 1 1 0 0 0
+ 0 1 0 0 0 1 0 1 0 1 0 1 0 1 1 0 0 1 0 0 0 0 1 0 0 1 0 0 0 1 1 1 0 1 0 1 1
+ 0 0 0 0 1 0 1 0 1 1 1 0 1 0 1 1 0 0 1 0 1 0 0 1 0 1 1 0 1 0 0 0 1 1 0 0 1
+ 0 1 1 0 1 0 0 0 1 1 0 1 1 0 0 1 0 0 0 1 1 1 0 1 0 0 1 0 0 0 0 1 0 0 0 0 1
+ 1 0 0 1 1 0 0 1 1 0 1 0 1 0 0 1 0 0 1 0 0 1 1 1 0 0 1 0 1 0 0 0 0 0 0 1 1
+ 0 0 0 0 0 0 1 1 0 0 0 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 1 0 1 0 1 1 0 0 0 0
+ 0 1 1 0 1 1 1 0 1 0 1 0 0 1 1]
+check:  []
+2024-02-18 01:59:30,476 Unhandled exception in event loop
 Traceback (most recent call last):
   File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
     self._context.run(self._callback, *self._args)
@@ -26,15 +40,20 @@ Traceback (most recent call last):
     y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
   File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/finfields.py", line 1287, in reshape
     return type(self)(self.value.reshape(*args, **kwargs), check=False)
-ValueError: cannot reshape array of size 280 into shape (104,)
-Traceback (enclosing MPyC coroutine call):
-here's your payload:  (b'XHD7LGYT9OH5OZP72234NR5VWJZUVHVZ; xb6s=x04xe3x9bCx83d^8xcfx180~xf7bp)3Txe4r8Wm!x86J!', b'3LLS1OGCAXQ7FB9ELPI6ET8HMAHJU65PU9GBRKPQHQE3DSCBF5KIM1I4MQ5M74RWXHD7LGYT9OH5OZP72234NR5VWJZUVHVZ; xb6s=x04xe3x9bCx83d^8xcfx180~xf7bp)3Txe4r8Wm!x86J!')
+ValueError: cannot reshape array of size 280 into shape (496,)
+here's your payload:  (b'C57ADB2ONRXOPQ8G4HODWLEJC8OKU4PAx82Oxd7xe9<x16xcexd4)xeerS1x04x17x110x99xc4x9aXGx9d=x89x06$~x08_xb5xc8', b'H5IZJFFALI1TL8EU7ESB5BSFI0LTTT2UBPHFHTD0BR621F0B20Y48LBIEO432YY1C57ADB2ONRXOPQ8G4HODWLEJC8OKU4PAx82Oxd7xe9<x16xcexd4)xeerS1x04x17x110x99xc4x9aXGx9d=x89x06$~x08_xb5xc8')
 The given input is a secret key!
-[[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea5778460>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea57784c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea57784f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea5778520>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea5778490>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea5778580>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea57785b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6ea57785e0>]]
-
-Signing process begins now...
-Error during signing process. Try Again!
-2024-02-16 22:06:54,908 Unhandled exception in event loop
+here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b2329bb50>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17703190>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17703160>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17702fb0>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17738c70>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17738cd0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17738d00>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17738d30>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17738ca0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17738d90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17738dc0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f6b17738df0>]]
+check:  [0 1 1 0 0 0 1 0 0 0 1 0 0 1 1 1 0 1 0 0 1 0 0 0 0 0 1 1 0 1 0 1 0 1 0 0 1
+ 0 0 1 0 1 0 1 1 0 1 0 0 1 0 0 1 0 1 0 0 1 0 0 0 1 1 0 0 1 0 0 0 1 1 0 0 1
+ 0 0 0 0 0 1 0 1 0 0 1 1 0 0 0 1 0 0 1 0 0 1 0 0 1 1 0 0 0 1 0 1 0 1 0 1 0
+ 0 0 1 0 0 1 1 0 0 0 0 1 1 1 0 0 0 0 1 0 0 0 1 0 1 0 1 0 1 0 1 0 1 0 0 1 1
+ 0 1 1 1 0 1 0 0 0 1 0 1 0 1 0 1 0 0 1 1 0 1 0 0 0 0 1 0 0 0 1 1 0 1 0 1 0
+ 1 0 0 0 0 1 0 0 1 0 1 0 0 1 1 0 1 0 0 0 1 1 0 0 1 0 0 1 0 0 1 0 0 1 1 0 0
+ 0 0 0 1 0 0 1 1 0 0 0 1 0 1 0 1 0 0 0 1 0 1 0 1 0 0 0 1 0 1 0 1 0 0 0 0 1
+ 1 0 0 1 0 0 1 0 1 0 1 0 1 0 0 1 0 0 1 1 1]
+2024-02-18 01:59:30,476 Unhandled exception in event loop
 Traceback (most recent call last):
   File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
     self._context.run(self._callback, *self._args)
@@ -52,5 +71,6 @@ Traceback (most recent call last):
     y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
   File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/finfields.py", line 1287, in reshape
     return type(self)(self.value.reshape(*args, **kwargs), check=False)
-ValueError: cannot reshape array of size 104 into shape (280,)
+ValueError: cannot reshape array of size 496 into shape (280,)
+Traceback (enclosing MPyC coroutine call):
 Traceback (enclosing MPyC coroutine call):

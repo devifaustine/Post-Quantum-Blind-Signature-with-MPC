@@ -45,6 +45,20 @@ def split_sk(key):
 # runs the sign() function using MPC
 # maybe comment the time.time() and unnecessary code when using benchmarking tools from python later
 
+
+def to_bytes(y):
+    """
+    converts y in binary to bytes
+    :param y: list/array of bits
+    :return: byte representation of y
+    """
+    x_bitstring = ''.join(str(bit) for bit in y)
+
+    # Convert the binary string back to bytes
+    x_bytes = bytes(int(x_bitstring[i:i + 8], 2) for i in range(0, len(x_bitstring), 8))
+
+    return eval(x_bytes)
+
 def check_type(x):
     """
     checks the type of x, if message return True, else False (for secret key) or raise error for others
@@ -119,8 +133,16 @@ async def main():
 
     # both parties share their inputs using mpc.input() - Shamir's Secret Sharing Scheme
     inputs = mpc.input(payload)
+    my_payload = None
 
-    print(inputs)
+
+    print("here's the payload: ", payload)
+    print("here's the inputs: ", inputs)
+
+    # TODO: test why output does not work here - try outputting here to check verification
+    #  process to get original values
+    for i in payload:
+        print("check: ", await mpc.output(i))
 
     # inputs[0][0] = message
     # inputs[1] = list of elements of the secret key
@@ -138,7 +160,7 @@ async def main():
         start = time.time()
         sig = await sphincs.sign(inputs[0][0], inputs[1])
         end = time.time()
-    except (NotImplementedError, AttributeError, ValueError):
+    except (NotImplementedError, AttributeError, ValueError, RuntimeError):
         print("Error during signing process. Try Again!")
         await mpc.shutdown()
 

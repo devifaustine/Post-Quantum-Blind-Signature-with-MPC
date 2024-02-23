@@ -18,7 +18,15 @@ for key in "${keys[@]}"; do
     python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0 <<< "$m"&
     # note: key has to be just the secret key, therefore public key has to be stored somewhere for verification
     python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< "$key"&
+    if [ $? -eq 0 ]; then
+      echo "Success"
+    else
+      echo "Failure"
+      set -e
+    fi
   done
 done > log.txt
 # TODO: make a table output in the command line for the results
 #  or put the result table benhcmakr in the log.txt file
+# exit the script
+set -e

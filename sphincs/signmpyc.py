@@ -164,7 +164,6 @@ class SPHINCS(object):
         :param SK: list of (SK.seed, SK.prf, PK.seed, PK.root) all of type secure objects
         :return: signature sign(M, SK) - still of secure object
         """
-
         # s is the signature for message M
         s = secfld.array(np.array([]))
 
@@ -175,6 +174,18 @@ class SPHINCS(object):
         # SK = [SK.seed, SK.prf, PK.seed, PK.root]
         skseed, skprf, pkseed, pkroot = SK
 
+        print("sign started")
+
+        try:
+            print("message: ", await mpc.output(M))
+            print("sk: ", await mpc.output(skprf))
+            print("sk: ", await mpc.output(skseed))
+            print("sk: ", await mpc.output(pkseed))
+            print("sk: ", await mpc.output(pkroot))
+        except (ValueError, RuntimeError):
+            print("FAIL HERE IN SIGNATURE ")
+
+        """
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed
         if RANDOMIZE:
@@ -187,7 +198,7 @@ class SPHINCS(object):
 
         # compute message digest and index, digest is of type SecObj
         digest = self.H_msg(R, pkseed, pkroot, M)
-
+        
         # TODO: check np_split function how it is used
         tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
         tmp_idx_tree = mpc.np_split(digest, floor((self.h - (self.h / self.d) + 7) / 8))
@@ -215,7 +226,7 @@ class SPHINCS(object):
         adrs.set_type(TREE)
         SIG_HT = ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
         s = mpc.np_concatenate((s, SIG_HT))
-
+        """
         raise NotImplementedError("Signing function not implemented yet!")
 
         # signature consists of R, SIG_FORS, SIG_HT - all of type secure object
