@@ -7,6 +7,14 @@ import random
 import string
 import time
 
+def check_duplicate(l):
+    """
+    checks if there are any duplicates in the list
+    :param l: list
+    :return: True if there are duplicates, False otherwise
+    """
+    return len(l) != len(set(l))
+
 # Create 2 seeds randomly, one for SHA128 the other for SHA256
 x = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(48))
 y = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
@@ -34,6 +42,9 @@ for i in range(100):
     # prints out generated messages
     #print("\t %s" %message)
 
+# make sure no duplicates in messages
+assert check_duplicate(messages) == False
+
 # list of elapsed time for SPHINCS using SHA128
 time_128 = []
 # list of elapsed time for SPHINCS using SHA256
@@ -52,29 +63,6 @@ sig2 = "b1f67e538bb9d4c2ef860f50085bcb72c10fb38ab696949b9417ddbefe8e4cad77a2617d
 PKseed = 'B505D7CFAD1B497499323C8686325E47'
 PKroot = '4FDFA42840C84B1DDD0EA5CE46482020'
 pk = PKseed + PKroot  # pk = B505D7CFAD1B497499323C8686325E474FDFA42840C84B1DDD0EA5CE46482020
-print("pk = ", pk)
-print()
-
-# Testing split messages
-message = b'Hello World'
-pk, sk = pyspx.shake_256f.generate_keypair(seeds[1])
-print(pk)
-m1 = message[:len(message)//2]
-m2 = message[len(message)//2:]
-print("m1 = ", m1)
-print("m2 = ", m2)
-sig1 = pyspx.shake_256f.sign(m1, sk)
-sig2 = pyspx.shake_256f.sign(m2, sk)
-sig = pyspx.shake_256f.sign(message, sk)
-print()
-print("length of sig1 = ", len(sig1))
-print("length of sig2 = ", len(sig2))
-print("length of sig = ", len(sig))
-print()
-print("sig1 = ", sig1)
-print("sig2 = ", sig2)
-print("sig = ", sig)
-print()
 
 # benchmark the keygen(), sign() and verify()
 for i in range(len(messages)):
@@ -84,10 +72,9 @@ for i in range(len(messages)):
     start_key = time.time()
     public_key, secret_key = pyspx.shake_128f.generate_keypair(seeds[0])
     end_key = time.time()
-    print("here's the public key: ", public_key)
-    print("here's the secret key: ", secret_key)
     time_key_128.append(end_key - start_key)
-    #print("secret key of SHA-128 is: ", secret_key)
+    print("len sk sphincs128:", len(secret_key))
+    print("len pk sphincs128:", len(public_key))
 
     # sign the message
     start = time.time()
@@ -95,6 +82,7 @@ for i in range(len(messages)):
     end = time.time()
     time_128.append(end - start)
 
+    print("here's the length of the SPHINCS+128 signature: ", len(signature))
 
     # verify the signature
     start_ver = time.time()
@@ -103,7 +91,7 @@ for i in range(len(messages)):
     time_ver_128.append(end_ver - start_ver)
 
     if not ver:
-        print(ver)
+        print("Verification for SPHINCS+128 failed!")
     #print(ver)
     #print("time =", elapsed)
 
@@ -112,8 +100,11 @@ for i in range(len(messages)):
     start_key_2 = time.time()
     public_key, secret_key = pyspx.shake_256f.generate_keypair(seeds[1])
     end_key_2 = time.time()
-    print("here's the public key: ", public_key)
-    print("here's the secret key: ", secret_key)
+
+    print("len sk sphincs256:", len(secret_key))
+    print("len pk sphincs256:", len(public_key))
+    #print("here's the public key: ", public_key)
+    #print("here's the secret key: ", secret_key)
     time_key_256.append(end_key_2 - start_key_2)
     #print("secret key of SHA-256 is: ", secret_key)
 
@@ -121,7 +112,7 @@ for i in range(len(messages)):
     start = time.time()
     signature = pyspx.shake_256f.sign(messages[i], secret_key)
     end = time.time()
-    print("here's the length of the signature: ", len(signature))
+    print("here's the length of the SPHINCS+256 signature: ", len(signature))
     time_256.append(end - start)
 
     # verify the signature using SHA256
@@ -131,7 +122,7 @@ for i in range(len(messages)):
     time_ver_256.append(end_ver_2 - start_ver_2)
 
     if not ver:
-        print(ver)
+        print("Verification for SPHINCS+256 failed!")
     #print(ver)
     #print("time =", elapsed)
 
@@ -150,8 +141,8 @@ for i in range(len(time_256)):
 
 # prints out the average time results - needs to be divided by 100, since it is
 # the sum of time it takes to sign 100 messages
-print("Time required for sign() using SHA128 is %d seconds." %elapsed_128)
-print("Time required for sign() using SHA256 is %d seconds." %elapsed_256)
+print("Time required for sign() using SHA128:", time_128)
+print("Time required for sign() using SHA256:", time_256)
 print("SHA128 is %d times faster than SHA256" %(elapsed_128/elapsed_256))
 print()
 
@@ -164,7 +155,7 @@ print("here's the time for verify() using SHA128: ", time_ver_128)
 print()
 print("here's the time for verify() using SHA256: ", time_ver_256)
 
-print(messages)
+#print(messages)
 """
 
 # Average Time
