@@ -158,7 +158,8 @@ async def main():
     print("here's the inputs: ", inputs)
 
     # TODO: test why output does not work here - try outputting here to check verification
-    #  process to get original values
+    #  process to get original values of pk - this works for the instance that give the input/payload first.
+    #  the other instance will crash and not be able to output their payload. - find out why
 
     print("here's the pk_seed: ", await mpc.output(payload[2]))
     print("here's the pk_root: ", await mpc.output(payload[3]))
