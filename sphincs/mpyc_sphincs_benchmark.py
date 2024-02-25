@@ -99,7 +99,7 @@ async def main():
 
     # wait until all parties starts the mpc and joins
     await mpc.start()
-
+    sig = None
     len_parties = len(mpc.__getattribute__("parties"))
 
     # number of parties needs to be exactly 2 (user and signer)
@@ -128,7 +128,7 @@ async def main():
             skprf_bit = bin(int.from_bytes(sk_prf, byteorder='big')).replace("0b", "")
 
             # check bit lengths, should be 256 each?
-            key_ele_bit = check_length([skprf_bit, skseed_bit, pkseed_bit, pkroot_bit])
+            key_ele_bit = check_length([skseed_bit, skprf_bit, pkseed_bit, pkroot_bit])
 
             payload = []
 
@@ -159,16 +159,13 @@ async def main():
 
     # TODO: test why output does not work here - try outputting here to check verification
     #  process to get original values of pk - this works for the instance that give the input/payload first.
-    #  the other instance will crash and not be able to output their payload. - find out why
+    #  the other instance will crash and not be able to output their payload.
+    #  This is because afterwards there are operations that
 
     print("here's the pk_seed: ", await mpc.output(payload[2]))
     print("here's the pk_root: ", await mpc.output(payload[3]))
     print("here's the sk_seed: ", await mpc.output(payload[0]))
     print("here's the sk_prf: ", await mpc.output(payload[1]))
-
-    for i in payload:
-        print("payload: ", i)
-        print("check: ", await mpc.output(i))
 
     # inputs[0][0] = message
     # inputs[1] = list of elements of the secret key

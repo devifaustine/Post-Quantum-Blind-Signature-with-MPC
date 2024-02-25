@@ -1,6 +1,33 @@
 from sha2_offsets import *
 from sphincs_params import *
 
+"""
+Usage: 
+from address import ADRS 
+adrs = ADRS() 
+adrs.setType(adrs.WOTS_HASH)
+print("adrs =", adrs.toHex())
+adrs = ADRS.fromHex("1528daecdc86eb8761030000000200000002000000d")
+
+Format: 
+layer   treeaddr    type    word1       word2       word3
+[1]     [8]         [1]     [4]         [4]         [4]
+
+0       1            9          10           14           18 # byte offsets
+0       2            18         20           28           36  # hex offsets
+
+-----------------------------------------------------------------------------------
+Type                         |   Word 1  |   Word 2  |   Word 3  |   Type Constant
+-----------------------------------------------------------------------------------
+0 WOTS+ hash address            keypairadr  chainadr    hashadr     WOTS_HASH
+1 WOTS+ pk comp addr            keypairadr      0           0       WOTS_PK
+2 Hash tree address             0           tree ht    tree index   TREE
+3 FORS tree address             keypairadr  tree ht    tree index   FORS_TREE
+4 FORS tree root comp addr      keypairadr      0           0       FORS_ROOTS
+5 WOTS+ key gen addr            keypairadr  chainadr    hashadr     WOTS_KEY
+6 WOTS+ key comp addr           keypairadr      0           0       WOTS_KEY_COMP
+"""
+
 # TODO: reform this to suit secure objects
 # TODO: remove these offsets as it is already in sha2 offsets
 SPX_OFFSET_LAYER = 0   # The byte used to specify the Merkle tree layer
@@ -14,56 +41,52 @@ SPX_OFFSET_TREE_INDEX = 18  # The start of the 4 byte field used to specify the 
 SPX_OFFSET_HASH_ADDR = 21  # The byte used to specify the hash address (where in the Winternitz chain)
 
 class ADRS:
-    def __init__(self, adrs):
+    def __init__(self, adrs_type=0, layer=0, treeaddr=0, word1=0, word2=0, word3=0):
         """
         initializes the address
         :param adrs: bytestring of size SPX_ADDR_BYTES (32) or None
         """
-        assert len(adrs) == SPX_ADDR_BYTES, "Address must be " + str(SPX_ADDR_BYTES) + " bytes long!"
-        self.adrs = adrs
+        self.adrs_type = adrs_type
+        self.layer = layer
+        self.treeaddr = treeaddr
+        self.word1 = word1
+        self.word2 = word2
+        self.word3 = word3
 
-        # TODO: fix this - find out difference between type and layer!
-        if adrs != None:
-            self.type = adrs[SPX_OFFSET_TYPE]
-            self.layer = adrs[SPX_OFFSET_LAYER]
-            self.treeadr = adrs[SPX_OFFSET_TREE:SPX_OFFSET_TREE+8]
-            self.keypairadr = adrs[SPX_OFFSET_KP_ADDR1:SPX_OFFSET_KP_ADDR2+1]
-            self.chainadr = adrs[SPX_OFFSET_CHAIN_ADDR]
-            self.hashadr = adrs[SPX_OFFSET_HASH_ADDR]
-        else:
-            self.type = None # 1 byte
-            self.layer = None # 1 byte
-            self.treeadr = None # 8 bytes
-            self.keypairadr = None # 2 bytes
-            self.chainadr = None # 4 bytes
-            self.hashadr = None # 4 bytes
+    def toHex(self):
+        """
+        return 32-byte address as a hex string
+        :return: hex repr of address
+        """
+        # TODO: check this again
+        treeaddr_hex = format(self.treeaddr, f'x').zfill(16)
+        return (format(self.layer, f'x').zfill(2) + treeaddr_hex + format(self.adrs_type, f'x').zfill(2) +
+                format(self.word1, f'x').zfill(8) + format(self.word2, f'x').zfill(8) +
+                format(self.word3, f'x').zfill(8))
+
 
     def __repr__(self):
-        # TODO: fix this (still not correct) - find out difference between type and layer!
-        # every ADRS begins with type (layer address)
-        res = self.type.to_bytes(1, 'big')
-        if self.type == 0:
-            # WOTS+ hash address (type + keypairadr + chainadr + hashadr)
-            res += self.keypairadr.to_bytes(2, 'big')
-            res += self.chainadr.to_bytes(4, 'big')
-        elif self.type == 1:
-            # WOTS+ public key compression address (type + keypairadr + padding 0)
-            res += self.keypairadr.to_bytes(2, 'big')
-            res += self.pad(0, 4)
-        elif self.type == 2:
-            # hash tree address (type + padding 0 + tree height + tree index)
-            pass
-        elif self.type == 3:
-            # FORS tree address (type + keypairadr + tree height + tree index)
-            pass
-        elif self.type == 4:
-            # FORS tree roots compression address (type + keypairadr + padding 0)
-            pass
-        elif self.type == 5:
-            # WOTS+ key generation address (type + keypairadr + chainadr + hashadr)
-            pass
-        return res
-        raise NotImplementedError("Not yet implemented")
+        """
+        return the address as a byte representation
+        :return: address in bytes
+        """
+        # TODO: Implement this and check ADRS construction again
+        raise NotImplementedError("Not implemented yet!")
+
+    @classmethod
+    def fromHex(cls, hex_str):
+        """
+        set the address from hex string
+        :param hex_str: hex string
+        :return: None
+        """
+        layer = int(hex_str[0:2], 16)
+        treeaddr = int(hex_str[2:18], 16)
+        adrs_type = int(hex_str[18:20], 16)
+        word1 = int(hex_str[20:28], 16)
+        word2 = int(hex_str[28:36], 16)
+        word3 = int(hex_str[36:], 16)
+        return cls(adrs_type, layer, treeaddr, word1, word2, word3)
 
     def copy(self):
         """
