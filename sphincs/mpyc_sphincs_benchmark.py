@@ -2,6 +2,7 @@
 from signmpyc import SPHINCS
 from mpyc.runtime import mpc
 import numpy as np
+import binascii
 import time
 
 sphincs = SPHINCS()
@@ -37,7 +38,7 @@ def split_sk(key):
     pk_root = sk_eval[96:]
 
     # inputs from bash script eliminates '\' in pk_root, so we have to fix it
-    assert len(pk_root) == 32
+    assert len(sk_prf) == len(sk_seed) == len(pk_seed) == len(pk_root) == 32
     return sk_seed, sk_prf, pk_seed, pk_root
 
 # _________________________________________________________________________________________________
@@ -58,6 +59,19 @@ def to_bytes(y):
     x_bytes = bytes(int(x_bitstring[i:i + 8], 2) for i in range(0, len(x_bitstring), 8))
 
     return eval(x_bytes)
+
+def check_length(x):
+    """
+    checks the length of list x, if each is not of length 256, pad this with leading zeros
+    :param x: list of binary representation of elements of secret key
+    :return: list of binary representation of elements of secret key
+    """
+    if type(x) != list:
+        x = [x]
+    for i in range(len(x)):
+        if len(x[i]) < 256:
+            x[i] = '0' * (256 - len(x[i])) + x[i]
+    return x
 
 def check_type(x):
     """
@@ -108,16 +122,20 @@ async def main():
             # payload is a secret key
             # split the sk into its elements
             sk_seed, sk_prf, pk_seed, pk_root = split_sk(in_)
-            pkseed_bit = ''.join(format(ord(i), '08b') for i in str(pk_seed))
-            pkroot_bit = ''.join(format(ord(i), '08b') for i in str(pk_root))
-            skseed_bit = ''.join(format(ord(i), '08b') for i in str(sk_seed))
-            skprf_bit = ''.join(format(ord(i), '08b') for i in str(sk_prf))
+            pkseed_bit = bin(int.from_bytes(pk_seed, byteorder='big')).replace("0b", "")
+            pkroot_bit = bin(int.from_bytes(pk_root, byteorder='big')).replace("0b", "")
+            skseed_bit = bin(int.from_bytes(sk_seed, byteorder='big')).replace("0b", "")
+            skprf_bit = bin(int.from_bytes(sk_prf, byteorder='big')).replace("0b", "")
+
+            # check bit lengths, should be 256 each?
+            key_ele_bit = check_length([skprf_bit, skseed_bit, pkseed_bit, pkroot_bit])
+
+            payload = []
 
             # payload is a list of secure objects containing the elements of sk
-            payload = [secfld.array(np.array([int(i) for i in skseed_bit])),
-                       secfld.array(np.array([int(i) for i in skprf_bit])),
-                       secfld.array(np.array([int(i) for i in pkseed_bit])),
-                       secfld.array(np.array([int(i) for i in pkroot_bit]))]
+            for i in key_ele_bit:
+                payload.append(secfld.array(np.array([int(j) for j in i])))
+
         else:
             xprint("The given input is a message!")
             # payload is a message
@@ -141,7 +159,14 @@ async def main():
 
     # TODO: test why output does not work here - try outputting here to check verification
     #  process to get original values
+
+    print("here's the pk_seed: ", await mpc.output(payload[2]))
+    print("here's the pk_root: ", await mpc.output(payload[3]))
+    print("here's the sk_seed: ", await mpc.output(payload[0]))
+    print("here's the sk_prf: ", await mpc.output(payload[1]))
+
     for i in payload:
+        print("payload: ", i)
         print("check: ", await mpc.output(i))
 
     # inputs[0][0] = message
