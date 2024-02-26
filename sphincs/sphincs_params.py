@@ -1,5 +1,5 @@
 # sphincs_params.py
-from sha2_offsets import *
+from shake_offsets import *
 
 # Constants
 SPX_N = 32
