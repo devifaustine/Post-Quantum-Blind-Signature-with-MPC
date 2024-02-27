@@ -250,4 +250,12 @@ class ADRS:
         :return: changed address
         """
         self.adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX+4] = tree_index.to_bytes(4, 'big')
+        self.update_comp()
         return self
+
+    def get_tree_index(self):
+        """
+        Get the tree index
+        :return: tree index
+        """
+        return int.from_bytes(self.adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX+4], 'big')
