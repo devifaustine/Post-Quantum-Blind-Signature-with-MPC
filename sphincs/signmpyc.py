@@ -132,11 +132,11 @@ class SPHINCS(object):
 
     def PRF(self, pkseed, skseed, adrs):
         """
-
-        :param pkseed:
-        :param skseed:
-        :param adrs:
-        :return:
+        pseudorandom function
+        :param pkseed: SPHINCS+ public seed
+        :param skseed: SPHINCS+ secret seed
+        :param adrs: address
+        :return: random value from SHAKE256(pk.seed || sk.seed || adrs, 8n)
         """
         mes = mpc.concatenate((pkseed, adrs, skseed))
         return shake.shake(mes, 8 * self.n, 512)
@@ -185,6 +185,7 @@ class SPHINCS(object):
         except (ValueError, RuntimeError):
             print("FAIL HERE IN SIGNATURE ")
 
+        raise NotImplementedError("Signing function not implemented yet!")
         """
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed
@@ -227,7 +228,6 @@ class SPHINCS(object):
         SIG_HT = ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
         s = mpc.np_concatenate((s, SIG_HT))
         """
-        raise NotImplementedError("Signing function not implemented yet!")
 
         # signature consists of R, SIG_FORS, SIG_HT - all of type secure object
         sig = (s, M)
