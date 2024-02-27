@@ -28,34 +28,31 @@ Type                         |   Word 1  |   Word 2  |   Word 3  |   Type Consta
 6 WOTS+ key comp addr           keypairadr      0           0       WOTS_KEY_COMP
 """
 
-# TODO: reform this to suit secure objects
-# TODO: remove these offsets as it is already in sha2 offsets
-SPX_OFFSET_LAYER = 0   # The byte used to specify the Merkle tree layer
-SPX_OFFSET_TREE = 1   # The start of the 8 byte field used to specify the tree
-SPX_OFFSET_TYPE = 9   # The byte used to specify the hash type (reason)
-SPX_OFFSET_KP_ADDR2 = 12  # The high byte used to specify the key pair (which one-time signature)
-SPX_OFFSET_KP_ADDR1 = 13  # The low byte used to specify the key pair
-SPX_OFFSET_CHAIN_ADDR = 17  # The byte used to specify the chain address (which Winternitz chain)
-SPX_OFFSET_TREE_HGT = 17  # The byte used to specify the height of this node in the FORS or Merkle tree
-SPX_OFFSET_TREE_INDEX = 18  # The start of the 4 byte field used to specify the node in the FORS or Merkle tree
-SPX_OFFSET_HASH_ADDR = 21  # The byte used to specify the hash address (where in the Winternitz chain)
-
 class ADRS:
-    def __init__(self, adrs='', adrs_type=0, layer=0, treeaddr=0, word1=0, word2=0, word3=0):
+    def __init__(self, adrs=b'', adrs_type=0, layer=0, treeaddr=0, word1=0, word2=0, word3=0):
         """
         initializes the address
         :param adrs: bytestring of size SPX_ADDR_BYTES (32) or None
+        :param adrs_type: bytestring for address type
+        :param layer: bytestring representing layer of the tree in HT
+        :param treeaddr: bytestring representation of the tree adress
+        :param word1: bytes
+        :param word2: bytes
+        :param word3: bytes
         """
-        if adrs:
+        assert len(adrs) == 32
+        if adrs != b'':
             self.adrs = adrs
-            self.adrs_type = adrs[SPX_OFFSET_TYPE]
-            self.layer = adrs[SPX_OFFSET_LAYER]
-            self.treeaddr = int.from_bytes(adrs[SPX_OFFSET_TREE:SPX_OFFSET_TREE+8], 'big')
-            self.word1 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX+4], 'big')
-            self.word2 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX+4:SPX_OFFSET_TREE_INDEX+8], 'big')
-            self.word3 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX+8:SPX_OFFSET_TREE_INDEX+12], 'big')
+            self.adrs_type = int.from_bytes(adrs[SPX_OFFSET_TYPE], byteorder='big')
+            self.layer = int.from_bytes(adrs[SPX_OFFSET_LAYER], byteorder='big')
+            self.treeaddr = int.from_bytes(adrs[SPX_OFFSET_TREE:SPX_OFFSET_TREE+8], byteorder='big')
+            self.word1 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX+4], byteorder='big')
+            self.word2 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX+4:SPX_OFFSET_TREE_INDEX+8], byteorder='big')
+            self.word3 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX+8:SPX_OFFSET_TREE_INDEX+12], byteorder='big')
         else:
-            self.adrs = str(layer) + str(treeaddr) + str(adrs_type) + str(word1) + str(word2) + str(word3)
+            self.adrs = layer.to_bytes(1, 'big') + treeaddr.to_bytes(8, 'big') + \
+                        adrs_type.to_bytes(1, 'big') + word1.to_bytes(4, 'big') + \
+                        word2.to_bytes(4, 'big') + word3.to_bytes(4, 'big')
             self.adrs_type = adrs_type
             self.layer = layer
             self.treeaddr = treeaddr
@@ -82,12 +79,25 @@ class ADRS:
         """
         return self.adrs
 
-    def load(self):
+    def update_adrs(self):
         """
         update the address adrs from its components
         :return: self
         """
         self.adrs = str(self.layer) + str(self.treeaddr) + str(self.adrs_type) + str(self.word1) + str(self.word2) + str(self.word3)
+        return self
+
+    def update_comp(self):
+        """
+        update the components of the address from the address adrs
+        :return: self
+        """
+        self.layer = int(self.adrs[0:2])
+        self.treeaddr = int(self.adrs[2:18])
+        self.adrs_type = int(self.adrs[18:20])
+        self.word1 = int(self.adrs[20:28])
+        self.word2 = int(self.adrs[28:36])
+        self.word3 = int(self.adrs[36:])
         return self
 
     @classmethod
@@ -103,7 +113,7 @@ class ADRS:
         word1 = int(hex_str[20:28], 16)
         word2 = int(hex_str[28:36], 16)
         word3 = int(hex_str[36:], 16)
-        return cls('', adrs_type, layer, treeaddr, word1, word2, word3)
+        return cls(b'', adrs_type, layer, treeaddr, word1, word2, word3)
 
     def copy(self):
         """
@@ -130,7 +140,7 @@ class ADRS:
         :return: None
         """
         self.type = type_
-        self.load()
+        self.update_adrs()
 
 
     # Specify which level of Merkle tree (the "layer") we're working on
