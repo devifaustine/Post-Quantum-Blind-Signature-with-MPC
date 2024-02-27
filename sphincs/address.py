@@ -43,8 +43,8 @@ class ADRS:
         assert len(adrs) == 32
         if adrs != b'':
             self.adrs = adrs
-            self.adrs_type = int.from_bytes(adrs[SPX_OFFSET_TYPE], byteorder='big')
-            self.layer = int.from_bytes(adrs[SPX_OFFSET_LAYER], byteorder='big')
+            self.adrs_type = adrs[SPX_OFFSET_TYPE]
+            self.layer = adrs[SPX_OFFSET_LAYER]
             self.treeaddr = int.from_bytes(adrs[SPX_OFFSET_TREE:SPX_OFFSET_TREE+8], byteorder='big')
             self.word1 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX+4], byteorder='big')
             self.word2 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX+4:SPX_OFFSET_TREE_INDEX+8], byteorder='big')
@@ -84,7 +84,7 @@ class ADRS:
         update the address adrs from its components
         :return: self
         """
-        self.adrs = str(self.layer) + str(self.treeaddr) + str(self.adrs_type) + str(self.word1) + str(self.word2) + str(self.word3)
+        self.adrs = self.layer.to_bytes() + str(self.treeaddr) + str(self.adrs_type) + str(self.word1) + str(self.word2) + str(self.word3)
         return self
 
     def update_comp(self):

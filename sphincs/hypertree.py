@@ -107,4 +107,3 @@ class Hypertree():
             return True
         else:
             return False
-        

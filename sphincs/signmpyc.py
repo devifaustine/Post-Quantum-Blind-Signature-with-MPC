@@ -10,6 +10,7 @@ from sphincs_params import *
 from address import ADRS
 from utils import UTILS
 from fors import FORS
+from hypertree import Hypertree
 
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
 seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
@@ -185,8 +186,6 @@ class SPHINCS(object):
         except (ValueError, RuntimeError):
             print("FAIL HERE IN SIGNATURE ")
 
-        raise NotImplementedError("Signing function not implemented yet!")
-        """
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed
         if RANDOMIZE:
@@ -224,10 +223,10 @@ class SPHINCS(object):
         PK_FORS = fors.fors_pkFromSig(SIG_FORS, md, pkseed, adrs)
 
         # sign FORS public key with HT
-        adrs.set_type(TREE)
-        SIG_HT = ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
+        adrs.set_type(2)  # 2 is for TREE
+        ht = Hypertree(self.h, self.d, self.tau, self.w)
+        SIG_HT = ht.ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
         s = mpc.np_concatenate((s, SIG_HT))
-        """
 
         # signature consists of R, SIG_FORS, SIG_HT - all of type secure object
         sig = (s, M)
