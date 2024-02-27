@@ -8,6 +8,8 @@ from math import ceil, floor, log
 wots = WOTS(32, 16)
 shake = SHAKE()
 
+#TODO: test and check this class and its functions 
+
 class XMSS:
     def __init__(self, h, n, w):
         self.h = h  # height (number of levels - 1) of the tree
