@@ -141,6 +141,7 @@ class ADRS:
         """
         self.type = type_
         self.update_adrs()
+        return self
 
 
     # Specify which level of Merkle tree (the "layer") we're working on
@@ -150,7 +151,8 @@ class ADRS:
         :param layer: the layer
         :return:
         """
-        self.adrs[SPX_OFFSET_LAYER] = layer
+        self.layer = layer
+        self.update_adrs()
         return self
 
     def set_tree_addr(self, tree):

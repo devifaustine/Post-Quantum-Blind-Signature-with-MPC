@@ -8,7 +8,7 @@ from math import ceil, floor, log
 wots = WOTS(32, 16)
 shake = SHAKE()
 
-#TODO: test and check this class and its functions 
+#TODO: test and check this class and its functions
 
 class XMSS:
     def __init__(self, h, n, w):
@@ -122,3 +122,5 @@ class XMSS:
                 node[1] = self.H(pkseed, adrs, auth[i] + node[0])
             node[0] = node[1]
         return node[0]
+
+

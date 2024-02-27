@@ -33,6 +33,14 @@ class UTILS(object):
 
         return eval(x_bytes)
 
+    def toByte(self, x, y):
+        """
+        returns a y-byte string containing binary representation of x in big endian order
+        :param x: non-negative integer
+        :param y: non-negative integer
+        :return: bytestring of length y
+        """
+        return x.to_bytes(y, byteorder='big')
 
     async def bits_to_string(self, x):
         """
