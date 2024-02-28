@@ -1,4 +1,4 @@
-# This is an implementation of SHA-256
+# This is an implementation of a standard SHA-256 in Python3. 
 
 import string
 import random
