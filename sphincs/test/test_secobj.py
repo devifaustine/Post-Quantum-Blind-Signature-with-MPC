@@ -590,6 +590,37 @@ async def main14():
 
     await mpc.shutdown()
 
+async def main14():
+    secfld = mpc.SecFld(2)
+
+    await mpc.start()
+
+    inputs = input("Give your input: ")
+
+    x = []
+    for i in range(len(inputs)):
+        x.append(ord(inputs[i]))
+
+    payload = secfld.array(np.array(x))
+
+    print("payload: ", payload)
+
+    inputs_ = mpc.input(payload)
+
+    concat = secfld.array(np.array([]))
+
+    print("inputs: ", inputs_)
+
+    for i in inputs_:
+        concat = mpc.np_concatenate((concat, i))
+
+    print("concatenated: ", await mpc.output(concat))
+
+    for i in payload:
+        print("check: ", await mpc.output(i))
+
+    await mpc.shutdown()
+
 # run this program with: python3 test_secobj.py -M2 -I0
 # M indicates the number of parties
 # I indicates the index of the current party
@@ -603,4 +634,5 @@ async def main14():
 #mpc.run(main11())
 #mpc.run(main12())
 #mpc.run(main13())
+#mpc.run(main14())
 mpc.run(main14())

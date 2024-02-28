@@ -40,8 +40,8 @@ class ADRS:
         :param word2: bytes
         :param word3: bytes
         """
-        assert len(adrs) == 32
         if adrs != b'':
+            assert len(adrs) == 32
             self.adrs = adrs
             self.adrs_type = adrs[SPX_OFFSET_TYPE]
             self.layer = adrs[SPX_OFFSET_LAYER]

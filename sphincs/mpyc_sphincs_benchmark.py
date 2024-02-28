@@ -2,7 +2,6 @@
 from signmpyc import SPHINCS
 from mpyc.runtime import mpc
 import numpy as np
-import binascii
 import time
 
 sphincs = SPHINCS()
@@ -46,7 +45,6 @@ def split_sk(key):
 # runs the sign() function using MPC
 # maybe comment the time.time() and unnecessary code when using benchmarking tools from python later
 
-
 def to_bytes(y):
     """
     converts y in binary to bytes
@@ -59,6 +57,26 @@ def to_bytes(y):
     x_bytes = bytes(int(x_bitstring[i:i + 8], 2) for i in range(0, len(x_bitstring), 8))
 
     return eval(x_bytes)
+
+def pad(x, y):
+    """
+    pad the array x with zeroes until y length is reached
+    :param x: to be padded
+    :param y: length to be reached
+    :return: new array of length y
+    """
+    pass
+
+async def check_inputs(x):
+    # TODO: check this function !!!!!! - this is not working
+    res = []
+    for i in range(len(x)):
+        print("checking input ", i, " of ", len(x))
+        try:
+            res.append(await mpc.output(x[i]))
+        except ValueError:
+            print("x: ", x[i])
+    return res  # list of 256-bit strings
 
 def check_length(x):
     """
@@ -153,6 +171,9 @@ async def main():
     inputs = mpc.input(payload)
     my_payload = None
 
+    # check inputs and make sure each are 256 bits
+    checked = await check_inputs(payload)
+
 
     print("here's the payload: ", payload)
     print("here's the inputs: ", inputs)
@@ -162,10 +183,18 @@ async def main():
     #  the other instance will crash and not be able to output their payload.
     #  This is because afterwards there are operations that
 
-    print("here's the pk_seed: ", await mpc.output(payload[2]))
-    print("here's the pk_root: ", await mpc.output(payload[3]))
-    print("here's the sk_seed: ", await mpc.output(payload[0]))
-    print("here's the sk_prf: ", await mpc.output(payload[1]))
+    try:
+        if check_type(in_):
+            sk_seed = await mpc.output(payload[0])
+            sk_prf = await mpc.output(payload[1])
+            pk_seed = await mpc.output(payload[2])
+            pk_root = await mpc.output(payload[3])
+            print("sk values are received")
+        else:
+            message = await mpc.output(payload[0])
+            print('message received')
+    except ValueError:
+        print("Error during receiving real input. Try Again!")
 
     # inputs[0][0] = message
     # inputs[1] = list of elements of the secret key
@@ -207,5 +236,4 @@ async def main():
 
     await mpc.shutdown()
 
-if __name__ == "__main__":
-    mpc.run(main())
+mpc.run(main())

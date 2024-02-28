@@ -4,7 +4,6 @@ import pyspx.shake_256f
 import random
 import string
 import numpy as np
-from mpyc.gfpx import GFpX
 from shake import SHAKE
 from sphincs_params import *
 from address import ADRS
@@ -97,7 +96,7 @@ class SPHINCS(object):
         pk = (pk[0], pk[1])
         return pyspx.shake_256f.verify(sig, msg, pk)
 
-    def toByte(self, x, y):
+    def toByte(self, x: int, y: int):
         """
         returns a y-byte string containing binary representation of x in big endian order
         :param x: non-negative integer
@@ -172,8 +171,14 @@ class SPHINCS(object):
         adrs = ADRS(self.toByte(0, 32))
         fors = FORS(self.n, self.k, self.t)
 
+        print("adrs: ", adrs.adrs)
+        print("fors: ", fors)
+
         # SK = [SK.seed, SK.prf, PK.seed, PK.root]
         skseed, skprf, pkseed, pkroot = SK
+
+        for i in SK:
+            print("SK: ", i)
 
         print("sign started")
 
@@ -188,6 +193,7 @@ class SPHINCS(object):
 
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed
+        print("opt: ", opt)
         if RANDOMIZE:
             opt = random.randint(0, 2**SPX_N)
 

@@ -14,9 +14,9 @@ address = ADRS(y.to_bytes(32, 'big'))
 class FORS:
     def __init__(self, n, k, t):
         self.a = log(t, 2)
-        self.n = n # security parameter - length of pk, sk. sig in bytes
-        self.k = k # number of sk sets, trees and indices computed from input string
-        self.t = t # number of elements per sk set, leaves per hash tree and upper bound on index values
+        self.n = n  # security parameter - length of pk, sk. sig in bytes
+        self.k = k  # number of sk sets, trees and indices computed from input string
+        self.t = t  # number of elements per sk set, leaves per hash tree and upper bound on index values
 
     def prf_addr(self, key, addr):
         """
