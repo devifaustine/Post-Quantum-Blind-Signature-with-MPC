@@ -86,16 +86,14 @@ async def check_inputs(x):
 def check_length(x, y):
     """
     checks the length of list x, if each is not of length 256, pad this with leading zeros
-    :param x: list of binary representation of elements of secret key
+    :param x: binary representation of type string
     :param y: desired length
-    :return: list of binary representation of elements of secret key
+    :return: padded string
     """
-    res = []
-    if type(x) != list:
-        x = [x]
+    res = ""
     if len(x) < y:
-        res.append((y - len(x)) * "0")  # pad with leading 0s
-    res.append(x)
+        res += ((y - len(x)) * "0")  # pad with leading 0s
+    res += x
     return res
 
 def check_type(x):
@@ -159,6 +157,12 @@ async def main():
             for i in range(len(sk_ele_bit)):
                 sk_ele_bit[i] = check_length(sk_ele_bit[i], 256)
 
+            payload = [secfld.array(np.array([int(i) for i in sk_ele_bit[0]])),
+                        secfld.array(np.array([int(i) for i in sk_ele_bit[1]])),
+                        secfld.array(np.array([int(i) for i in sk_ele_bit[2]])),
+                        secfld.array(np.array([int(i) for i in sk_ele_bit[3]]))]
+
+
             mes = input('Give the other input here: ')
             sk = in_
 
@@ -166,9 +170,6 @@ async def main():
             xprint("The given input is a message!")
             # payload is a message
             mes_bit = ''.join(format(ord(i), '08b') for i in in_)
-
-            print(type(mes_bit))
-            print("message bits: ", mes_bit)
 
             # check if mes_bit is of length 256, if not pad with 0s
             mes_bit = check_length(mes_bit, 256)
@@ -224,7 +225,7 @@ async def main():
     # catch exceptions in case of errors
     try:
         start = time.time()
-        sig = await sphincs.sign(inputs[0][0], inputs[1])
+        sig = await sphincs.sign(inputs[0][0], inputs[1], mes, sk)
         end = time.time()
     except (NotImplementedError, AttributeError, ValueError, RuntimeError):
         print("Error during signing process. Try Again!")

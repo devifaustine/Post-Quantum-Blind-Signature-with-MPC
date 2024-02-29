@@ -157,7 +157,7 @@ class SPHINCS(object):
             res.append(i)
         return res
 
-    async def sign(self, M, SK):
+    async def sign(self, M, SK, m, sk):
         """
         sign the message M using secret key SK (All done using MPyC functions)
         :param M: message (secure object - secfld.array)
