@@ -166,5 +166,15 @@ class FORS:
         :param adrs: address ADRS
         :return: PK seed of FORS
         """
-        # TODO: implement this function!
-        raise NotImplementedError("Not yet implemented")
+        # compute roots
+        for i in range(self.k):
+            # get the next index from bits i*log(t) to (i+1)*log(t) - 1 of message m
+            idx_start = i * int(log(self.t, 2))
+            idx_end = (i + 1) * int(log(self.t, 2))
+
+            # compute leaf
+            sk = sig_fors[i * 2 * self.n: (2 * i + 1) * self.n]
+            adrs.set_tree_height(0)
+            raise NotImplementedError
+            #adrs.set_tree_index(i * self.t + ) # use index here - TODO: check if indexing above is correct
+

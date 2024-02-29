@@ -70,26 +70,33 @@ def pad(x, y):
 async def check_inputs(x):
     # TODO: check this function !!!!!! - this is not working
     res = []
-    for i in range(len(x)):
-        print("checking input ", i, " of ", len(x))
-        try:
-            res.append(await mpc.output(x[i]))
-        except ValueError:
-            print("x: ", x[i])
-    return res  # list of 256-bit strings
-
-def check_length(x):
-    """
-    checks the length of list x, if each is not of length 256, pad this with leading zeros
-    :param x: list of binary representation of elements of secret key
-    :return: list of binary representation of elements of secret key
-    """
     if type(x) != list:
         x = [x]
     for i in range(len(x)):
-        if len(x[i]) < 256:
-            x[i] = '0' * (256 - len(x[i])) + x[i]
-    return x
+        for j in x[i]: # check each element of x
+            print("checking input ", j, " of ", type(j))
+            try:
+                res.append(await mpc.output(j))
+            except ValueError:
+                print("j: ", j)
+                return []
+                await mpc.shutdown()
+    return res  # list of 256-bit strings
+
+def check_length(x, y):
+    """
+    checks the length of list x, if each is not of length 256, pad this with leading zeros
+    :param x: list of binary representation of elements of secret key
+    :param y: desired length
+    :return: list of binary representation of elements of secret key
+    """
+    res = []
+    if type(x) != list:
+        x = [x]
+    if len(x) < y:
+        res.append((y - len(x)) * "0")  # pad with leading 0s
+    res.append(x)
+    return res
 
 def check_type(x):
     """
@@ -121,8 +128,7 @@ async def main():
     len_parties = len(mpc.__getattribute__("parties"))
 
     # number of parties needs to be exactly 2 (user and signer)
-    if len_parties < 2 or len_parties > 2:
-        raise AttributeError("The number of parties needs to be exactly 2!")
+    assert len_parties == 2, "The number of parties needs to be exactly 2!"
 
     # accept input from both user and signer
     in_ = input('Give your input here: ')
@@ -132,6 +138,8 @@ async def main():
     # TODO: remember to pad the message as it is not of length n (?) do we need to pad here or in signmpyc? - check
 
     payload = None
+    mes = None
+    sk = None
 
     # check the type of payload (either message or secret key) and convert it to secure objects
     try:
@@ -145,24 +153,34 @@ async def main():
             skseed_bit = bin(int.from_bytes(sk_seed, byteorder='big')).replace("0b", "")
             skprf_bit = bin(int.from_bytes(sk_prf, byteorder='big')).replace("0b", "")
 
+            sk_ele_bit = [skseed_bit, skprf_bit, pkseed_bit, pkroot_bit]
+
             # check bit lengths, should be 256 each?
-            key_ele_bit = check_length([skseed_bit, skprf_bit, pkseed_bit, pkroot_bit])
+            for i in range(len(sk_ele_bit)):
+                sk_ele_bit[i] = check_length(sk_ele_bit[i], 256)
 
-            payload = []
-
-            # payload is a list of secure objects containing the elements of sk
-            for i in key_ele_bit:
-                payload.append(secfld.array(np.array([int(j) for j in i])))
+            mes = input('Give the other input here: ')
+            sk = in_
 
         else:
             xprint("The given input is a message!")
             # payload is a message
             mes_bit = ''.join(format(ord(i), '08b') for i in in_)
+
+            print(type(mes_bit))
+            print("message bits: ", mes_bit)
+
+            # check if mes_bit is of length 256, if not pad with 0s
+            mes_bit = check_length(mes_bit, 256)
+
             # payload is a list and the first element is the message, the rest is just an empty array - unused
             payload = [secfld.array(np.array([int(i) for i in mes_bit])),
                        secfld.array(np.array([])),
                        secfld.array(np.array([])),
                        secfld.array(np.array([]))]      # secret-shared input message bits in list
+            mes = in_
+            sk = input('Give the other input here: ')
+
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
         await mpc.shutdown()
@@ -170,10 +188,6 @@ async def main():
     # both parties share their inputs using mpc.input() - Shamir's Secret Sharing Scheme
     inputs = mpc.input(payload)
     my_payload = None
-
-    # check inputs and make sure each are 256 bits
-    checked = await check_inputs(payload)
-
 
     print("here's the payload: ", payload)
     print("here's the inputs: ", inputs)

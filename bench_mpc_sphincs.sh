@@ -15,9 +15,13 @@ read -a mes <<< "$(python3 sphincs/gen_m_bench.py -n 5)"
 
 for key in "${keys[@]}"; do
   for m in "${mes[@]}"; do
-    python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0 <<< "$m"&
+    #echo "$m" "$m" "$key" | python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0
+    #echo "$key" "$m" "$key" | python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1
+    python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0 <<< "$m
+    $key"&
     # note: key has to be just the secret key, therefore public key has to be stored somewhere for verification
-    python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< "$key"&
+    python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< "$key
+    $m"&
     if [ $? -eq 0 ]; then
       echo "Success"
     else
