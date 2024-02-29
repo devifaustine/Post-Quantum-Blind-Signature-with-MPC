@@ -96,6 +96,21 @@ class SPHINCS(object):
         pk = (pk[0], pk[1])
         return pyspx.shake_256f.verify(sig, msg, pk)
 
+    def check_length(self, m, sk):
+        """
+        check the length of the message and secret key
+        :param m: message
+        :param sk: secret key
+        :return:
+        """
+        print("checking the length of inputs")
+        res = []
+        sk = eval(sk)
+        res.append(m)
+        res.append(sk)
+        print(sk)
+        return res
+
     def toByte(self, x: int, y: int):
         """
         returns a y-byte string containing binary representation of x in big endian order
@@ -177,19 +192,9 @@ class SPHINCS(object):
         # SK = [SK.seed, SK.prf, PK.seed, PK.root]
         skseed, skprf, pkseed, pkroot = SK
 
-        for i in SK:
-            print("SK: ", i)
+        inputs = check_length(m, sk)
 
         print("sign started")
-
-        try:
-            print("message: ", await mpc.output(M))
-            print("sk: ", await mpc.output(skprf))
-            print("sk: ", await mpc.output(skseed))
-            print("sk: ", await mpc.output(pkseed))
-            print("sk: ", await mpc.output(pkroot))
-        except (ValueError, RuntimeError):
-            print("FAIL HERE IN SIGNATURE ")
 
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed

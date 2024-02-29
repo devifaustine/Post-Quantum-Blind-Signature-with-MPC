@@ -1,63 +1,10 @@
 Success
-2024-02-29 13:39:38,957 Start MPyC runtime v0.9.9
-2024-02-29 13:39:38,979 Start MPyC runtime v0.9.9
-2024-02-29 13:39:38,984 All 2 parties connected.
-Give your input here: here's your payload:  GDFXTVMVEDOS1J3LKVXNKYF6SEE18IQR4TU0NRM1YACW6D2PKXGRKQAMPIC90XO6Z
+2024-02-29 19:44:32,253 Start MPyC runtime v0.9.9
+2024-02-29 19:44:32,284 Start MPyC runtime v0.9.9
+2024-02-29 19:44:32,290 All 2 parties connected.
+Give your input here: 2024-02-29 19:44:32,290 All 2 parties connected.
+here's your payload:  LA
 The given input is a message!
-Give the other input here: 2024-02-29 13:39:38,985 All 2 parties connected.
-Give your input here: here's your payload:  (b'YXRH1KU5BRVBCRJRV1254NXZIZHIHLG8x8dxd13xa3#ixbdxd6$x80x82xfcDoxefx14xdadxecxdfixb7x07MxdcSxa6xc0xadx86Xxb7', b'0QHXRQUY2QS80NCULQBA9MD6S1PULXHXGJCCPUJY346E70FG3SQ9ZMYLL8TM31L5YXRH1KU5BRVBCRJRV1254NXZIZHIHLG8x8dxd13xa3#ixbdxd6$x80x82xfcDoxefx14xdadxecxdfixb7x07MxdcSxa6xc0xadx86Xxb7')
+Give the other input here: Give your input here: here's your payload:  (b"U2PWQ3DJYHPW8TJ5YQY5W0DOG2DYJU51xef'xa6^xdfxf2<nx1cxdcxd20xaaxb8Ixa9Bdxdaxf9xc0H#x8dx11xa5Ex13x92xa9x036", b"W45J7B70J8CK2GZSK2YLDPLN0WI2IG8LMECUTTDT3XC103FYADLYC78ME5H5CRWBU2PWQ3DJYHPW8TJ5YQY5W0DOG2DYJU51xef'xa6^xdfxf2<nx1cxdcxd20xaaxb8Ixa9Bdxdaxf9xc0H#x8dx11xa5Ex13x92xa9x036")
 The given input is a secret key!
-Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5454aaef20>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448fad330>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448fad240>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448fad930>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf160>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf190>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf2b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faeb60>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faebc0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf2e0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf280>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf310>]]
-message received
-
-Signing process begins now...
-adrs:  b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-fors:  <fors.FORS object at 0x7f5448faf130>
-SK:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faebc0>
-SK:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf2e0>
-SK:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf280>
-SK:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f5448faf310>
-sign started
-2024-02-29 13:39:38,986 Unhandled exception in event loop
-Traceback (most recent call last):
-  File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
-    self._context.run(self._callback, *self._args)
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 461, in <lambda>
-    task.add_done_callback(lambda t: _reconcile(decl, t))
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 385, in _reconcile
-    givn = task.result()
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 313, in _wrap_in_coro
-    return await awaitable
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 301, in __await__
-    val = self.coro.send(None)
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 488, in _distribute
-    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 488, in <listcomp>
-    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/finfields.py", line 1287, in reshape
-    return type(self)(self.value.reshape(*args, **kwargs), check=False)
-ValueError: cannot reshape array of size 256 into shape (520,)
-here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59b95b2f20>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada599c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada59990>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada59240>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada5ab00>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada5ab60>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada5ab90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada5abc0>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada5ab30>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada5ac20>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada5ac50>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f59ada5ac80>]]
-2024-02-29 13:39:38,986 Unhandled exception in event loop
-Traceback (most recent call last):
-  File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
-    self._context.run(self._callback, *self._args)
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 461, in <lambda>
-    task.add_done_callback(lambda t: _reconcile(decl, t))
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 385, in _reconcile
-    givn = task.result()
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 313, in _wrap_in_coro
-    return await awaitable
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 301, in __await__
-    val = self.coro.send(None)
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 488, in _distribute
-    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 488, in <listcomp>
-    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/finfields.py", line 1287, in reshape
-    return type(self)(self.value.reshape(*args, **kwargs), check=False)
-ValueError: cannot reshape array of size 520 into shape (256,)
-Traceback (enclosing MPyC coroutine call):
-Traceback (enclosing MPyC coroutine call):
+Give the other input here: 

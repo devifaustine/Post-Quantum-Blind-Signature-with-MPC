@@ -21,6 +21,16 @@ def xprint(s, d=''):
     if log:
         print(s)
 
+def get_pk(key):
+    """
+    get the public key from the secret key
+    :param key: secret key
+    :return: public key
+    """
+    key_s = key.replace("x", '\\x')
+    pk, sk = eval(key_s)
+    return pk
+
 def split_sk(key):
     """
     sk includes pk and the real secret key SK = (PK, (SK1, SK2, Q))
@@ -66,22 +76,6 @@ def pad(x, y):
     :return: new array of length y
     """
     pass
-
-async def check_inputs(x):
-    # TODO: check this function !!!!!! - this is not working
-    res = []
-    if type(x) != list:
-        x = [x]
-    for i in range(len(x)):
-        for j in x[i]: # check each element of x
-            print("checking input ", j, " of ", type(j))
-            try:
-                res.append(await mpc.output(j))
-            except ValueError:
-                print("j: ", j)
-                return []
-                await mpc.shutdown()
-    return res  # list of 256-bit strings
 
 def check_length(x, y):
     """
@@ -193,24 +187,6 @@ async def main():
     print("here's the payload: ", payload)
     print("here's the inputs: ", inputs)
 
-    # TODO: test why output does not work here - try outputting here to check verification
-    #  process to get original values of pk - this works for the instance that give the input/payload first.
-    #  the other instance will crash and not be able to output their payload.
-    #  This is because afterwards there are operations that
-
-    try:
-        if check_type(in_):
-            sk_seed = await mpc.output(payload[0])
-            sk_prf = await mpc.output(payload[1])
-            pk_seed = await mpc.output(payload[2])
-            pk_root = await mpc.output(payload[3])
-            print("sk values are received")
-        else:
-            message = await mpc.output(payload[0])
-            print('message received')
-    except ValueError:
-        print("Error during receiving real input. Try Again!")
-
     # inputs[0][0] = message
     # inputs[1] = list of elements of the secret key
     # both of type secure objects
@@ -244,10 +220,9 @@ async def main():
     # TODO: assert verify the signature before shutting down
     # verify() accepts the signature, message and public key as bytes not SecObj
     # TODO: convert pkseed and pkroot to bytes (use function in utils)
-    pkseed = inputs[1][2]
-    pkroot = inputs[1][3]
-    pk = pkseed + pkroot # public key in bytes
-    assert await sphincs.verify(sig, inputs[0][0], pk)
+
+    pk = get_pk(sk)  # public key in bytes
+    assert sphincs.verify(sig, mes, pk)
 
     await mpc.shutdown()
 

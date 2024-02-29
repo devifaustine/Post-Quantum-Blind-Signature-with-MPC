@@ -15,8 +15,6 @@ read -a mes <<< "$(python3 sphincs/gen_m_bench.py -n 5)"
 
 for key in "${keys[@]}"; do
   for m in "${mes[@]}"; do
-    #echo "$m" "$m" "$key" | python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0
-    #echo "$key" "$m" "$key" | python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1
     python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0 <<< "$m
     $key"&
     # note: key has to be just the secret key, therefore public key has to be stored somewhere for verification
@@ -31,6 +29,6 @@ for key in "${keys[@]}"; do
   done
 done > log.txt
 # TODO: make a table output in the command line for the results
-#  or put the result table benhcmakr in the log.txt file
+#  or put the result table benchmark in the log.txt file
 # exit the script
 set -e
