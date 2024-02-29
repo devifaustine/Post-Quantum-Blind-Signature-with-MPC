@@ -132,6 +132,10 @@ async def main():
     payload = None
     mes = None
     sk = None
+    pk_seed = None
+    pk_root = None
+    sk_seed = None
+    sk_prf = None
 
     # check the type of payload (either message or secret key) and convert it to secure objects
     try:
@@ -139,7 +143,11 @@ async def main():
             xprint("The given input is a secret key!")
             # payload is a secret key
             # split the sk into its elements
-            sk_seed, sk_prf, pk_seed, pk_root = split_sk(in_)
+            try:
+                sk_seed, sk_prf, pk_seed, pk_root = split_sk(in_)
+            except SyntaxError:
+                print("Secret key value generated is wrong. Please restart the function and try again!")
+                await mpc.shutdown()
             pkseed_bit = bin(int.from_bytes(pk_seed, byteorder='big')).replace("0b", "")
             pkroot_bit = bin(int.from_bytes(pk_root, byteorder='big')).replace("0b", "")
             skseed_bit = bin(int.from_bytes(sk_seed, byteorder='big')).replace("0b", "")
@@ -203,6 +211,12 @@ async def main():
         start = time.time()
         sig = await sphincs.sign(inputs[0][0], inputs[1], mes, sk)
         end = time.time()
+    except AssertionError:
+        raise AssertionError("The length of the message and secret key is wrong! Please restart the function!")
+        await mpc.shutdown()
+    except SyntaxError:
+        print("Secret key value generated is wrong. Please restart the function and try again!")
+        await mpc.shutdown()
     except (NotImplementedError, AttributeError, ValueError, RuntimeError):
         print("Error during signing process. Try Again!")
         await mpc.shutdown()

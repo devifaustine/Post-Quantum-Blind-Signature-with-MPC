@@ -84,7 +84,7 @@ class ADRS:
         update the address adrs from its components
         :return: self
         """
-        self.adrs = self.layer.to_bytes() + str(self.treeaddr) + str(self.adrs_type) + str(self.word1) + str(self.word2) + str(self.word3)
+        self.adrs = str(self.layer) + str(self.treeaddr) + str(self.adrs_type) + str(self.word1) + str(self.word2) + str(self.word3)
         return self
 
     def update_comp(self):

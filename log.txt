@@ -1,10 +1,21 @@
 Success
-2024-02-29 19:44:32,253 Start MPyC runtime v0.9.9
-2024-02-29 19:44:32,284 Start MPyC runtime v0.9.9
-2024-02-29 19:44:32,290 All 2 parties connected.
-Give your input here: 2024-02-29 19:44:32,290 All 2 parties connected.
-here's your payload:  LA
+2024-03-01 00:42:07,573 Start MPyC runtime v0.9.9
+2024-03-01 00:42:07,576 Start MPyC runtime v0.9.9
+2024-03-01 00:42:07,684 All 2 parties connected.
+Give your input here: 2024-03-01 00:42:07,684 All 2 parties connected.
+Give your input here: here's your payload:  ACCPJHAHNJJH5MNHN1XOZWRY62DNXMZNWV8MXLQIAGNMOD0ZHE8BRY910OE
 The given input is a message!
-Give the other input here: Give your input here: here's your payload:  (b"U2PWQ3DJYHPW8TJ5YQY5W0DOG2DYJU51xef'xa6^xdfxf2<nx1cxdcxd20xaaxb8Ixa9Bdxdaxf9xc0H#x8dx11xa5Ex13x92xa9x036", b"W45J7B70J8CK2GZSK2YLDPLN0WI2IG8LMECUTTDT3XC103FYADLYC78ME5H5CRWBU2PWQ3DJYHPW8TJ5YQY5W0DOG2DYJU51xef'xa6^xdfxf2<nx1cxdcxd20xaaxb8Ixa9Bdxdaxf9xc0H#x8dx11xa5Ex13x92xa9x036")
+Give the other input here: here's your payload:  (b"SJ9VAPH7C4A8RE37C308RHTEA11W5X0E?xefxd1xd2a'B2x9f7xe5yxd3 xd8xefx10.}xcc7x9cx88xc0x95xe0[xf2xbb=xd6p", b"2Q8FHU86LT76TSB7M6493HYW9SNJTL1RAYE3VY35W4YTNNUONEWCCAGK4P9KXAEOSJ9VAPH7C4A8RE37C308RHTEA11W5X0E?xefxd1xd2a'B2x9f7xe5yxd3 xd8xefx10.}xcc7x9cx88xc0x95xe0[xf2xbb=xd6p")
 The given input is a secret key!
-Give the other input here: 
+Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dd2caf4c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc7159f90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc7159f60>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc7159840>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b190>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b1f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b220>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b250>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b1c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b2b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b2e0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc7133c40>]]
+
+Signing process begins now...
+checking the length of inputs
+sign started
+here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33b80>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33c70>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33ca0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33c40>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33af0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33b50>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33bb0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33790>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33b20>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab335b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab335e0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f226af4c0>]]
+
+Signing process begins now...
+checking the length of inputs
+sign started

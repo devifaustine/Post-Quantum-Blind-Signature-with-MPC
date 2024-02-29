@@ -81,7 +81,7 @@ class SPHINCS(object):
         self.d = d
         self.w = w
         self.fh = fh
-        self.t = log(self.fh, 2)  # number of FORS leaves (2^t)
+        self.t = 2**fh  # number of FORS leaves (2^t)
         self.k = k
         self.a = log(self.t)
         SPX_FULL_HEIGHT = 68
@@ -150,8 +150,6 @@ class SPHINCS(object):
         assert len(pk) == 64
         assert len(sk) == 128  # each element is 32 (n)-byte long
         res.append(pyspx.shake_256f.sign(m, sk))
-        print(pk)
-        print(type(pk))
         assert isinstance(sk, bytes)
         assert isinstance(m, bytes)
         assert self.verify(res[3], res[0], res[1])
@@ -174,8 +172,7 @@ class SPHINCS(object):
         :param msg: message in Secure Object type
         :return: SHAKE(sk || opt || msg, 8n)
         """
-        # TODO: check this function
-        mes = mpc.np_concatenate((sk, opt, msg))
+        mes = sk + opt + msg
         return shake.shake(mes, 8 * self.n, 512)
 
     async def H_msg(self, R, pkseed, pkroot, msg):
@@ -187,6 +184,8 @@ class SPHINCS(object):
         :param msg: message in Secure Object type
         :return: digest and index - SHAKE(R || PK.seed || PK.root || msg, 8m)
         """
+        assert isinstance(pkseed, bytes)
+        assert isinstance(msg, bytes)
         mes = R + pkseed + pkroot + msg
         return shake.shake(mes, 8 * self.m, 512)
 
@@ -200,6 +199,40 @@ class SPHINCS(object):
         """
         mes = mpc.concatenate((pkseed, adrs, skseed))
         return shake.shake(mes, 8 * self.n, 512)
+
+    def digest_message(self, digest):
+        """
+        digest the message
+        :param digest: message digest
+        :return: message digest in bytes
+        """
+        if isinstance(digest, mpc.SecureObject):
+            # split function into 3 parts
+            tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
+            tmp_idx_tree = mpc.np_split(digest, floor((self.h - (self.h / self.d) + 7) / 8))
+            tmp_idx_leaf = mpc.np_split(digest, floor(((self.h / self.d) + 7) / 8))
+
+            md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
+            idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
+            idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
+        else:
+            # split function into 3 parts
+            first = floor((self.k * self.a + 7) / 8)
+            second = first + floor((self.h - (self.h / self.d) + 7) / 8)
+            third = second + floor(((self.h / self.d) + 7) / 8)
+
+            #TODO: FIX THE TYPEERROR HERE! 
+            tmp_md = digest[:first]
+            tmp_idx_tree = digest[first:second]
+            tmp_idx_leaf = digest[second:third]
+
+            print("temporary values generated here :", tmp_md)
+
+            md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
+            idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
+            idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
+
+        return md, idx_tree, idx_leaf
 
     def pad(self, x):
         """
@@ -231,7 +264,13 @@ class SPHINCS(object):
         adrs = ADRS(self.toByte(0, 32))
         fors = FORS(self.n, self.k, self.t)
 
-        inputs = self.check_length(m, sk)
+        try:
+            inputs = self.check_length(m, sk)
+        except AssertionError:
+            raise AssertionError("The length of the message and secret key is wrong! Please restart the function!")
+        except SyntaxError:
+            raise SyntaxError("The secret key value is wrongly generated, please restart the function!")
+
         # sk = [SK.seed, SK.prf, PK.seed, PK.root]
         skseed, skprf, pkseed, pkroot = SK
 
@@ -242,26 +281,19 @@ class SPHINCS(object):
         if RANDOMIZE:
             opt = random.randint(0, 2**self.n)
 
-        R = await self.PRF_msg(skprf, opt, M)
-        assert isinstance(R, mpc.SecureObject)
-
-        # R should be concatenated to s, but since s is empty, we could just assign it directly
-        s = mpc.np_copy(R)
-
-        # compute message digest and index, digest is of type SecObj
         try:
+            R = await self.PRF_msg(skprf, opt, M)
+            assert isinstance(R, mpc.SecureObject)
+            # R should be concatenated to s, but since s is empty, we could just assign it directly
+            s = mpc.np_copy(R)
+            # compute message digest and index, digest is of type SecObj
             digest = self.H_msg(R, pkseed, pkroot, M)
-        except ValueError:
+        except (ValueError, TypeError, AssertionError):
+            skseed, skprf, pkseed, pkroot = get_sk_ele(sk)
+            R = await self.PRF_msg(skprf, opt, M)
             digest = self.H_msg(R, pkseed, pkroot, inputs[0])
 
-        # split function into 3 parts
-        tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
-        tmp_idx_tree = mpc.np_split(digest, floor((self.h - (self.h / self.d) + 7) / 8))
-        tmp_idx_leaf = mpc.np_split(digest, floor(((self.h / self.d) + 7) / 8))
-
-        md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
-        idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
-        idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
+        md, idx_tree, idx_leaf = self.digest_message(digest)
 
         # FORS sign
         adrs.set_layer_addr(0)
@@ -271,7 +303,10 @@ class SPHINCS(object):
 
         SIG_FORS = fors.fors_sign(md, skseed, pkseed, adrs)
         # TODO: pay attention to type of SIG_FORS and make sure concat works!
-        s = mpc.np_concatenate((s, SIG_FORS))
+        try:
+            s = mpc.np_concatenate((s, SIG_FORS))
+        except:
+            s += SIG_FORS
 
         # get FORS public key
         PK_FORS = fors.fors_pkFromSig(SIG_FORS, md, pkseed, adrs)
