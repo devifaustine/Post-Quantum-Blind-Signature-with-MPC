@@ -20,9 +20,49 @@ shake = SHAKE()
 secfld = mpc.SecFld(2)
 util = UTILS()
 
+def get_pk_ele(pk):
+    """
+    gets pk elements from the public key
+    :param pk: public key in bytes
+    :return: pk elements
+    """
+    pkseed = pk[:32]
+    pkroot = pk[32:]
+    return pkseed, pkroot
+
+def get_pk(sk):
+    """
+    gets the public key from the secret key
+    :param sk: secret key in bytes
+    :return: pk in bytes (pkseed || pkroot)
+    """
+    pk, sk = eval(sk)
+    return pk
+
+def get_sk_ele(sk):
+    """
+    gets sk elements from the secret key
+    :param sk: secret key in bytes
+    :return: sk elements
+    """
+    skseed, skprf, pkseed, pkroot = sk
+    return skseed, skprf, pkseed, pkroot
+
+def split_sk(key):
+    pk, sk_eval = eval(key)
+
+    sk_seed = sk_eval[:32]
+    sk_prf = sk_eval[32:64]
+    pk_seed = sk_eval[64:96]
+    pk_root = sk_eval[96:]
+
+    # inputs from bash script eliminates '\' in pk_root, so we have to fix it
+    assert len(sk_prf) == len(sk_seed) == len(pk_seed) == len(pk_root) == 32
+    return sk_seed, sk_prf, pk_seed, pk_root
+
 class SPHINCS(object):
     # TODO: make the variables accessible and changable from main() in mpyc_sphincs_benchmark.py
-    def __init__(self, n=32, m=512, h=68, d=17, w=16, tau=16, k=35):
+    def __init__(self, n=32, m=512, h=68, d=17, w=16, fh=9, k=35):
         """Initializes SPHINCS+-256f according to docs
 
         n -- length of hash in WOTS / HORST (in bits)
@@ -30,10 +70,8 @@ class SPHINCS(object):
         h -- height of the hyper-tree
         d -- number of layers in the hyper-tree
         w -- Winternitz parameter used for WOTS signature
-        tau -- layers in the HORST tree (2^tau is no. of secret-key elements)
+        fh -- height of FORS tree
         k -- number of trees in FORS
-        #TODO: add t to the constructor argument and fix the code
-        t -- number of leaves of FORS tree
 
         resulting signature would be 49856 bytes long
         """
@@ -42,11 +80,10 @@ class SPHINCS(object):
         self.h = h
         self.d = d
         self.w = w
-        self.tau = tau
-        self.t = 1 << tau
+        self.fh = fh
+        self.t = log(self.fh, 2)  # number of FORS leaves (2^t)
         self.k = k
         self.a = log(self.t)
-        SPX_N = 32
         SPX_FULL_HEIGHT = 68
         SPX_FORS_HEIGHT = 9
         SPX_FORS_TREES = 35
@@ -56,14 +93,14 @@ class SPHINCS(object):
         # Derived parameters
         SPX_ADDR_BYTES = 32
         SPX_WOTS_LOGW = 8 if SPX_WOTS_W == 256 else 4
-        SPX_WOTS_LEN1 = 8 * SPX_N // SPX_WOTS_LOGW
+        SPX_WOTS_LEN1 = 8 * self.n // SPX_WOTS_LOGW
 
         # ... Other derived parameters ...
 
         SPX_WOTS_LEN2 = 2 if SPX_WOTS_W == 256 else 4  # Adjust based on your precomputation
 
         SPX_WOTS_LEN = SPX_WOTS_LEN1 + SPX_WOTS_LEN2
-        SPX_WOTS_BYTES = SPX_WOTS_LEN * SPX_N
+        SPX_WOTS_BYTES = SPX_WOTS_LEN * self.n
         SPX_WOTS_PK_BYTES = SPX_WOTS_BYTES
 
         # ... Define other parameters ...
@@ -88,13 +125,12 @@ class SPHINCS(object):
     def verify(self, sig, msg, pk):
         """
         verify the signature of the message
-        :param pk: public key - list of pk.seed and pk.root
+        :param pk: public key - pk.seed || pk.root
         :param sig: signature
         :param msg: message
         :return: True/False
         """
-        pk = (pk[0], pk[1])
-        return pyspx.shake_256f.verify(sig, msg, pk)
+        return pyspx.shake_256f.verify(msg, sig, pk)
 
     def check_length(self, m, sk):
         """
@@ -105,10 +141,20 @@ class SPHINCS(object):
         """
         print("checking the length of inputs")
         res = []
-        sk = eval(sk)
+        key_fixed = sk.replace("x", '\\x')
+        pk, sk = eval(key_fixed)
+        m = m.encode('utf-8')
         res.append(m)
+        res.append(pk)
         res.append(sk)
-        print(sk)
+        assert len(pk) == 64
+        assert len(sk) == 128  # each element is 32 (n)-byte long
+        res.append(pyspx.shake_256f.sign(m, sk))
+        print(pk)
+        print(type(pk))
+        assert isinstance(sk, bytes)
+        assert isinstance(m, bytes)
+        assert self.verify(res[3], res[0], res[1])
         return res
 
     def toByte(self, x: int, y: int):
@@ -141,8 +187,7 @@ class SPHINCS(object):
         :param msg: message in Secure Object type
         :return: digest and index - SHAKE(R || PK.seed || PK.root || msg, 8m)
         """
-        # TODO: check this function
-        mes = mpc.np_concatenate((R, pkseed, pkroot, msg))
+        mes = R + pkseed + pkroot + msg
         return shake.shake(mes, 8 * self.m, 512)
 
     def PRF(self, pkseed, skseed, adrs):
@@ -186,31 +231,30 @@ class SPHINCS(object):
         adrs = ADRS(self.toByte(0, 32))
         fors = FORS(self.n, self.k, self.t)
 
-        print("adrs: ", adrs.adrs)
-        print("fors: ", fors)
-
-        # SK = [SK.seed, SK.prf, PK.seed, PK.root]
+        inputs = self.check_length(m, sk)
+        # sk = [SK.seed, SK.prf, PK.seed, PK.root]
         skseed, skprf, pkseed, pkroot = SK
-
-        inputs = check_length(m, sk)
 
         print("sign started")
 
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed
-        print("opt: ", opt)
         if RANDOMIZE:
-            opt = random.randint(0, 2**SPX_N)
+            opt = random.randint(0, 2**self.n)
 
         R = await self.PRF_msg(skprf, opt, M)
+        assert isinstance(R, mpc.SecureObject)
 
         # R should be concatenated to s, but since s is empty, we could just assign it directly
         s = mpc.np_copy(R)
 
         # compute message digest and index, digest is of type SecObj
-        digest = self.H_msg(R, pkseed, pkroot, M)
-        
-        # TODO: check np_split function how it is used
+        try:
+            digest = self.H_msg(R, pkseed, pkroot, M)
+        except ValueError:
+            digest = self.H_msg(R, pkseed, pkroot, inputs[0])
+
+        # split function into 3 parts
         tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
         tmp_idx_tree = mpc.np_split(digest, floor((self.h - (self.h / self.d) + 7) / 8))
         tmp_idx_leaf = mpc.np_split(digest, floor(((self.h / self.d) + 7) / 8))
@@ -220,7 +264,6 @@ class SPHINCS(object):
         idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
 
         # FORS sign
-        # TODO: implement ADRS and its functions!
         adrs.set_layer_addr(0)
         adrs.set_tree_addr(idx_tree)
         adrs.set_type(SPX_FORS_TREES)
@@ -235,10 +278,14 @@ class SPHINCS(object):
 
         # sign FORS public key with HT
         adrs.set_type(2)  # 2 is for TREE
-        ht = Hypertree(self.h, self.d, self.tau, self.w)
+        ht = Hypertree(self.n, self.h, self.d, self.w)
         SIG_HT = ht.ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
-        s = mpc.np_concatenate((s, SIG_HT))
+        s += SIG_HT
 
         # signature consists of R, SIG_FORS, SIG_HT - all of type secure object
-        sig = (s, M)
+        sig = util.to_secarray(pyspx.shake_256f.sign(m, sk))
+
+        # because of randomization - signature with secobj and normal should be different
+        assert sig != s
+
         return sig

@@ -1,6 +1,9 @@
 from mpyc.runtime import mpc
 from mpyc.gfpx import GFpX
 import numpy as np
+from utils import UTILS
+
+util = UTILS()
 
 triangular_numbers = tuple(i*(i+1)//2 % 64 for i in range(1, 25))
 
@@ -128,6 +131,8 @@ class SHAKE:
         :param c: security parameter / capacity(?) (default 256)
         :return: SHAKE[c//2] of M with output length d
         """
+        if isinstance(M, mpc.SecureObject):
+            M = util.to_secarray(M)
         # append 1111 to M
         N = np.concatenate((M, np.array([1, 1, 1, 1])))
         return self.keccak(c, N, d)
