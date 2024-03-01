@@ -14,10 +14,11 @@ class UTILS(object):
         :param x: input (typically string)
         :return: binary representation of type secure array in SecFld(2)
         """
-        # x should be of type string
-        bits = ''.join(format(ord(i), '08b') for i in str(x))
-        bitlist = [int(i) for i in bits]
-        return self.secfld.array(np.array(bitlist))
+        if isinstance(x, str):
+            # convert x to bytes
+            x = x.encode('utf-8')
+        x_bits = bin(int.from_bytes(x, byteorder='big')).replace("0b", "")
+        return self.secfld.array(np.array([int(i) for i in x_bits]))
 
     async def bits_to_bytestring(self, y):
         """

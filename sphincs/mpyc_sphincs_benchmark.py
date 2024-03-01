@@ -164,7 +164,6 @@ async def main():
                         secfld.array(np.array([int(i) for i in sk_ele_bit[2]])),
                         secfld.array(np.array([int(i) for i in sk_ele_bit[3]]))]
 
-
             mes = input('Give the other input here: ')
             sk = in_
 
@@ -212,7 +211,7 @@ async def main():
         sig = await sphincs.sign(inputs[0][0], inputs[1], mes, sk)
         end = time.time()
     except AssertionError:
-        raise AssertionError("The length of the message and secret key is wrong! Please restart the function!")
+        print("The length of the message and secret key is wrong! Please restart the function!")
         await mpc.shutdown()
     except SyntaxError:
         print("Secret key value generated is wrong. Please restart the function and try again!")

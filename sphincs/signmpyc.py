@@ -3,6 +3,7 @@ from math import log, floor
 import pyspx.shake_256f
 import random
 import string
+import hashlib
 import numpy as np
 from shake import SHAKE
 from sphincs_params import *
@@ -13,6 +14,7 @@ from hypertree import Hypertree
 
 # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
 seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
+shake_hash = hashlib.shake_256()
 
 # this can be set to 1 if you want the signature to be randomized (for security)
 RANDOMIZE = 0
@@ -49,15 +51,13 @@ def get_sk_ele(sk):
     return skseed, skprf, pkseed, pkroot
 
 def split_sk(key):
-    pk, sk_eval = eval(key)
-
-    sk_seed = sk_eval[:32]
-    sk_prf = sk_eval[32:64]
-    pk_seed = sk_eval[64:96]
-    pk_root = sk_eval[96:]
-
-    # inputs from bash script eliminates '\' in pk_root, so we have to fix it
-    assert len(sk_prf) == len(sk_seed) == len(pk_seed) == len(pk_root) == 32
+    key = str(key)
+    key_fixed = key.replace("x", '\\x')
+    pk, sk = eval(key_fixed)
+    sk_seed = sk[:32]
+    sk_prf = sk[32:64]
+    pk_seed = sk[64:96]
+    pk_root = sk[96:]
     return sk_seed, sk_prf, pk_seed, pk_root
 
 class SPHINCS(object):
@@ -139,7 +139,6 @@ class SPHINCS(object):
         :param sk: secret key
         :return:
         """
-        print("checking the length of inputs")
         res = []
         key_fixed = sk.replace("x", '\\x')
         pk, sk = eval(key_fixed)
@@ -154,6 +153,41 @@ class SPHINCS(object):
         assert isinstance(m, bytes)
         assert self.verify(res[3], res[0], res[1])
         return res
+
+    def digest_message(self, digest):
+        """
+        digest the message
+        :param digest: message digest
+        :return: message digest in bytes
+        """
+        """
+        digested = digest
+        digest = util.to_secarray(digest)
+        if isinstance(digest, mpc.SecureObject):
+            # split function into 3 parts
+            tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
+            tmp_idx_tree = mpc.np_split(digest, floor((self.h - (self.h / self.d) + 7) / 8))
+            tmp_idx_leaf = mpc.np_split(digest, floor(((self.h / self.d) + 7) / 8))
+
+            md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
+            idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
+            idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
+        else:
+        """
+        # split function into 3 parts
+        first = floor((self.k * self.a + 7) / 8)
+        second = first + floor((self.h - (self.h / self.d) + 7) / 8)
+        third = second + floor(((self.h / self.d) + 7) / 8)
+
+        tmp_md = digest[:first]
+        tmp_idx_tree = digest[first:second]
+        tmp_idx_leaf = digest[second:third]
+
+        md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
+        idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
+        idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
+
+        return md, idx_tree, idx_leaf
 
     def toByte(self, x: int, y: int):
         """
@@ -173,9 +207,13 @@ class SPHINCS(object):
         :return: SHAKE(sk || opt || msg, 8n)
         """
         mes = sk + opt + msg
-        return shake.shake(mes, 8 * self.n, 512)
+        mes2 = util.to_secarray(mes)
+        hash = shake.shake(mes2, 8 * self.n, 512)
+        hash_org = shake_hash.update(mes)
+        assert hash.shape == util.to_secarray(hash_org).shape
+        return
 
-    async def H_msg(self, R, pkseed, pkroot, msg):
+    def H_msg(self, R, pkseed, pkroot, msg):
         """
         hash function to generate the message digest and index
         :param R: randomness from PRF_msg
@@ -184,24 +222,37 @@ class SPHINCS(object):
         :param msg: message in Secure Object type
         :return: digest and index - SHAKE(R || PK.seed || PK.root || msg, 8m)
         """
-        assert isinstance(pkseed, bytes)
-        assert isinstance(msg, bytes)
         mes = R + pkseed + pkroot + msg
         return shake.shake(mes, 8 * self.m, 512)
 
-    def check_sk(self, sk1, sk2):
-        # checks the shape of sk and make sure they are the same with the original value
-        # TODO: fix this function 
-        print("checking the secret key")
+    def check_shape(self, sk1, sk2):
+        """
+        checks the shape of sk with the original value
+        :param sk1: secure object
+        :param sk2: in bytes (original value)
+        :return:
+        """
+        # take the elements of sk - sk = [sk.seed, sk.prf, pk.seed, pk.root]
+        try:
+            sk = split_sk(eval(sk2))
+            mes = False
+        except NameError:
+            # case message - change to list
+            sk = [sk2]
+            sk1 = [sk1]
+            mes = True
+
+        # check if the shape of sk1 is the same as sk2
         if isinstance(sk1[0], mpc.SecureObject):
             for i in range(len(sk1)):
-                print("first shape: ", sk1[i].shape)
-                print(sk2)
-                print(type(sk2))
-                print(sk2[i])
-                print("second shape: ", util.to_secarray(sk2[i]).shape)
-                assert sk1[i].shape == util.to_secarray(sk2[i]).shape
-        return sk2
+                # convert original to secure array too
+                sk_or = util.to_secarray(sk[i])
+                assert sk1[i].shape >= sk_or.shape, "The shape input is wrong!"
+
+        if mes:
+            return sk[0].encode('utf-8')
+        else:
+            return sk
 
     def PRF(self, pkseed, skseed, adrs):
         """
@@ -213,37 +264,6 @@ class SPHINCS(object):
         """
         mes = mpc.concatenate((pkseed, adrs, skseed))
         return shake.shake(mes, 8 * self.n, 512)
-
-    def digest_message(self, digest):
-        """
-        digest the message
-        :param digest: message digest
-        :return: message digest in bytes
-        """
-        if isinstance(digest, mpc.SecureObject):
-            # split function into 3 parts
-            tmp_md = mpc.np_split(digest, floor((self.k * self.a + 7) / 8))
-            tmp_idx_tree = mpc.np_split(digest, floor((self.h - (self.h / self.d) + 7) / 8))
-            tmp_idx_leaf = mpc.np_split(digest, floor(((self.h / self.d) + 7) / 8))
-
-            md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
-            idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
-            idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
-        else:
-            # split function into 3 parts
-            first = floor((self.k * self.a + 7) / 8)
-            second = first + floor((self.h - (self.h / self.d) + 7) / 8)
-            third = second + floor(((self.h / self.d) + 7) / 8)
-
-            tmp_md = digest[:first]
-            tmp_idx_tree = digest[first:second]
-            tmp_idx_leaf = digest[second:third]
-
-            print("temporary values generated here :", tmp_md)
-
-            md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
-            idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
-            idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
 
         return md, idx_tree, idx_leaf
 
@@ -285,7 +305,7 @@ class SPHINCS(object):
             raise SyntaxError("The secret key value is wrongly generated, please restart the function!")
 
         # sk = [SK.seed, SK.prf, PK.seed, PK.root]
-        skseed, skprf, pkseed, pkroot = self.check_sk(SK, eval(sk)[1])
+        skseed, skprf, pkseed, pkroot = self.check_shape(SK, sk)
 
         print("sign started")
 
@@ -300,12 +320,13 @@ class SPHINCS(object):
             # R should be concatenated to s, but since s is empty, we could just assign it directly
             s = mpc.np_copy(R)
             # compute message digest and index, digest is of type SecObj
-            digest = self.H_msg(R, pkseed, pkroot, M)
+            digest = await self.H_msg(R, pkseed, pkroot, M)
         except (ValueError, TypeError, AssertionError):
-            skseed, skprf, pkseed, pkroot = get_sk_ele(sk)
+            M = self.check_shape(M, m)
             R = await self.PRF_msg(skprf, opt, M)
-
-        digest = self.H_msg(R, pkseed, pkroot, inputs[0])
+            print(R)
+            digest = await self.H_msg(R, pkseed, pkroot, inputs[0])
+        print(digest)
         md, idx_tree, idx_leaf = self.digest_message(digest)
 
         print("digest:", digest)

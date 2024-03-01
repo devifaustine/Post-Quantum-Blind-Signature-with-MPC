@@ -131,7 +131,7 @@ class SHAKE:
         :param c: security parameter / capacity(?) (default 256)
         :return: SHAKE[c//2] of M with output length d
         """
-        if isinstance(M, mpc.SecureObject):
+        if not isinstance(M, mpc.SecureObject):
             M = util.to_secarray(M)
         # append 1111 to M
         N = np.concatenate((M, np.array([1, 1, 1, 1])))
