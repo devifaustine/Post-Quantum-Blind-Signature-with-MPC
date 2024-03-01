@@ -568,7 +568,7 @@ async def main5():
     print("input1: ", await mpc.output(inputs[1]))
     await mpc.shutdown()
 
-async def main14():
+async def main16():
     secfld = mpc.SecFld(2)
 
     await mpc.start()
@@ -621,6 +621,34 @@ async def main14():
 
     await mpc.shutdown()
 
+async def main15():
+    # test python indexing inside mpc
+    secfld = mpc.SecFld(2)
+    await mpc.start()
+
+    inputs = input("Give your input: ")
+
+    in_ = mpc.input(secfld(int(inputs)))
+
+    # here's a list and a string we try to index later
+    a = [1, 2, 3, 4, 5]
+    b = "hello"
+
+    # convert the list and string to secure objects
+    a_sec = secfld.array(np.array(a))
+    b_sec = secfld.array(np.array([ord(i) for i in b]))
+
+    b_first = b[2:]
+    a_first = a[1:]
+
+    print(a_first)
+    print(b_first)
+
+    print("a: ", await mpc.output(a_sec))
+    print("b: ", await mpc.output(b_sec))
+
+    await mpc.shutdown()
+
 # run this program with: python3 test_secobj.py -M2 -I0
 # M indicates the number of parties
 # I indicates the index of the current party
@@ -635,4 +663,4 @@ async def main14():
 #mpc.run(main12())
 #mpc.run(main13())
 #mpc.run(main14())
-mpc.run(main14())
+mpc.run(main15())

@@ -189,6 +189,20 @@ class SPHINCS(object):
         mes = R + pkseed + pkroot + msg
         return shake.shake(mes, 8 * self.m, 512)
 
+    def check_sk(self, sk1, sk2):
+        # checks the shape of sk and make sure they are the same with the original value
+        # TODO: fix this function 
+        print("checking the secret key")
+        if isinstance(sk1[0], mpc.SecureObject):
+            for i in range(len(sk1)):
+                print("first shape: ", sk1[i].shape)
+                print(sk2)
+                print(type(sk2))
+                print(sk2[i])
+                print("second shape: ", util.to_secarray(sk2[i]).shape)
+                assert sk1[i].shape == util.to_secarray(sk2[i]).shape
+        return sk2
+
     def PRF(self, pkseed, skseed, adrs):
         """
         pseudorandom function
@@ -221,7 +235,6 @@ class SPHINCS(object):
             second = first + floor((self.h - (self.h / self.d) + 7) / 8)
             third = second + floor(((self.h / self.d) + 7) / 8)
 
-            #TODO: FIX THE TYPEERROR HERE! 
             tmp_md = digest[:first]
             tmp_idx_tree = digest[first:second]
             tmp_idx_leaf = digest[second:third]
@@ -272,7 +285,7 @@ class SPHINCS(object):
             raise SyntaxError("The secret key value is wrongly generated, please restart the function!")
 
         # sk = [SK.seed, SK.prf, PK.seed, PK.root]
-        skseed, skprf, pkseed, pkroot = SK
+        skseed, skprf, pkseed, pkroot = self.check_sk(SK, eval(sk)[1])
 
         print("sign started")
 
@@ -291,9 +304,12 @@ class SPHINCS(object):
         except (ValueError, TypeError, AssertionError):
             skseed, skprf, pkseed, pkroot = get_sk_ele(sk)
             R = await self.PRF_msg(skprf, opt, M)
-            digest = self.H_msg(R, pkseed, pkroot, inputs[0])
 
+        digest = self.H_msg(R, pkseed, pkroot, inputs[0])
         md, idx_tree, idx_leaf = self.digest_message(digest)
+
+        print("digest:", digest)
+        print("md=", md)
 
         # FORS sign
         adrs.set_layer_addr(0)
