@@ -40,7 +40,6 @@ class FORS:
         :param idx: sk index = i*t+j
         :return: secret key of FORS
         """
-        # TODO: find out if copy is deep or shallow copy
         skADRS = copy.deepcopy(adrs)  # copy address to create key gen address
         skADRS.set_type(3)  # 3 = FORS tree address, 4 = FORS tree roots compression address
         skADRS.set_keypair_addr(adrs.get_keypair_addr())
@@ -112,6 +111,8 @@ class FORS:
             node = self.F(pkseed, adrs, sk)
             adrs.set_tree_height(1)
             adrs.set_tree_index(idx)
+
+            # TODO: fix the following lines of code! full of errors 
 
             while stack and stack[-1].height == node.height:
                 adrs.set_tree_index((adrs.get_tree_index() - 1) // 2)
