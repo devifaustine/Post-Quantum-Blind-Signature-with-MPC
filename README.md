@@ -1,7 +1,7 @@
 # Post-Quantum-Blind-Signature-with-MPC
 A simulation of a quantum-resistant blind signature scheme using Multi-Party Computation (MPC).
 
-PS: this repository is still under development. 
+PS: this repository is still under development and unofficial, and the code is far from perfect. It is a work in progress and is not yet ready for production use.
 
 The idea is to use [SPHINCS+](https://sphincs.org/) to compute a quantum-resistant digital signature and compute it inside the MPC, such that the parties involved do not learn anything from each other's private inputs.
 In this setting, there would only be 2 parties, the user and the signer. The signer's secret input would be the secret key, whereas the user input would be the message to be signed. These two inputs would be kept private from each other.
@@ -20,3 +20,7 @@ To run the benchmark, run the following command:
 ```
 This will run the benchmark for the MPC SPHINCS+ signature scheme, and output the results in the `results` file.
 The ```.\bench_mpc_sphincs.sh``` script first generates the messages and the key pairs for signing. It then initializes and runs two python3 instances, one for the user/requester and one for the signer. Both instances will give the right inputs into the console (the user sends the message and the signer the key pair), and the SPHINCS+ signing function in MPC begins.
+
+The `log.txt` file gives the log output of each instance of the python3 program running. The `results` file gives the time taken for the MPC SPHINCS+ signature scheme to run.
+
+PS: sometimes the key generation and message generation fail, and the script would need to be rerun. This is a known issue and is being worked on.
