@@ -90,6 +90,18 @@ class FORS:
         hash_org = hashlib.shake_256(mes).digest(8 * self.n)
         return hash, hash_org
 
+    def get_height(self, byte):
+        """
+        get the height of a tree (represented in bytes)
+        :param byte: tree
+        :return:
+        """
+        # tree height is the second word of address ADRS (4 bytes)
+        h_bytes = byte[SPX_OFFSET_TREE_INDEX + 4:SPX_OFFSET_TREE_INDEX + 8]
+        print(h_bytes)
+        h_int = int.from_bytes(h_bytes, 'big')
+        return h_int
+
     def fors_treehash(self, skseed, s, z, pkseed, adrs):
         """
         computes the root node of a FORS tree
@@ -112,16 +124,17 @@ class FORS:
             adrs.set_tree_height(1)
             adrs.set_tree_index(idx)
 
-            # TODO: fix the following lines of code! full of errors
+            if stack:
+                print(node[1])
+                print(stack[-1])
 
-            while stack and stack[-1].height == node.height:
+            # TODO: find out how to break the loop - unendliche schleife jetzt
+            # repeat whilst top node of the stack has the same height as node
+            while len(stack) > 0 and self.get_height(stack[-1]) == self.get_height(node[1]):
                 adrs.set_tree_index((adrs.get_tree_index() - 1) // 2)
-                # TODO: stack.pop() || node - concatenation here (check the types and adjust)
-                node = self.H(pkseed, adrs, (stack.pop() + node))
+                node = self.H(pkseed, adrs, (stack.pop() + node[1]))
                 adrs.set_tree_height(adrs.get_tree_height() + 1)
-
             stack.append(node[1])
-
         return stack.pop()
 
     def fors_PKgen(self, skseed, pkseed, adrs):
