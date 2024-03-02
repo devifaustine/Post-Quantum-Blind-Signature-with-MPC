@@ -1,21 +1,42 @@
-Success
-2024-03-01 00:42:07,573 Start MPyC runtime v0.9.9
-2024-03-01 00:42:07,576 Start MPyC runtime v0.9.9
-2024-03-01 00:42:07,684 All 2 parties connected.
-Give your input here: 2024-03-01 00:42:07,684 All 2 parties connected.
-Give your input here: here's your payload:  ACCPJHAHNJJH5MNHN1XOZWRY62DNXMZNWV8MXLQIAGNMOD0ZHE8BRY910OE
+2024-03-02 00:41:34,158 Start MPyC runtime v0.9.9
+2024-03-02 00:41:34,233 Start MPyC runtime v0.9.9
+2024-03-02 00:41:34,288 All 2 parties connected.
+Give your input here: 2024-03-02 00:41:34,288 All 2 parties connected.
+Give your input here: here's your payload:  BLKHR5L9RMB7GANYLJL5MPD9XPS947F9TW2BP9M
 The given input is a message!
-Give the other input here: here's your payload:  (b"SJ9VAPH7C4A8RE37C308RHTEA11W5X0E?xefxd1xd2a'B2x9f7xe5yxd3 xd8xefx10.}xcc7x9cx88xc0x95xe0[xf2xbb=xd6p", b"2Q8FHU86LT76TSB7M6493HYW9SNJTL1RAYE3VY35W4YTNNUONEWCCAGK4P9KXAEOSJ9VAPH7C4A8RE37C308RHTEA11W5X0E?xefxd1xd2a'B2x9f7xe5yxd3 xd8xefx10.}xcc7x9cx88xc0x95xe0[xf2xbb=xd6p")
+Give the other input here: here's your payload:  (b'QIY87TS0HRTBU7TKIM4WSDPGB362J9G5*ixa1,xdcx9cxf6xeexedMI&uJzxe5x94xa9xe4xdfxc0|xa2x00Lxacx05dxacxb3xb7x10', b'KGSFONXJFA6NH6CLRMVBSVN1JCWH4CQQ5VUW6WWJGIUPPAAFRWVOK036ZB6UCY02QIY87TS0HRTBU7TKIM4WSDPGB362J9G5*ixa1,xdcx9cxf6xeexedMI&uJzxe5x94xa9xe4xdfxc0|xa2x00Lxacx05dxacxb3xb7x10')
 The given input is a secret key!
-Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dd2caf4c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc7159f90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc7159f60>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc7159840>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b190>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b1f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b220>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b250>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b1c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b2b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc715b2e0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f4dc7133c40>]]
+Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a286af040>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4faf0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4f5b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4f580>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4f9a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4fa00>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4fc10>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4fb20>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4f6a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4f160>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4f100>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb4f130>]]
 
 Signing process begins now...
-checking the length of inputs
 sign started
-here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33b80>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33c70>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33ca0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33c40>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33af0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33b50>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33bb0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33790>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab33b20>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab335b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f1ab335e0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f8f226af4c0>]]
+R: (<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f2a1cb7fdf0>, b'\xb4\xaa\x05\x9f\x1e2\xb0\xba\xa2\xa2\xf3\x961\x17\xe1\x1a\x8c\x018\xa9d\x1b\xe9-\x0c;J\xb5\x01,?yo\x02\xcf\xc3\xc9\xcb`\xafp\x9ft\xd1m\xdf5\xa1\'\x88\xfc\xd2\xb0\xfc`Nr\xad\xe2\xfa]Wr\x1b\x8cW1\x96UL~\x94\x98_\x16;\x10\xb6\x9f\xa4\xa7y0\xf3\x01p\xed(\xe2~\xd0\x11+\xa4:\xe2aj\xae17\xe3\x98\xcd\xa5\x07\x97B#\xfd\xd9\xee\x8a\xb5n|\xe5<g\x92_\x08\tO\xe0\xe3\x1f\x15r\xaf\x15\xdb~o\x7fj\xab\x7f\xcd\xc6\x9a\xc5\xad\xeb\xe5\x96\xf7HT\xe5Z\x85\\}\n\xd0\x99\x80\xfc\xc8[l\x84\xfan\x80^\x8f\xaeu\x08\xdbCtt\xf4\x15Eq8Z\xe4\xa3\xe8"\xcdI:\xf3\xca\xc7\xd4\x9csy\xd3\x1d\xf8\xb9NON\xff\x1e\xf7f3`\xd6C@.T\x8c\x8a\xec\xb1\xb7\x16\xe4\xfb\xe8t}\x94\xa7\x82\x16\x99\r!!dP\xa9\'\r}\x9d\xb9\x05t\xa7=4\x883\x02\xbb<i\xd1j\xfdb"')
+b'\xe0R\xeeI\xbe\xc5\xde\xd36'
+<class 'bytes'>
+here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f1477caf040>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b5bd0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b5ba0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b53c0>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b6dd0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b6e30>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b6e60>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b6e90>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b6e00>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b6ef0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1b6f20>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f146c1875e0>]]
 
 Signing process begins now...
-checking the length of inputs
 sign started
+The length of the message and secret key is wrong! Please restart the function!
+2024-03-02 00:41:34,554 Unhandled exception in event loop
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 461, in <lambda>
+    task.add_done_callback(lambda t: _reconcile(decl, t))
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 385, in _reconcile
+    givn = task.result()
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 313, in _wrap_in_coro
+    return await awaitable
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 301, in __await__
+    val = self.coro.send(None)
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 488, in _distribute
+    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/runtime.py", line 488, in <listcomp>
+    y = [[field.array(unmarshal(r), check=False).reshape(shape)] for r in shares]
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/finfields.py", line 1287, in reshape
+    return type(self)(self.value.reshape(*args, **kwargs), check=False)
+ValueError: cannot reshape array of size 312 into shape (256,)
+Traceback (enclosing MPyC coroutine call):
