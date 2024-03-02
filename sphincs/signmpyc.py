@@ -345,7 +345,7 @@ class SPHINCS(object):
         # FORS sign
         adrs.set_layer_addr(0)
         adrs.set_tree_addr(idx_tree)
-        adrs.set_type(SPX_FORS_TREES)
+        adrs.set_type(3)  # 3 = FORS tree 
         adrs.set_keypair_addr(idx_leaf)
 
         SIG_FORS = fors.fors_sign(md, skseed, pkseed, adrs)
