@@ -112,7 +112,7 @@ class FORS:
             adrs.set_tree_height(1)
             adrs.set_tree_index(idx)
 
-            # TODO: fix the following lines of code! full of errors 
+            # TODO: fix the following lines of code! full of errors
 
             while stack and stack[-1].height == node.height:
                 adrs.set_tree_index((adrs.get_tree_index() - 1) // 2)

@@ -22,9 +22,6 @@ run_benchmark() {
   done > log.txt
 }
 
-run_benchmark
-set -e
-
 exit_code=$?
 
 while true; do
