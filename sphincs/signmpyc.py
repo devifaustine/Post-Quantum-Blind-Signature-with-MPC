@@ -183,9 +183,13 @@ class SPHINCS(object):
         tmp_idx_tree = digest[first:second]
         tmp_idx_leaf = digest[second:third]
 
-        md = tmp_md[self.k * self.a]  # first ka bits of tmp_md
-        idx_tree = tmp_idx_tree[self.h - (self.h / self.d)]  # first h - h/d bits of tmp_idx_tree
-        idx_leaf = tmp_idx_leaf[self.h / self.d]  # first h/d bits of tmp_idx_leaf
+        first = int(self.k * self.a)
+        second = int(self.h - (self.h // self.d))
+        third = int(self.h // self.d)
+
+        md = tmp_md[:first]  # first ka bits of tmp_md
+        idx_tree = tmp_idx_tree[:second]  # first h - h/d bits of tmp_idx_tree
+        idx_leaf = tmp_idx_leaf[:third]  # first h/d bits of tmp_idx_leaf
 
         return md, idx_tree, idx_leaf
 
@@ -209,11 +213,11 @@ class SPHINCS(object):
         mes = sk + opt + msg
         mes2 = util.to_secarray(mes)
         hash = shake.shake(mes2, 8 * self.n, 512)
-        hash_org = shake_hash.update(mes)
-        assert hash.shape == util.to_secarray(hash_org).shape
-        return
+        shake_hash.update(mes)
+        digest = shake_hash.digest(8 * self.n)
+        return hash, digest
 
-    def H_msg(self, R, pkseed, pkroot, msg):
+    async def H_msg(self, R, pkseed, pkroot, msg):
         """
         hash function to generate the message digest and index
         :param R: randomness from PRF_msg
@@ -223,7 +227,10 @@ class SPHINCS(object):
         :return: digest and index - SHAKE(R || PK.seed || PK.root || msg, 8m)
         """
         mes = R + pkseed + pkroot + msg
-        return shake.shake(mes, 8 * self.m, 512)
+        res = shake.shake(mes, 8 * self.m, 512)
+        shake_hash.update(mes)
+        digest = shake_hash.digest(8 * self.n)
+        return res, digest
 
     def check_shape(self, sk1, sk2):
         """
@@ -320,17 +327,12 @@ class SPHINCS(object):
             # R should be concatenated to s, but since s is empty, we could just assign it directly
             s = mpc.np_copy(R)
             # compute message digest and index, digest is of type SecObj
-            digest = await self.H_msg(R, pkseed, pkroot, M)
+            digest = await self.H_msg(R[1], pkseed, pkroot, M)
         except (ValueError, TypeError, AssertionError):
             M = self.check_shape(M, m)
             R = await self.PRF_msg(skprf, opt, M)
-            print(R)
-            digest = await self.H_msg(R, pkseed, pkroot, inputs[0])
-        print(digest)
-        md, idx_tree, idx_leaf = self.digest_message(digest)
-
-        print("digest:", digest)
-        print("md=", md)
+            digest = await self.H_msg(R[1], pkseed, pkroot, inputs[0])
+        md, idx_tree, idx_leaf = self.digest_message(digest[1])
 
         # FORS sign
         adrs.set_layer_addr(0)
@@ -339,7 +341,7 @@ class SPHINCS(object):
         adrs.set_keypair_addr(idx_leaf)
 
         SIG_FORS = fors.fors_sign(md, skseed, pkseed, adrs)
-        # TODO: pay attention to type of SIG_FORS and make sure concat works!
+
         try:
             s = mpc.np_concatenate((s, SIG_FORS))
         except:

@@ -1,9 +1,11 @@
 # implement FORS in SPHINCS+
+import hashlib
 
 from sphincs_params import *
 from address import ADRS
 from shake import SHAKE
 from math import log, floor
+import copy
 
 shake = SHAKE()
 y = 0
@@ -25,9 +27,10 @@ class FORS:
         :param addr: address
         :return: PRF
         """
-        # TODO: where does addr come in play? what is it used for? - check prf_addr in sphincsplus and compare
-        res = shake.shake(key, self.n, 512)
-        return res
+        mes = addr.get_address() + key
+        res = shake.shake(mes, self.n, 512)
+        sk = hashlib.shake_256(mes).digest(self.n)
+        return res, sk
 
     def fors_SKgen(self, skseed, adrs, idx):
         """
@@ -38,15 +41,16 @@ class FORS:
         :return: secret key of FORS
         """
         # TODO: find out if copy is deep or shallow copy
-        skADRS = adrs.copy() # copy address to create key gen address
-        skADRS.set_type(3) # 3 = FORS tree address, 4 = FORS tree roots compression address
+        skADRS = copy.deepcopy(adrs)  # copy address to create key gen address
+        skADRS.set_type(3)  # 3 = FORS tree address, 4 = FORS tree roots compression address
         skADRS.set_keypair_addr(adrs.get_keypair_addr())
 
         skADRS.set_tree_height(0) # height of the tree
-        skADRS.set_tree_index(idx)
-        sk = self.prf_addr(skseed, skADRS) # generate sk using PRF
+        idx_bytes = idx.to_bytes(4, 'big')
+        skADRS.set_tree_index(idx_bytes)
+        sk = self.prf_addr(skseed, skADRS)  # generate sk using PRF
 
-        return sk
+        return sk[1]
 
     def F(self, pkseed, adrs, m1):
         """
@@ -56,10 +60,10 @@ class FORS:
         :param m1:
         :return: the hash value
         """
-        # TODO: find out how to combine all these values below to mes
-        mes = pkseed + adrs + m1
+        mes = pkseed + adrs.get_address() + m1
         hash = shake.shake(mes, 8 * self.n, 512)
-        return hash
+        hash_org = hashlib.shake_256(mes).digest(8 * self.n)
+        return hash, hash_org
 
     def H(self, pkseed, adrs, m):
         """
@@ -69,9 +73,10 @@ class FORS:
         :param m: m1 || m2
         :return: the hash value
         """
-        mes = pkseed + adrs + m
+        mes = pkseed + adrs.get_address() + m
         hash = shake.shake(mes, 8 * self.n, 512)
-        return hash
+        hash_org = hashlib.shake_256(mes).digest(8 * self.n)
+        return hash, hash_org
 
     def fors_treehash(self, skseed, s, z, pkseed, adrs):
         """
@@ -101,7 +106,7 @@ class FORS:
                 node = self.H(pkseed, adrs, (stack.pop() + node))
                 adrs.set_tree_height(adrs.get_tree_height() + 1)
 
-            stack.append(node)
+            stack.append(node[1])
 
         return stack.pop()
 
@@ -123,7 +128,7 @@ class FORS:
         forspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.F(pkseed, forspkAdrs, root)
 
-        return pk
+        return pk[1]
 
     def fors_sign(self, m, skseed, pkseed, adrs):
         """
@@ -138,19 +143,23 @@ class FORS:
 
         # compute signature elements
         for i in range(self.k):
+            # convert message m to bits
+            m_bits = ''.join(format(byte, '08b') for byte in m)
             # get next index
-            idx_start = i * int(log(self.t, 2))
-            idx_end = (i + 1) * int(log(self.t, 2))
-            idx = int(m[idx_start:idx_end], 2)
+            idx_start = int(i * (log(self.t, 2)))
+            idx_end = int((i + 1) * (log(self.t, 2)))
+            idx = m_bits[idx_start:idx_end] # index is bytestring
+            int_id = int(idx, 2)
 
             # pick private key element
-            sk_element = self.fors_SKgen(skseed, adrs, i * self.t + idx)
+            sk_element = self.fors_SKgen(skseed, adrs, i * self.t + int_id)
             sig_fors += sk_element
+
 
             # compute auth path
             auth = b''
-            for j in range(self.a):
-                s = floor(idx / (2 ** j)) ^ 1
+            for j in range(int(self.a)):
+                s = floor(int_id / (2 ** j)) ^ 1
                 auth += self.fors_treehash(skseed, i * self.t + s * (2 ** j), j, pkseed, adrs)
 
             sig_fors += auth

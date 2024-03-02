@@ -9,9 +9,11 @@ adrs.setType(adrs.WOTS_HASH)
 print("adrs =", adrs.toHex())
 adrs = ADRS.fromHex("1528daecdc86eb8761030000000200000002000000d")
 
+1 word = 32 bits = 4 bytes 
+
 Format: 
 layer   treeaddr    type    word1       word2       word3
-[1]     [8]         [1]     [4]         [4]         [4]
+[1]     [3]         [1]     [1]         [1]         [1]
 
 0       1            9          10           14           18 # byte offsets
 0       2            18         20           28           36  # hex offsets
@@ -29,7 +31,7 @@ Type                         |   Word 1  |   Word 2  |   Word 3  |   Type Consta
 """
 
 class ADRS:
-    def __init__(self, adrs=b'', adrs_type=0, layer=0, treeaddr=0, word1=0, word2=0, word3=0):
+    def __init__(self, adrs=b''):
         """
         initializes the address
         :param adrs: bytestring of size SPX_ADDR_BYTES (32) or None
@@ -43,22 +45,14 @@ class ADRS:
         if adrs != b'':
             assert len(adrs) == 32
             self.adrs = adrs
-            self.adrs_type = adrs[SPX_OFFSET_TYPE]
-            self.layer = adrs[SPX_OFFSET_LAYER]
-            self.treeaddr = int.from_bytes(adrs[SPX_OFFSET_TREE:SPX_OFFSET_TREE+8], byteorder='big')
-            self.word1 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX+4], byteorder='big')
-            self.word2 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX+4:SPX_OFFSET_TREE_INDEX+8], byteorder='big')
-            self.word3 = int.from_bytes(adrs[SPX_OFFSET_TREE_INDEX+8:SPX_OFFSET_TREE_INDEX+12], byteorder='big')
         else:
-            self.adrs = layer.to_bytes(1, 'big') + treeaddr.to_bytes(8, 'big') + \
-                        adrs_type.to_bytes(1, 'big') + word1.to_bytes(4, 'big') + \
-                        word2.to_bytes(4, 'big') + word3.to_bytes(4, 'big')
-            self.adrs_type = adrs_type
-            self.layer = layer
-            self.treeaddr = treeaddr
-            self.word1 = word1
-            self.word2 = word2
-            self.word3 = word3
+            self.adrs = b'\x00' * SPX_ADDR_BYTES
+        self.adrs_type = adrs[SPX_OFFSET_TYPE:SPX_OFFSET_TYPE + 4]
+        self.layer = adrs[SPX_OFFSET_LAYER:SPX_OFFSET_LAYER + 4]
+        self.treeaddr = adrs[SPX_OFFSET_TREE:SPX_OFFSET_TREE + 8]
+        self.word1 = adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX + 4]
+        self.word2 = adrs[SPX_OFFSET_TREE_INDEX + 4:SPX_OFFSET_TREE_INDEX + 8]
+        self.word3 = adrs[SPX_OFFSET_TREE_INDEX + 8:SPX_OFFSET_TREE_INDEX + 12]
 
     def toHex(self):
         """
@@ -71,6 +65,9 @@ class ADRS:
                 format(self.word1, f'x').zfill(8) + format(self.word2, f'x').zfill(8) +
                 format(self.word3, f'x').zfill(8))
 
+    def __str__(self):
+        # Convert bytes to string using decode
+        return self.adrs.decode('utf-8')
 
     def __repr__(self):
         """
@@ -79,12 +76,19 @@ class ADRS:
         """
         return self.adrs
 
+    def get_address(self):
+        """
+        get the address
+        :return:
+        """
+        return self.adrs
+
     def update_adrs(self):
         """
         update the address adrs from its components
         :return: self
         """
-        self.adrs = str(self.layer) + str(self.treeaddr) + str(self.adrs_type) + str(self.word1) + str(self.word2) + str(self.word3)
+        self.adrs = self.layer.to_bytes(4, 'big') + self.treeaddr + self.adrs_type + self.word1 + self.word2 + self.word3
         return self
 
     def update_comp(self):
@@ -115,12 +119,14 @@ class ADRS:
         word3 = int(hex_str[36:], 16)
         return cls(b'', adrs_type, layer, treeaddr, word1, word2, word3)
 
-    def copy(self):
+    def copy(self, adrs):
         """
         copy the address
         :return: the copied address
         """
-        return ADRS(self.adrs)
+        new_adr = ADRS(adrs)
+        print("new address: ", new_adr)
+        return new_adr
 
     def pad(self, value, length):
         """
@@ -161,9 +167,12 @@ class ADRS:
         :param tree: merkle tree
         :return:
         """
-        if (SPX_TREE_HEIGHT * (SPX_D - 1)) > 64:
-            raise ValueError("Subtree addressing is currently limited to at most 2^64 trees")
-        self.adrs[SPX_OFFSET_TREE:SPX_OFFSET_TREE+8] = tree.to_bytes(8, 'big')
+        if not isinstance(tree, bytes):
+            tree = tree.to_bytes(8, 'big')
+        #if (SPX_TREE_HEIGHT * (SPX_D - 1)) > 64:
+        #    raise ValueError("Subtree addressing is currently limited to at most 2^64 trees")
+        self.treeaddr = tree
+        self.update_adrs()
         return self
 
 
@@ -186,11 +195,8 @@ class ADRS:
         :param keypair: keypair
         :return:
         """
-        if SPX_FULL_HEIGHT/SPX_D > 8:
-            # We have > 256 OTS at the bottom of the Merkle tree; to specify
-            # which one, we'd need to express it in two bytes
-            self.adrs[SPX_OFFSET_KP_ADDR2] = keypair >> 8
-        self.adrs[SPX_OFFSET_KP_ADDR1] = keypair & 0xff
+        self.word1 = keypair
+        self.update_adrs()
         return self
 
     def copy_keypair_addr(self, in_):
@@ -212,17 +218,19 @@ class ADRS:
         :param chain: merkle chain
         :return:
         """
-        self.adrs[SPX_OFFSET_CHAIN_ADDR] = chain
+        self.word2 = chain
+        self.update_adrs()
         return self
 
-    def set_hash_addr(self, hash):
+    def set_hash_addr(self, hash_):
         """
         Specify where in the Merkle chain we are
         (the hash address)
-        :param hash: hash
+        :param hash_: hash
         :return:
         """
-        self.adrs[SPX_OFFSET_HASH_ADDR] = hash
+        self.word3 = hash_
+        self.update_adrs()
         return self
 
     # These functions are used for all hash tree addresses (including FORS).
@@ -232,7 +240,7 @@ class ADRS:
         Get the key pair address
         :return: key pair address
         """
-        return self.adrs[SPX_OFFSET_KP_ADDR1]
+        return self.word1
 
     def set_tree_height(self, tree_height):
         """
@@ -241,7 +249,10 @@ class ADRS:
         :param tree_height: tree height
         :return: changed address
         """
-        self.adrs[SPX_OFFSET_TREE_HGT] = tree_height
+        if isinstance(tree_height, int):
+            tree_height = tree_height.to_bytes(4, 'big')
+        self.word2 = tree_height
+        self.update_adrs()
         return self
 
     def set_tree_index(self, tree_index):
@@ -251,8 +262,10 @@ class ADRS:
         :param tree_index: tree index
         :return: changed address
         """
-        self.adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX+4] = tree_index.to_bytes(4, 'big')
-        self.update_comp()
+        if isinstance(tree_index, int):
+            tree_index = tree_index.to_bytes(4, 'big')
+        self.word3 = tree_index
+        self.update_adrs()
         return self
 
     def get_tree_index(self):
@@ -260,4 +273,4 @@ class ADRS:
         Get the tree index
         :return: tree index
         """
-        return int.from_bytes(self.adrs[SPX_OFFSET_TREE_INDEX:SPX_OFFSET_TREE_INDEX+4], 'big')
+        return self.word3
