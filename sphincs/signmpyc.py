@@ -22,6 +22,13 @@ shake = SHAKE()
 secfld = mpc.SecFld(2)
 util = UTILS()
 
+# convert logging to False if not wanted
+logging = True
+
+def xprint(string):
+    if logging: 
+        print(string)
+
 def get_pk_ele(pk):
     """
     gets pk elements from the public key
@@ -314,7 +321,7 @@ class SPHINCS(object):
         # sk = [SK.seed, SK.prf, PK.seed, PK.root]
         skseed, skprf, pkseed, pkroot = self.check_shape(SK, sk)
 
-        print("sign started")
+        xprint("sign started")
 
         # generate randomizer - default to pkseed and not randomized
         opt = pkseed
@@ -333,6 +340,7 @@ class SPHINCS(object):
             R = await self.PRF_msg(skprf, opt, M)
             digest = await self.H_msg(R[1], pkseed, pkroot, inputs[0])
         md, idx_tree, idx_leaf = self.digest_message(digest[1])
+        xprint("message digested.")
 
         # FORS sign
         adrs.set_layer_addr(0)
@@ -341,6 +349,7 @@ class SPHINCS(object):
         adrs.set_keypair_addr(idx_leaf)
 
         SIG_FORS = fors.fors_sign(md, skseed, pkseed, adrs)
+        xprint("FORS signature generated.")
 
         try:
             s = mpc.np_concatenate((s, SIG_FORS))
@@ -361,5 +370,5 @@ class SPHINCS(object):
 
         # because of randomization - signature with secobj and normal should be different
         assert sig != s
-        # TODO: change this to s
+        
         return sig

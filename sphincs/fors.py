@@ -7,6 +7,13 @@ from shake import SHAKE
 from math import log, floor
 import copy
 
+# change to false if no log wanted
+logging = True 
+
+def xprint(string):
+    if logging: 
+        print(string)
+
 shake = SHAKE()
 y = 0
 address = ADRS(y.to_bytes(32, 'big'))
@@ -47,8 +54,11 @@ class FORS:
         skADRS.set_tree_height(0) # height of the tree
         idx_bytes = idx.to_bytes(4, 'big')
         skADRS.set_tree_index(idx_bytes)
-        sk = self.prf_addr(skseed, skADRS)  # generate sk using PRF
-
+        try: 
+            sk = self.prf_addr(skseed, skADRS)  # generate sk using PRF
+        except:
+            xprint("fail during orf function for adrs.")
+        xprint("fors sk generated")
         return sk[1]
 
     def F(self, pkseed, adrs, m1):
@@ -128,6 +138,7 @@ class FORS:
                 node = self.H(pkseed, adrs, (stack.pop() + node[1]))
                 adrs.set_tree_height(int.from_bytes(adrs.get_tree_height(), 'big') + 1)
             stack.append(node[1])
+        xprint("fors treehash generated.")
         return stack.pop()
 
     def fors_PKgen(self, skseed, pkseed, adrs):
@@ -147,7 +158,7 @@ class FORS:
         forspkAdrs.set_type(4)
         forspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.F(pkseed, forspkAdrs, root)
-
+        xprint("fors pk generated.")
         return pk[1]
 
     def fors_sign(self, m, skseed, pkseed, adrs):
@@ -182,7 +193,7 @@ class FORS:
                 auth += self.fors_treehash(skseed, i * self.t + s * (2 ** j), j, pkseed, adrs)
 
             sig_fors += auth
-
+        xprint("fors signature generated.")
         return sig_fors
 
     def fors_pkFromSig(self, sig_fors, m, pkseed, adrs):
@@ -230,5 +241,6 @@ class FORS:
         forspkADRS.set_type(4)  # 4 = FORS roots
         forspkADRS.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.Tk(pkseed, forspkADRS, root)
+        xprint("fors verification done.")
         return pk[1]
 
