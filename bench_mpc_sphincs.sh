@@ -18,22 +18,26 @@ run_benchmark() {
       $m"&
     done
   done > log.txt
+  set -e
 }
+
+echo "Benchmark started."
+run_benchmark
 
 exit_code=$?
 
-while true; do
-  run_benchmark
-  exit_code=$?
+#while true; do
+#  run_benchmark
+#  exit_code=$?
 
-  if [ $exit_code -eq 0 ]; then
-    echo "Running benchmark again."
-  else
-    echo "Benchmark successful."
-    break
-  fi
-done
+#  if [ $exit_code -eq 0 ]; then
+#    echo "Running benchmark again."
+#  else
+#    echo "Benchmark successful."
+#    break
+#  fi
+#done
 
 #  or put the result table benchmark in the log.txt file
 # exit the script
-set -e
+#set -e
