@@ -6,9 +6,11 @@ from address import ADRS
 from shake import SHAKE
 from math import log, floor
 import copy
+import time 
 
 # change to false if no log wanted
 logging = True 
+timer = 10
 
 def xprint(string):
     if logging: 
@@ -131,7 +133,6 @@ class FORS:
             adrs.set_tree_height(1)
             adrs.set_tree_index(idx)
 
-            # TODO: terminated whilst generating authentication path - why? 
             # repeat whilst top node of the stack has the same height as node
             while len(stack) > 0 and self.get_height(stack[-1]) == self.get_height(node[1]):
                 adrs.set_tree_index((int.from_bytes(adrs.get_tree_index(), 'big') - 1) // 2)
@@ -170,7 +171,7 @@ class FORS:
         :return: FORS signature SIG_FORS
         """
         sig_fors = b''
-
+        start_time = time.time() 
         # compute signature elements
         for i in range(self.k):
             # convert message m to bits
@@ -187,7 +188,6 @@ class FORS:
             sk_element = self.fors_SKgen(skseed, adrs, i * self.t + int_id)
             sig_fors += sk_element
 
-            auth = []
             # compute auth path
             for j in range(int(self.a)):
                 s = floor(int_id / (2 ** j)) ^ 1
@@ -195,9 +195,9 @@ class FORS:
                 idx_i = i * self.t + s * (2 ** j)
                 print("idx: ", idx_i)
                 # concat the authentication path 
-                auth += self.fors_treehash(skseed, idx_i, j, pkseed, adrs)
-        for x in auth: 
-            sig_fors += x
+                sig_fors += self.fors_treehash(skseed, idx_i, j, pkseed, adrs)
+            if time.time() - start_time >= timer: 
+                break
         xprint("fors signature generated.")
         return sig_fors
 
@@ -234,10 +234,10 @@ class FORS:
             for j in range(int(self.a)):
                 adrs.set_tree_height(j+1)
                 if floor(idx_int / ( 2 ** j)) % 2 == 0:
-                    adrs.set_tree_index(adrs.get_tree_index() // 2)
+                    adrs.set_tree_index(int.from_index(adrs.get_tree_index()) // 2)
                     node.append(self.H(pkseed, adrs, (node[0]+auth[j])))
                 else:
-                    adrs.set_tree_index((adrs.get_tree_index() -1) / 2)
+                    adrs.set_tree_index((int.from_index(adrs.get_tree_index()) -1) // 2)
                     node.append(self.H(pkseed, adrs, (auth[j] + node[0])))
                 node[0] = node[1]
             root.append(node[0])

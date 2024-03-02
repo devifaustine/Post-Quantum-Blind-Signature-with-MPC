@@ -354,7 +354,8 @@ class SPHINCS(object):
         try:
             s = mpc.np_concatenate((s, SIG_FORS))
         except:
-            s += SIG_FORS
+            sig_fors = util.to_secarray(SIG_FORS)
+            s = mpc.np_concatenate((s, sig_fors))
 
         # get FORS public key
         PK_FORS = fors.fors_pkFromSig(SIG_FORS, md, pkseed, adrs)
