@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#TODO: these will be the parameters (256 bytes or something and the messages or sk that will change for each loop
-
 run_benchmark() {
   # split array input by newlines
   IFS=$'\n'
@@ -36,7 +34,6 @@ while true; do
   fi
 done
 
-# TODO: make a table output in the command line for the results
 #  or put the result table benchmark in the log.txt file
 # exit the script
 set -e
