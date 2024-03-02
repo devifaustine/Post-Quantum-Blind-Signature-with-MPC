@@ -65,6 +65,19 @@ class FORS:
         hash_org = hashlib.shake_256(mes).digest(8 * self.n)
         return hash, hash_org
 
+    def Tk(self, pkseed, adrs, m):
+        """
+        computes shake256(pkseed || adrs || m, 8n)
+        :param pkseed: SPHINCS+ public seed
+        :param adrs: address
+        :param m: message to be hashed
+        :return: hashed values
+        """
+        mes = pkseed + adrs.get_address() + m
+        hash = shake.shake(mes, 8 * self.n, 512)
+        hash_org = hashlib.shake_256(mes).digest(8 * self.n)
+        return hash, hash_org
+
     def H(self, pkseed, adrs, m):
         """
         computes shake256(pkseed||adrs||m, 8n)
@@ -175,15 +188,41 @@ class FORS:
         :param adrs: address ADRS
         :return: PK seed of FORS
         """
+        node = []
+        root = []
         # compute roots
         for i in range(self.k):
             # get the next index from bits i*log(t) to (i+1)*log(t) - 1 of message m
+            # convert message to bit repr
+            m_bits = ''.join(format(byte, '08b') for byte in m)
             idx_start = i * int(log(self.t, 2))
             idx_end = (i + 1) * int(log(self.t, 2))
+            idx = m_bits[idx_start:idx_end]
+            idx_int = int(idx, 2)
 
             # compute leaf
             sk = sig_fors[i * 2 * self.n: (2 * i + 1) * self.n]
             adrs.set_tree_height(0)
-            raise NotImplementedError
-            #adrs.set_tree_index(i * self.t + ) # use index here - TODO: check if indexing above is correct
+            adrs.set_tree_index(idx_int + self.t * i)
+            node.append(self.F(pkseed, adrs, sk))
+
+            # compute root from leaf and auth
+            auth = sig_fors[(i + 1) * self.n:(i + 1) * (self.n * 2)]
+            adrs.set_tree_index(i * self.t + idx_int)
+            for j in range(int(self.a)):
+                adrs.set_tree_height(j+1)
+                if floor(idx_int / ( 2 ** j)) % 2 == 0:
+                    adrs.set_tree_index(adrs.get_tree_index() // 2)
+                    node.append(self.H(pkseed, adrs, (node[0]+auth[j])))
+                else:
+                    adrs.set_tree_index((adrs.get_tree_index() -1) / 2)
+                    node.append(self.H(pkseed, adrs, (auth[j] + node[0])))
+                node[0] = node[1]
+            root.append(node[0])
+        forspkADRS = copy.deepcopy(adrs)  # copy address to create FTS pubkey address
+
+        forspkADRS.set_type(4)  # 4 = FORS roots
+        forspkADRS.set_keypair_addr(adrs.get_keypair_addr())
+        pk = self.Tk(pkseed, forspkADRS, root)
+        return pk[1]
 
