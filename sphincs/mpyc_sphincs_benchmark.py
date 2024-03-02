@@ -39,6 +39,8 @@ def split_sk(key):
     """
     # every element has length 32 bytes
     key_fixed = key.replace("x", '\\x')
+    key_fixed = key_fixed.replace("r", '\\r')
+    key_fixed = key_fixed.replace("n", '\\n')
     pk, sk_eval = eval(key_fixed)
 
     sk_seed = sk_eval[:32]
@@ -182,10 +184,14 @@ async def main():
                        secfld.array(np.array([]))]      # secret-shared input message bits in list
             mes = in_
             sk = input('Give the other input here: ')
-
+    except TypeError: 
+        print("Something went wrong in splitting the sk. Try Again!")
+        await mpc.shutdown()
+        return
     except ValueError:
         print("Payload invalid. check_type failed to recognize the pattern. Try Again!")
         await mpc.shutdown()
+        return
 
     # both parties share their inputs using mpc.input() - Shamir's Secret Sharing Scheme
     inputs = mpc.input(payload)
@@ -213,12 +219,15 @@ async def main():
     except AssertionError:
         print("The length of the message and secret key is wrong! Please restart the function!")
         await mpc.shutdown()
+        #return
     except SyntaxError:
         print("Secret key value generated is wrong. Please restart the function and try again!")
         await mpc.shutdown()
+        #return
     except (NotImplementedError, AttributeError, ValueError, RuntimeError):
         print("Error during signing process. Try Again!")
         await mpc.shutdown()
+        #return 
 
     print("Signature generated!\nHere is the signature: ", await mpc.output(sig))
     end_out = time.time()
