@@ -255,6 +255,13 @@ class ADRS:
         self.update_adrs()
         return self
 
+    def get_tree_height(self):
+        """
+        Get the tree height
+        :return: tree height
+        """
+        return self.word2
+
     def set_tree_index(self, tree_index):
         """
         Specify the distance from the left edge of the node in the Merkle/FORS tree

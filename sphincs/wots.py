@@ -1,8 +1,9 @@
 # Implements the WOTS+ class
-
+import copy
 from math import log, ceil, floor
 from shake import SHAKE
 from sphincs_params import *
+import hashlib
 
 shake = SHAKE()
 
@@ -66,10 +67,11 @@ class WOTS:
         :param x:
         :return:
         """
-        # TODO: mes has to be adjusted accordingly as it is of type SecObj
+        # TODO: check
         mes = skseed + adrs + x
         res = shake.shake(mes, 8 * self.n, 512)
-        return res
+        digest = hashlib.shake_256(mes).digest(8 * self.n)
+        return res, digest
 
     def wots_SKgen(self, skseed, adrs):
         """
@@ -78,8 +80,7 @@ class WOTS:
         :param adrs: address ADRS
         :return: secret key sk of WOTS+
         """
-        # TODO: fix copy deep / shallow and adjust accordingly
-        skAdrs = adrs.copy()
+        skAdrs = copy.deepcopy(adrs)
         skAdrs.set_type(1)  # 1 is for WOTS+ public key compression address (type + keypairadr + padding 0)
 
         raise NotImplementedError("Not yet implemented")
@@ -113,9 +114,8 @@ class WOTS:
         :param adrs: address ADRS
         :return: WOTS+ public key
         """
-        # TODO: check copy() function deep/shallow
-        wotspkAdrs = adrs.copy()  # copy address to create OTS pubkey address
-        skadrs = adrs.copy()  # copy address to create key gen address
+        wotspkAdrs = copy.deepcopy(adrs)  # copy address to create OTS pubkey address
+        skadrs = copy.deepcopy(adrs)  # copy address to create key gen address
         skadrs.set_type(1)  # 1 is for WOTS+ public key compression address (type + keypairadr + padding 0)
         skadrs.set_keypair_addr(adrs.get_keypair_addr())
 
