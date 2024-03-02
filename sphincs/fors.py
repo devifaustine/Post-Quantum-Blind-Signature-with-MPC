@@ -94,13 +94,10 @@ class FORS:
         """
         get the height of a tree (represented in bytes)
         :param byte: tree
-        :return:
+        :return: height of the tree (bytes) in int
         """
         # tree height is the second word of address ADRS (4 bytes)
-        h_bytes = byte[SPX_OFFSET_TREE_INDEX + 4:SPX_OFFSET_TREE_INDEX + 8]
-        print(h_bytes)
-        h_int = int.from_bytes(h_bytes, 'big')
-        return h_int
+        return len(byte)
 
     def fors_treehash(self, skseed, s, z, pkseed, adrs):
         """
@@ -124,16 +121,12 @@ class FORS:
             adrs.set_tree_height(1)
             adrs.set_tree_index(idx)
 
-            if stack:
-                print(node[1])
-                print(stack[-1])
-
             # TODO: find out how to break the loop - unendliche schleife jetzt
             # repeat whilst top node of the stack has the same height as node
             while len(stack) > 0 and self.get_height(stack[-1]) == self.get_height(node[1]):
-                adrs.set_tree_index((adrs.get_tree_index() - 1) // 2)
+                adrs.set_tree_index((int.from_bytes(adrs.get_tree_index(), 'big') - 1) // 2)
                 node = self.H(pkseed, adrs, (stack.pop() + node[1]))
-                adrs.set_tree_height(adrs.get_tree_height() + 1)
+                adrs.set_tree_height(int.from_bytes(adrs.get_tree_height(), 'big') + 1)
             stack.append(node[1])
         return stack.pop()
 
@@ -181,7 +174,6 @@ class FORS:
             # pick private key element
             sk_element = self.fors_SKgen(skseed, adrs, i * self.t + int_id)
             sig_fors += sk_element
-
 
             # compute auth path
             auth = b''

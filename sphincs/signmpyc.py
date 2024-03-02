@@ -361,5 +361,5 @@ class SPHINCS(object):
 
         # because of randomization - signature with secobj and normal should be different
         assert sig != s
-
+        # TODO: change this to s
         return sig
