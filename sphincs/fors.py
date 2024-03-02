@@ -58,7 +58,7 @@ class FORS:
             sk = self.prf_addr(skseed, skADRS)  # generate sk using PRF
         except:
             xprint("fail during orf function for adrs.")
-        xprint("fors sk generated")
+        #xprint("fors sk generated")
         return sk[1]
 
     def F(self, pkseed, adrs, m1):
@@ -191,7 +191,7 @@ class FORS:
             for j in range(int(self.a)):
                 s = floor(int_id / (2 ** j)) ^ 1
                 auth += self.fors_treehash(skseed, i * self.t + s * (2 ** j), j, pkseed, adrs)
-
+                xprint("authentication path: " + auth)
             sig_fors += auth
         xprint("fors signature generated.")
         return sig_fors
