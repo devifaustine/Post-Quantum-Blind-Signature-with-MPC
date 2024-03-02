@@ -131,14 +131,13 @@ class FORS:
             adrs.set_tree_height(1)
             adrs.set_tree_index(idx)
 
-            # TODO: find out how to break the loop - unendliche schleife jetzt
+            # TODO: terminated whilst generating authentication path - why? 
             # repeat whilst top node of the stack has the same height as node
             while len(stack) > 0 and self.get_height(stack[-1]) == self.get_height(node[1]):
                 adrs.set_tree_index((int.from_bytes(adrs.get_tree_index(), 'big') - 1) // 2)
                 node = self.H(pkseed, adrs, (stack.pop() + node[1]))
                 adrs.set_tree_height(int.from_bytes(adrs.get_tree_height(), 'big') + 1)
             stack.append(node[1])
-        xprint("fors treehash generated.")
         return stack.pop()
 
     def fors_PKgen(self, skseed, pkseed, adrs):
@@ -182,17 +181,23 @@ class FORS:
             idx = m_bits[idx_start:idx_end] # index is bytestring
             int_id = int(idx, 2)
 
+            print("id: ", int_id)
+
             # pick private key element
             sk_element = self.fors_SKgen(skseed, adrs, i * self.t + int_id)
             sig_fors += sk_element
 
+            auth = []
             # compute auth path
-            auth = b''
             for j in range(int(self.a)):
                 s = floor(int_id / (2 ** j)) ^ 1
-                auth += self.fors_treehash(skseed, i * self.t + s * (2 ** j), j, pkseed, adrs)
-                xprint("authentication path: " + auth)
-            sig_fors += auth
+                print("s: ", s)
+                idx_i = i * self.t + s * (2 ** j)
+                print("idx: ", idx_i)
+                # concat the authentication path 
+                auth += self.fors_treehash(skseed, idx_i, j, pkseed, adrs)
+        for x in auth: 
+            sig_fors += x
         xprint("fors signature generated.")
         return sig_fors
 
