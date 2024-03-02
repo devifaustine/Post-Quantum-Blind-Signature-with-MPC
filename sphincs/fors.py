@@ -191,9 +191,9 @@ class FORS:
             # compute auth path
             for j in range(int(self.a)):
                 s = floor(int_id / (2 ** j)) ^ 1
-                print("s: ", s)
+                #print("s: ", s)
                 idx_i = i * self.t + s * (2 ** j)
-                print("idx: ", idx_i)
+                #print("idx: ", idx_i)
                 # concat the authentication path 
                 sig_fors += self.fors_treehash(skseed, idx_i, j, pkseed, adrs)
             if time.time() - start_time >= timer: 
@@ -212,6 +212,7 @@ class FORS:
         """
         node = []
         root = []
+        xprint("compute roots fors")
         # compute roots
         for i in range(self.k):
             # get the next index from bits i*log(t) to (i+1)*log(t) - 1 of message m
@@ -226,21 +227,25 @@ class FORS:
             sk = sig_fors[i * 2 * self.n: (2 * i + 1) * self.n]
             adrs.set_tree_height(0)
             adrs.set_tree_index(idx_int + self.t * i)
-            node.append(self.F(pkseed, adrs, sk))
+            node.append(self.F(pkseed, adrs, sk)[1])
 
             # compute root from leaf and auth
             auth = sig_fors[(i + 1) * self.n:(i + 1) * (self.n * 2)]
             adrs.set_tree_index(i * self.t + idx_int)
             for j in range(int(self.a)):
                 adrs.set_tree_height(j+1)
+                tree_idx = int.from_bytes(adrs.get_tree_index(), 'big')
                 if floor(idx_int / ( 2 ** j)) % 2 == 0:
-                    adrs.set_tree_index(int.from_index(adrs.get_tree_index()) // 2)
-                    node.append(self.H(pkseed, adrs, (node[0]+auth[j])))
+                    adrs.set_tree_index(tree_idx // 2)
+                    new_m = node[0] + auth[j*self.n:(j+1)*self.n]
                 else:
-                    adrs.set_tree_index((int.from_index(adrs.get_tree_index()) -1) // 2)
-                    node.append(self.H(pkseed, adrs, (auth[j] + node[0])))
+                    adrs.set_tree_index((tree_idx - 1) // 2)
+                    new_m = auth[j * self.n:(j + 1) * self.n] + node[0]
+                new_node = self.H(pkseed, adrs, new_m)
+                node.append(new_node[1])
                 node[0] = node[1]
             root.append(node[0])
+            xprint(".")
         forspkADRS = copy.deepcopy(adrs)  # copy address to create FTS pubkey address
 
         forspkADRS.set_type(4)  # 4 = FORS roots
