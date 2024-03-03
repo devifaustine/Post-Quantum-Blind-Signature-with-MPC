@@ -38,9 +38,9 @@ def split_sk(key):
     :return: (sk.seed, sk.prf, pk.seed, pk.root) each of length
     """
     # every element has length 32 bytes
-    key_fixed = key.replace("x", '\\x')
-    key_fixed = key_fixed.replace("r", '\\r')
-    key_fixed = key_fixed.replace("n", '\\n')
+    #key_fixed = key.replace("x", '\\x')
+    #key_fixed = key_fixed.replace("r", '\\r')
+    #key_fixed = key_fixed.replace("n", '\\n')
     pk, sk_eval = eval(key_fixed)
 
     sk_seed = sk_eval[:32]
