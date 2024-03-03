@@ -649,6 +649,38 @@ async def main15():
 
     await mpc.shutdown()
 
+async def main17():
+    """
+    test concatenation of secarray different lengths
+    :return:
+    """
+    secfld = mpc.SecFld(2)
+
+    await mpc.start()
+
+    in_ = input("Give your input: ")
+
+    in_bit = ''.join(format(ord(i), '08b') for i in in_)
+    sec_ins = mpc.input(secfld.array(np.array([int(i) for i in in_bit])))
+
+    list_1 = secfld.array(np.array([4]))
+    list_2 = secfld.array(np.array([4, 5]))
+    list_3 = secfld.array(np.array([4, 5, 6]))
+    list_4 = secfld.array(np.array([4, 5, 6, 7]))
+
+    lists = [list_1, list_2, list_3, list_4]
+
+    for i in lists:
+        concat = mpc.np_concatenate((sec_ins[0], np.array([1,2,3])))
+        print("concatenated: ", await mpc.output(concat))
+
+    # Notes: concatenate works with secure object and normal array, not with both secure objects.
+
+    cons = mpc.np_concatenate((list_1, list_2))
+    print("concat both secobj: ", await mpc.output(cons))
+
+    await mpc.shutdown()
+
 # run this program with: python3 test_secobj.py -M2 -I0
 # M indicates the number of parties
 # I indicates the index of the current party
@@ -663,4 +695,5 @@ async def main15():
 #mpc.run(main12())
 #mpc.run(main13())
 #mpc.run(main14())
-mpc.run(main15())
+#mpc.run(main15())
+mpc.run(main17())

@@ -78,7 +78,7 @@ class Hypertree():
             if i < self.d - 1:
                 root = self.xmss.xmss_pk_from_sig(id_leaf, sig_tmp, root, pkseed, adrs)
         xprint("Hypertree signature generated.")
-        return sig_ht
+        return sig_ht, util.to_secarray(sig_ht)
 
 
     # signature verification

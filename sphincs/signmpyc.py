@@ -364,7 +364,10 @@ class SPHINCS(object):
         adrs.set_type(2)  # 2 is for TREE
         ht = Hypertree(self.n, self.h, self.d, self.w)
         SIG_HT = ht.ht_sign(PK_FORS, skseed, pkseed, idx_tree, idx_leaf)
-        s += SIG_HT
+        try:
+            s = mpc.np_concatenate((s, SIG_HT[1]))
+        except:
+            s += SIG_HT[0]
 
         # signature consists of R, SIG_FORS, SIG_HT - all of type secure object
         sig = util.to_secarray(pyspx.shake_256f.sign(m, sk))
@@ -372,4 +375,4 @@ class SPHINCS(object):
         # because of randomization - signature with secobj and normal should be different
         assert sig != s
         
-        return sig
+        return s
