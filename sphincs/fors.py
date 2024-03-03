@@ -153,16 +153,16 @@ class FORS:
         :param adrs: address
         :return: FORS public key PK
         """
-        forspkAdrs = adrs.copy()
+        forspkAdrs = copy.deepcopy(adrs)
 
         root = []
         for i in range(self.k):
-            root[i] = self.fors_treehash(skseed, i * self.t, self.a, pkseed, adrs)
+            root.append(self.fors_treehash(skseed, i * self.t, self.a, pkseed, adrs))
 
         forspkAdrs.set_type(4)
         forspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.F(pkseed, forspkAdrs, root)
-        xprint("fors pk generated.")
+        xprint("FORS pk generated.")
         return pk[1]
 
     def fors_sign(self, m, skseed, pkseed, adrs):
@@ -202,7 +202,7 @@ class FORS:
                 sig_fors += self.fors_treehash(skseed, idx_i, j, pkseed, adrs)
             if time.time() - start_time >= timer: 
                 break
-        xprint("fors signature generated.")
+        xprint("FORS signature generated.")
         return sig_fors
 
     def fors_pkFromSig(self, sig_fors, m, pkseed, adrs):
@@ -258,6 +258,6 @@ class FORS:
         forspkADRS.set_type(4)  # 4 = FORS roots
         forspkADRS.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.Tk(pkseed, forspkADRS, root)
-        xprint("fors verification done.")
+        xprint("FORS verification done.")
         return pk[1]
 
