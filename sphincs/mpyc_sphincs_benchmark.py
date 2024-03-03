@@ -11,22 +11,6 @@ secfld = mpc.SecFld(2)
 # set log to True to print the output
 logging = True
 
-async def print_out(text, s):
-    """Print and return bit array s as byte string."""
-    s = await mpc.output(s)
-
-    s = pad_sec(s, 49856 * 8)
-
-    # Convert binary array to bytes
-    s = np.fliplr(s.reshape(-1, 8)).reshape(-1)  # reverse bits for each byte
-    print(type(s))
-
-    byte_list = [int("".join(map(str, s[i:i + 8])), 2) for i in range(0, len(s), 8)]
-    byte_string = bytes(byte_list)
-
-    print(f'{text} {byte_string}')
-    return byte_string
-
 def pad_sec(array, x):
     """Pad secure array to length x"""
     r = x - array.size 
@@ -43,6 +27,22 @@ def xprint(s, d=''):
     """
     if logging:
         print(s)
+
+async def print_out(text, s):
+    """Print and return bit array s as byte string."""
+    s = await mpc.output(s)
+
+    s = pad_sec(s, 49856 * 8)
+
+    # Convert binary array to bytes
+    s = np.fliplr(s.reshape(-1, 8)).reshape(-1)  # reverse bits for each byte
+    print(type(s))
+
+    byte_list = [int("".join(map(str, s[i:i + 8])), 2) for i in range(0, len(s), 8)]
+    byte_string = bytes(byte_list)
+
+    print(f'{text} {byte_string}')
+    return byte_string
 
 def get_pk(key):
     """
