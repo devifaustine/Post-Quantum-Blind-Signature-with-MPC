@@ -2,7 +2,6 @@
 import copy
 from math import log, ceil, floor
 from shake import SHAKE
-from sphincs_params import *
 import hashlib
 
 logging = True
@@ -20,7 +19,6 @@ def base_w(x, w, out_len):
     :param out_len: output length
     :return: out_len int array basew
     """
-    # TODO: check this function and implement it
     in_ = 0
     out_ = 0
     total = 0
@@ -55,7 +53,7 @@ class WOTS:
         :param adrs: hash address adrs
         :return:
         """
-        xprint("chain function started")
+        #xprint("chain function started")
         if (s == 0):
             return x
         if ((i + s) > (self.w - 1)):
@@ -80,18 +78,6 @@ class WOTS:
         res = shake.shake(mes, 8 * self.n, 512)
         digest = hashlib.shake_256(mes).digest(8 * self.n)
         return res, digest
-
-    def wots_SKgen(self, skseed, adrs):
-        """
-        generates a WOTS+ secret key
-        :param skseed: secret seed SK.seed
-        :param adrs: address ADRS
-        :return: secret key sk of WOTS+
-        """
-        skAdrs = copy.deepcopy(adrs)
-        skAdrs.set_type(1)  # 1 is for WOTS+ public key compression address (type + keypairadr + padding 0)
-
-        raise NotImplementedError("Not yet implemented")
 
     def PRF(self, skseed, adrs):
         """
@@ -145,7 +131,7 @@ class WOTS:
         wotspkAdrs.set_type(1)  # 1: WOTS PK
         wotspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.T_len(pkseed, wotspkAdrs, tmp)[1]
-
+        xprint("WOTS+ public key generated.")
         return pk
 
     def wots_skgen(self, skseed, adrs):
@@ -155,7 +141,7 @@ class WOTS:
         :param adrs: address
         :return: WOTS+ private key
         """
-        skadrs = adrs.copy()  # copy address to create a keygen address
+        skadrs = copy.deepcopy(adrs)  # copy address to create a keygen address
         skadrs.set_type(5)  # 5 is for WOTS+ PRF
         skadrs.set_keypair_addr(adrs.get_keypair_addr())
         sk = b''
@@ -163,6 +149,7 @@ class WOTS:
             skadrs.set_chain_addr(i)
             skadrs.set_hash_addr(0)
             sk += self.PRF(skseed, skadrs)[1]
+        xprint("WOTS+ secret key generated.")
         return sk
 
 
@@ -175,7 +162,6 @@ class WOTS:
         :param adrs: address ADRS
         :return: WOTS+ signature sig
         """
-        # TODO: check the following function
         checksum = 0
 
         # convert message to base w
@@ -191,7 +177,6 @@ class WOTS:
         l2_bytes = ceil((self.l2 * log(self.w, 2)) / 8)
         tmp1 = base_w(checksum.to_bytes(l2_bytes, 'big'), self.w, self.l2)
         msg += tmp1
-        # TODO: check base_w function and the output type
 
         skadrs = copy.deepcopy(adrs) # copy address to create keygen address
         skadrs.set_type(5)
@@ -206,7 +191,7 @@ class WOTS:
             adrs.set_chain_addr(i)
             adrs.set_hash_addr(0)
             sig += self.chain(sk, 0, msg[i], pkseed, adrs)
-
+        xprint("WOTS+ signature generated.")
         return sig
 
     def wots_pkFromSig(self, sig, m, pkseed, adrs):
@@ -241,5 +226,6 @@ class WOTS:
         wotspkAdrs.set_type(1)  # 1: WOTS PK
         wotspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
         pk_sig = self.T_len(pkseed, wotspkAdrs, tmp)[1]
+        xprint("WOTS+ verification done.")
         return pk_sig
 
