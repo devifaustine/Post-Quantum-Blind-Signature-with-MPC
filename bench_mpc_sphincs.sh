@@ -11,11 +11,44 @@ run_benchmark() {
 
   for key in "${keys[@]}"; do
     for m in "${mes[@]}"; do
-      python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0 <<< "$m
-      $key"&
+
+      python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0 & 
+
+      python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 
+      sleep 1
+
+      last_line=$(tail -n 1)
+
+      if [[$last_line == *"Give your input here: "]]; then
+        echo "$m"
+      fi
+
+      last_line=$(tail -n 1)
+
+      if [[$last_line == *"Give your input here: "]]; then
+        echo "$key"
+      fi
+
+      last_line=$(tail -n 1)
+      
+      sleep 1
+
+      if [[$last_line == *"Give the other input here: "]]; then
+        echo "$key"
+      fi
+
+      sleep 2
+
+      last_line=$(tail -n 1)
+
+      if [[$last_line == *"Give the other input here: "]]; then
+        echo "$m"
+      fi
+      #python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I0 <<< "$m
+      #$key"&
       # note: key has to be just the secret key, therefore public key has to be stored somewhere for verification
-      python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< "$key
-      $m"&
+      #python3 sphincs/mpyc_sphincs_benchmark.py -M2 -I1 <<< "$key
+      #$m"&
     done
   done > log.txt
   set -e
