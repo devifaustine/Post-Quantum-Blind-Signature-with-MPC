@@ -4,6 +4,9 @@
 python3 sphincs/gen_keys_bench.py -n 3 > keys.txt
 python3 sphincs/gen_m_bench.py -n 5 > mes.txt
 
+# Runs the python script to benchmark the mpc SPHINCS+ implementation
+python3 bench_mpc_sphincs.py > log.txt
+
 run_benchmark() {
   # split array input by newlines
   IFS=$'\n'
