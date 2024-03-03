@@ -23,15 +23,15 @@ p1 = subprocess.Popen(user, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stder
 p2 = subprocess.Popen(signer, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
 # provide input for user
-p1.stdin.write(messages[0] + "\n")
+p1.stdin.write(messages[0])
 p1.stdin.flush()
-p1.stdin.write(keys[0] + "\n")
+p1.stdin.write(keys[0])
 p1.stdin.flush()
 
 # provide input for signer
-p2.stdin.write(keys[0] + "\n")
+p2.stdin.write(keys[0])
 p2.stdin.flush()
-p2.stdin.write(messages[0] + "\n")
+p2.stdin.write(messages[0])
 p2.stdin.flush()
 
 """
