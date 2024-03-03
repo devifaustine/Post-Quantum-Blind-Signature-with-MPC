@@ -32,7 +32,14 @@ async def print_out(text, s):
     """Print and return bit array s as byte string."""
     s = await mpc.output(s)
 
-    s = pad_sec(s, 49856 * 8)
+    try: 
+        s = pad_sec(s, 49856 * 8)
+    except AttributeError: 
+        time.sleep(5)
+        print(type(s))
+        byte_list = [int("".join(map(str, s[i:i + 8])), 2) for i in range(0, len(s), 8)]
+        byte_string = bytes(byte_list)
+        return byte_string
 
     # Convert binary array to bytes
     s = np.fliplr(s.reshape(-1, 8)).reshape(-1)  # reverse bits for each byte
@@ -243,8 +250,15 @@ async def main():
         await mpc.shutdown()
         #return 
 
-    sig = await print_out("Signature generated!\nHere is the signature: ", sig)
+    sig_bytes = await mpc.output(sig)
+
+    # TODO: signature too big, process always terminated because "infinite" loop
+    print("Signature generated!\nHere is the signature: ", sig_bytes)
+    #sig = await print_out("Signature generated!\nHere is the signature: ", sig)
     
+    print(type(sig_bytes))
+    #print("converted to bytes:", )
+
     end_out = time.time()
     elapsed1 = end - start  # elapsed time until sign() is done
     elapsed2 = end_out - start  # elapsed time until output is printed
