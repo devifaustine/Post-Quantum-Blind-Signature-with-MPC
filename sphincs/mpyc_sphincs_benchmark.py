@@ -252,13 +252,6 @@ async def main():
 
     sig_bytes = await mpc.output(sig)
 
-    # TODO: signature too big, process always terminated because "infinite" loop
-    print("Signature generated!\nHere is the signature: ", sig_bytes)
-    #sig = await print_out("Signature generated!\nHere is the signature: ", sig)
-    
-    print(type(sig_bytes))
-    #print("converted to bytes:", )
-
     end_out = time.time()
     elapsed1 = end - start  # elapsed time until sign() is done
     elapsed2 = end_out - start  # elapsed time until output is printed
@@ -272,6 +265,13 @@ async def main():
         var = existing_content
         var += (str(elapsed1) + " " + str(elapsed2) + '\n')
         file.write(var)
+
+    # TODO: signature too big, process always terminated because "infinite" loop
+    print("Signature generated!\nHere is the signature: ", sig_bytes)
+    #sig = await print_out("Signature generated!\nHere is the signature: ", sig)
+    
+    print(type(sig_bytes))
+    #print("converted to bytes:", )
 
     # verify the generated signature
     #assert sphincs.verify(sig, bytes(mes, 'utf-8'), pk_seed + pk_root)
