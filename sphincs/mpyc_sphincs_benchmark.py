@@ -229,7 +229,9 @@ async def main():
         await mpc.shutdown()
         #return 
 
-    print("Signature generated!\nHere is the signature: ", await mpc.output(sig))
+    sig = await mpc.output(sig)
+    print("Signature generated!\nHere is the signature: ", sig)
+    
     end_out = time.time()
     elapsed1 = end - start  # elapsed time until sign() is done
     elapsed2 = end_out - start  # elapsed time until output is printed
