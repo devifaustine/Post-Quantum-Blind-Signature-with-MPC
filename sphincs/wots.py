@@ -131,7 +131,6 @@ class WOTS:
         wotspkAdrs.set_type(1)  # 1: WOTS PK
         wotspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.T_len(pkseed, wotspkAdrs, tmp)[1]
-        xprint("WOTS+ public key generated.")
         return pk
 
     def wots_skgen(self, skseed, adrs):

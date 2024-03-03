@@ -8,6 +8,11 @@ import hashlib
 # initialize WOTS+ instance for XMSS
 wots = WOTS(32, 16)
 shake = SHAKE()
+logging = True
+
+def xprint(string):
+    if logging: 
+        print(string)
 
 #TODO: test and check this class and its functions
 
@@ -105,6 +110,7 @@ class XMSS:
         adrs.set_keypair_addr(idx)
         sig = wots.wots_sign(m, skseed, pkseed, adrs)
         sig_xmss = sig + auth
+        xprint("XMSS signature generated")
         return sig_xmss
 
     def get_sigs(self, sig):
@@ -166,4 +172,5 @@ class XMSS:
                 new_m = auths[i] + node[0]
             new_node = self.H(pkseed, adrs, new_m)
             node[0] = new_node[1]
+        xprint("XMSS verification is done.")
         return node[0]
