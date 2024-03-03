@@ -195,6 +195,8 @@ class ADRS:
         :param keypair: keypair
         :return:
         """
+        if isinstance(keypair, int):
+            keypair = keypair.to_bytes(4, 'big')
         self.word1 = keypair
         self.update_adrs()
         return self
@@ -218,6 +220,8 @@ class ADRS:
         :param chain: merkle chain
         :return:
         """
+        if isinstance(chain, int):
+            chain = chain.to_bytes(4, 'big')
         self.word2 = chain
         self.update_adrs()
         return self
@@ -229,6 +233,8 @@ class ADRS:
         :param hash_: hash
         :return:
         """
+        if isinstance(hash_, int):
+            hash_ = hash_.to_bytes(4, 'big')
         self.word3 = hash_
         self.update_adrs()
         return self

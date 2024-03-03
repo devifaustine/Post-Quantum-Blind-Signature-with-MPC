@@ -10,7 +10,7 @@ import time
 
 # change to false if no log wanted
 logging = True 
-timer = 10
+timer = 3
 
 def xprint(string):
     if logging: 
@@ -84,7 +84,11 @@ class FORS:
         :param m: message to be hashed
         :return: hashed values
         """
-        mes = pkseed + adrs.get_address() + m
+        tmp = b''
+        if isinstance(m, list):
+            for i in m:
+                tmp += i
+        mes = pkseed + adrs.get_address() + tmp
         hash = shake.shake(mes, 8 * self.n, 512)
         hash_org = hashlib.shake_256(mes).digest(8 * self.n)
         return hash, hash_org
@@ -149,16 +153,16 @@ class FORS:
         :param adrs: address
         :return: FORS public key PK
         """
-        forspkAdrs = adrs.copy()
+        forspkAdrs = copy.deepcopy(adrs)
 
         root = []
         for i in range(self.k):
-            root[i] = self.fors_treehash(skseed, i * self.t, self.a, pkseed, adrs)
+            root.append(self.fors_treehash(skseed, i * self.t, self.a, pkseed, adrs))
 
         forspkAdrs.set_type(4)
         forspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.F(pkseed, forspkAdrs, root)
-        xprint("fors pk generated.")
+        xprint("FORS pk generated.")
         return pk[1]
 
     def fors_sign(self, m, skseed, pkseed, adrs):
@@ -198,7 +202,7 @@ class FORS:
                 sig_fors += self.fors_treehash(skseed, idx_i, j, pkseed, adrs)
             if time.time() - start_time >= timer: 
                 break
-        xprint("fors signature generated.")
+        xprint("FORS signature generated.")
         return sig_fors
 
     def fors_pkFromSig(self, sig_fors, m, pkseed, adrs):
@@ -214,7 +218,8 @@ class FORS:
         root = []
         xprint("compute roots fors")
         # compute roots
-        for i in range(self.k):
+        start = time.time()
+        for i in range(self.k-60):
             # get the next index from bits i*log(t) to (i+1)*log(t) - 1 of message m
             # convert message to bit repr
             m_bits = ''.join(format(byte, '08b') for byte in m)
@@ -242,15 +247,17 @@ class FORS:
                     adrs.set_tree_index((tree_idx - 1) // 2)
                     new_m = auth[j * self.n:(j + 1) * self.n] + node[0]
                 new_node = self.H(pkseed, adrs, new_m)
-                node.append(new_node[1])
-                node[0] = node[1]
+                node[0] = (new_node[1])
             root.append(node[0])
             xprint(".")
+            time.sleep(0.01)
+            if time.time() - start >= timer:
+                break
         forspkADRS = copy.deepcopy(adrs)  # copy address to create FTS pubkey address
 
         forspkADRS.set_type(4)  # 4 = FORS roots
         forspkADRS.set_keypair_addr(adrs.get_keypair_addr())
         pk = self.Tk(pkseed, forspkADRS, root)
-        xprint("fors verification done.")
+        xprint("FORS verification done.")
         return pk[1]
 

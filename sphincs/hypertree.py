@@ -6,6 +6,12 @@ from address import ADRS
 from utils import UTILS
 
 util = UTILS()
+# set logging to False if you don't want to print debug messages
+logging = True
+
+def xprint(string):
+    if logging:
+        print(string)
 
 class Hypertree():
     def __init__(self, n=32, h=68, d=17, w=16):
@@ -37,6 +43,7 @@ class Hypertree():
         adrs.set_layer_addr(self.d - 1)
         adrs.set_tree_addr(0)
         root = self.xmss.xmss_pkgen(skseed, pkseed, adrs)
+        xprint("Hypertree public key generated.")
         return root
 
     def ht_sign(self, m, skseed, pkseed, id_tree, id_leaf):
@@ -65,11 +72,12 @@ class Hypertree():
             id_leaf = self.h // self.d  # least significatn bits of id_tree
             id_tree = (self.h - (i + 1) * (self.h / self.d))  # most significant bits of id_tree
             adrs.set_layer_addr(i)
-            adrs.set_tree_addr(id_tree)
+            adrs.set_tree_addr(int(id_tree))
             sig_tmp = self.xmss.xmss_sign(root, skseed, id_leaf, pkseed, adrs)
             sig_ht += sig_tmp
             if i < self.d - 1:
                 root = self.xmss.xmss_pk_from_sig(id_leaf, sig_tmp, root, pkseed, adrs)
+        xprint("Hypertree signature generated.")
         return sig_ht
 
 
@@ -102,6 +110,8 @@ class Hypertree():
             adrs.set_layer_addr(i)
             adrs.set_tree_addr(id_tree)
             node = self.xmss.xmss_pk_from_sig(id_leaf, sig_tmp, node, pkseed, adrs)
+
+        xprint("HT verification process is done.")
 
         if node == pk_ht:
             return True
