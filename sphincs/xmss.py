@@ -146,13 +146,15 @@ class XMSS:
         adrs.set_keypair_addr(idx)
         sigs = self.get_sigs(sig)  # extract signatures only from sig_xmss
         auths = self.get_auth(sig)  # extract the auth paths only from sig_xmss
-        idx_int = int.from_bytes(idx, 'big')
+        if isinstance(idx, int):
+            idx_int = idx
+        else:
+            idx_int = int.from_bytes(idx, 'big')
         node.append(wots.wots_pkFromSig(sig, m, pkseed, adrs))
 
         # compute root from WOTS+ pk and auth path
         adrs.set_type(2)
         adrs.set_tree_index(idx)
-
 
         for i in range(self.h):
             adrs.set_tree_height(i+1)
