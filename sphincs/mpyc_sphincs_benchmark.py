@@ -41,7 +41,7 @@ def split_sk(key):
     #key_fixed = key.replace("x", '\\x')
     #key_fixed = key_fixed.replace("r", '\\r')
     #key_fixed = key_fixed.replace("n", '\\n')
-    pk, sk_eval = eval(key_fixed)
+    pk, sk_eval = eval(key)
 
     sk_seed = sk_eval[:32]
     sk_prf = sk_eval[32:64]
