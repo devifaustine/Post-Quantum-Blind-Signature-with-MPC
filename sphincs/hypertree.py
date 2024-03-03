@@ -4,10 +4,12 @@ from wots import WOTS
 from xmss import XMSS
 from address import ADRS
 from utils import UTILS
+import time
 
 util = UTILS()
 # set logging to False if you don't want to print debug messages
 logging = True
+timer = 10
 
 def xprint(string):
     if logging:
@@ -68,6 +70,7 @@ class Hypertree():
         sig_ht += sig_tmp
         root = self.xmss.xmss_pk_from_sig(id_leaf, sig_tmp, m, pkseed, adrs)
 
+        start = time.time()
         for i in range(self.d):
             id_leaf = self.h // self.d  # least significatn bits of id_tree
             id_tree = (self.h - (i + 1) * (self.h / self.d))  # most significant bits of id_tree
@@ -77,6 +80,9 @@ class Hypertree():
             sig_ht += sig_tmp
             if i < self.d - 1:
                 root = self.xmss.xmss_pk_from_sig(id_leaf, sig_tmp, root, pkseed, adrs)
+            if time.time()-start > timer:
+                xprint("Hypertree signature generation is taking too long.")
+                break
         xprint("Hypertree signature generated.")
         return sig_ht, util.to_secarray(sig_ht)
 
