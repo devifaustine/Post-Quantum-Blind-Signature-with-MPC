@@ -23,6 +23,7 @@ run_benchmark() {
 
 echo "Benchmark started."
 run_benchmark
+wait
 echo "Benchmark finished." 
 
 exit_code=$?

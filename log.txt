@@ -1,54 +1,58 @@
-2024-03-02 21:42:29,002 Start MPyC runtime v0.9
-2024-03-02 21:42:29,042 Start MPyC runtime v0.9
-2024-03-02 21:42:29,156 All 2 parties connected.
-Give your input here: here's your payload:  11F5LH2X31QO
+2024-03-03 13:49:12,100 Start MPyC runtime v0.9
+2024-03-03 13:49:12,131 Start MPyC runtime v0.9
+2024-03-03 13:49:12,247 All 2 parties connected.
+Give your input here: here's your payload:  F4C8U5KWVPHI7VTSTI2EAWMHNVZP8EWP3
 The given input is a message!
-Give the other input here: 2024-03-02 21:42:29,157 All 2 parties connected.
-Give your input here: here's your payload:  (b'9B0AK5XTGPTQ0W48FUSEZ769YRZL6EKWxffxc0xa3x96Sx0fx0fx84xe4xe8Gxa4xdexb4xeaxb1[x103xcbx07xb6x80x12Qxd8x15x9bx9dxc76.', b'ERS8Y7PECC8MEID54AYCJ786946MW8E3DLIT5COPA05X5XS3YP8DR6X96AUQPW8L9B0AK5XTGPTQ0W48FUSEZ769YRZL6EKWxffxc0xa3x96Sx0fx0fx84xe4xe8Gxa4xdexb4xeaxb1[x103xcbx07xb6x80x12Qxd8x15x9bx9dxc76.')
+Give the other input here: 2024-03-03 13:49:12,250 All 2 parties connected.
+Give your input here: here's your payload:  (b'KUY0U0WI06B66JP1JI13P2X9TZFEVQ1Hx9exdf-"x14x9bxf7xcfx18xfcxa5xcexf4x05x85lgC3xaex89xdetxebfxba|`x90"xfax0f', b'I49YYV7LDGEC85QCFVJUTPNRYR2IX2CLE4OE8JEMTOV3VB12NZENGODWENU6Q4SKKUY0U0WI06B66JP1JI13P2X9TZFEVQ1Hx9exdf-"x14x9bxf7xcfx18xfcxa5xcexf4x05x85lgC3xaex89xdetxebfxba|`x90"xfax0f')
 The given input is a secret key!
-Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87ceedb9a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e6500>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e64d0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e6560>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e7670>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e76d0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e7700>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e7730>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e76a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e7790>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e77c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f87c83e77f0>]]
+Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce171a79a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce171a7880>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb760>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb700>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb7f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb850>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb880>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb8b0>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb820>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb910>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb940>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fce106bb970>]]
 
 Signing process begins now...
-sign started
-Secret key value generated is wrong. Please restart the function and try again!
-2024-03-02 21:42:35,632 Stop MPyC -- elapsed time: 0:00:06.472|bytes sent: 673
-here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c878f9a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c878f880>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c99e70>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c98f70>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c9bdc0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c9b730>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c9bd90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c9bd30>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c9b700>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c9be80>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c9beb0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f83c1c9bee0>]]
-
-Signing process begins now...
-sign started
-Secret key value generated is wrong. Please restart the function and try again!
-2024-03-02 21:42:35,632 Stop MPyC -- elapsed time: 0:00:06.475|bytes sent: 673
-2024-03-02 21:42:35,648 Unhandled exception in event loop
+The length of the message and secret key is wrong! Please restart the function!
+2024-03-03 13:49:13,669 Unhandled exception in event loop
 Traceback (most recent call last):
-  File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
+  File "/home/codespace/.python/current/lib/python3.10/asyncio/events.py", line 80, in _run
     self._context.run(self._callback, *self._args)
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 461, in <lambda>
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 431, in <lambda>
     task.add_done_callback(lambda t: _reconcile(decl, t))
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 385, in _reconcile
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 355, in _reconcile
     givn = task.result()
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 313, in _wrap_in_coro
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 283, in _wrap_in_coro
     return await awaitable
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 301, in __await__
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 271, in __await__
     val = self.coro.send(None)
-  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 504, in output
-    field = x[0].field
-AttributeError: 'NoneType' object has no attribute 'field'
-2024-03-02 21:42:35,650 Unhandled exception in event loop
-Traceback (most recent call last):
-  File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
-    self._context.run(self._callback, *self._args)
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 461, in <lambda>
-    task.add_done_callback(lambda t: _reconcile(decl, t))
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 385, in _reconcile
-    givn = task.result()
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 313, in _wrap_in_coro
-    return await awaitable
-  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 301, in __await__
-    val = self.coro.send(None)
-  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 504, in output
-    field = x[0].field
-AttributeError: 'NoneType' object has no attribute 'field'
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 452, in _distribute
+    y = [[field.array(unmarshal(r), check=False).reshape(shape) for r in shares]]
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 452, in <listcomp>
+    y = [[field.array(unmarshal(r), check=False).reshape(shape) for r in shares]]
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/finfields.py", line 1289, in reshape
+    return type(self)(self.value.reshape(*args, **kwargs), check=False)
+ValueError: cannot reshape array of size 264 into shape (256,)
 Traceback (enclosing MPyC coroutine call):
+here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fcf064a79a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff9b1f00>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff9b1fc0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff9b3730>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff9b39d0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff9b3fd0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff9b3970>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff9b39a0>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff9b3e80>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff764040>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff7640a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fceff7640d0>]]
+
+Signing process begins now...
+The length of the message and secret key is wrong! Please restart the function!
+2024-03-03 13:49:13,666 Unhandled exception in event loop
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.10/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 431, in <lambda>
+    task.add_done_callback(lambda t: _reconcile(decl, t))
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 355, in _reconcile
+    givn = task.result()
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 283, in _wrap_in_coro
+    return await awaitable
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 271, in __await__
+    val = self.coro.send(None)
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 452, in _distribute
+    y = [[field.array(unmarshal(r), check=False).reshape(shape) for r in shares]]
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 452, in <listcomp>
+    y = [[field.array(unmarshal(r), check=False).reshape(shape) for r in shares]]
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/finfields.py", line 1289, in reshape
+    return type(self)(self.value.reshape(*args, **kwargs), check=False)
+ValueError: cannot reshape array of size 256 into shape (264,)
 Traceback (enclosing MPyC coroutine call):
