@@ -239,12 +239,9 @@ async def main():
         var = str(elapsed1) + " " + str(elapsed2) + '\n'
         file.write(var)
 
-    # TODO: assert verify the signature before shutting down
-    # verify() accepts the signature, message and public key as bytes not SecObj
-    # TODO: convert pkseed and pkroot to bytes (use function in utils)
-
+    # verify the generated signature
     pk = get_pk(sk)  # public key in bytes
-    assert sphincs.verify(sig, mes, pk)
+    assert sphincs.verify(sig, bytes(mes, 'utf-8'), pk)
 
     await mpc.shutdown()
 
