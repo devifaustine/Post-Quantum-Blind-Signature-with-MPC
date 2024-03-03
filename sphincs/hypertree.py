@@ -9,7 +9,7 @@ import time
 util = UTILS()
 # set logging to False if you don't want to print debug messages
 logging = True
-timer = 20
+timer = 10
 
 def xprint(string):
     if logging:

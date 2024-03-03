@@ -10,7 +10,7 @@ import time
 wots = WOTS(32, 16)
 shake = SHAKE()
 logging = True
-timer = 20
+timer = 10
 
 def xprint(string):
     if logging: 
