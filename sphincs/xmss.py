@@ -3,6 +3,7 @@
 from wots import WOTS
 from shake import SHAKE
 from math import ceil, floor, log
+import hashlib
 
 # initialize WOTS+ instance for XMSS
 wots = WOTS(32, 16)
@@ -25,7 +26,18 @@ class XMSS:
         :return: SHAKE256(pkseed || adrs || m, 8n)
         """
         mes = pkseed + adrs + m
-        return shake.shake(mes, 8 * self.n, 512)
+        hash = shake.shake(mes, 8 * self.n, 512)
+        digest = hashlib.shake_256(mes).digest(8 * self.n)
+        return hash, digest
+
+    def get_height(self, byte):
+        """
+        get the height of a tree (represented in bytes)
+        :param byte: tree
+        :return: height of the tree (bytes) in int
+        """
+        # tree height is the second word of address ADRS (4 bytes)
+        return len(byte)
 
     def treehash(self, skseed, s, z, pkseed, adrs):
         """
@@ -42,18 +54,19 @@ class XMSS:
 
         stack = []
 
-        for i in range(2^z):
+        for i in range(pow(2, z)):
             adrs.set_type(0)  # 0 is for WOTS+ hash address
             adrs.set_keypair_addr(s + i)
             node = wots.wots_PKgen(skseed, pkseed, adrs)
             adrs.set_type(2)  # 2 is hash tree address
             adrs.set_tree_height(1)
             adrs.set_tree_index(s + i)
+
             # while top node on stack has the same height as the node
-            while len(stack) > 0 and stack[-1][1] == adrs.get_tree_height():
-                adrs.set_tree_index((adrs.get_tree_index() - 1) / 2)
-                node = self.H(pkseed, adrs, stack.pop() + node)
-                adrs.set_tree_height(adrs.get_tree_height() + 1)
+            while len(stack) > 0 and self.get_height(stack[-1]) == self.get_height(node[1]):
+                adrs.set_tree_index((int.from_bytes(adrs.get_tree_height(), 'big') - 1) / 2)
+                node = self.H(pkseed, adrs, stack.pop() + node[1])
+                adrs.set_tree_height(int.from_bytes(adrs.get_tree_height(), 'big') + 1)
             stack.append(node)
         return stack.pop()
 
@@ -78,10 +91,11 @@ class XMSS:
         :param adrs: address
         :return: XMSS signature SIG_XMSS(sig || AUTH)
         """
+        idx_int = int.from_bytes(idx, 'big')
         auth = b''
         # build authentication path
         for i in range(self.h):
-            k = floor(idx / pow(2, i)) ^ 1
+            k = floor(idx_int / pow(2, i)) ^ 1
             auth += self.treehash(skseed, k * pow(2, i), i, pkseed, adrs)
 
         adrs.set_type(0)

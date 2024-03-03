@@ -5,7 +5,12 @@ from shake import SHAKE
 from sphincs_params import *
 import hashlib
 
+logging = True
 shake = SHAKE()
+
+def xprint(string):
+    if logging:
+        print(string)
 
 def base_w(x, w, out_len):
     """
@@ -50,13 +55,15 @@ class WOTS:
         :param adrs: hash address adrs
         :return:
         """
+        xprint("chain function started")
         if (s == 0):
             return x
         if ((i + s) > (self.w - 1)):
             return None
         tmp = self.chain(x, i, s - 1, pkseed, adrs)
         adrs.set_hash_addr(i + s - 1)
-        tmp = self.F(pkseed, adrs, tmp)
+        tmp = self.F(pkseed, adrs, tmp)[1]
+        #print("tmp: ", tmp)
         return tmp
 
     def F(self, skseed, adrs, x):
@@ -67,8 +74,9 @@ class WOTS:
         :param x:
         :return:
         """
-        # TODO: check
-        mes = skseed + adrs + x
+        if isinstance(x, int):
+            x = x.to_bytes(4, 'big')
+        mes = skseed + adrs.adrs + x
         res = shake.shake(mes, 8 * self.n, 512)
         digest = hashlib.shake_256(mes).digest(8 * self.n)
         return res, digest
@@ -93,7 +101,9 @@ class WOTS:
         :return:
         """
         mes = skseed + adrs.adrs
-        return shake.shake(mes, 8 * self.n, 512)
+        res = shake.shake(mes, 8 * self.n, 512)
+        digest = hashlib.shake_256(mes).digest(8 * self.n)
+        return res, digest
 
     def T_len(self, pkseed, adrs, m):
         """
@@ -103,8 +113,10 @@ class WOTS:
         :param m: message
         :return: hash value
         """
-        mes = pkseed + adrs + m
-        return shake.shake(mes, 8 * self.n, 512)
+        mes = pkseed + adrs.adrs + m
+        hash = shake.shake(mes, 8 * self.n, 512)
+        digest = hashlib.shake_256(mes).digest(8 * self.n)
+        return hash, digest
 
     def wots_PKgen(self, skseed, pkseed, adrs):
         """
@@ -125,14 +137,14 @@ class WOTS:
         for i in range(self.l):
             skadrs.set_chain_addr(i)
             skadrs.set_hash_addr(0)
-            sk += self.PRF(skseed, skadrs)
+            sk += self.PRF(skseed, skadrs)[1]
             adrs.set_chain_addr(i)
             adrs.set_hash_addr(0)
             tmp += self.chain(sk[i], 0, self.w -1, pkseed, adrs)
 
-        wotspkAdrs.set_type(SPX_WOTS_PK_BYTES)
+        wotspkAdrs.set_type(1)  # 1: WOTS PK
         wotspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
-        pk = self.T_len(pkseed, wotspkAdrs, tmp)
+        pk = self.T_len(pkseed, wotspkAdrs, tmp)[1]
 
         return pk
 
@@ -150,7 +162,7 @@ class WOTS:
         for i in range(self.l):
             skadrs.set_chain_addr(i)
             skadrs.set_hash_addr(0)
-            sk += self.PRF(skseed, skadrs)
+            sk += self.PRF(skseed, skadrs)[1]
         return sk
 
 
@@ -189,7 +201,7 @@ class WOTS:
         for i in range(self.l):
             skadrs.set_chain_addr(i)
             skadrs.set_hash_addr(0)
-            sk = self.PRF(skseed, skadrs)
+            sk = self.PRF(skseed, skadrs)[1]
             adrs.set_chain_addr(i)
             adrs.set_hash_addr(0)
             sig += self.chain(sk, 0, msg[i], pkseed, adrs)
