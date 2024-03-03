@@ -369,8 +369,10 @@ class SPHINCS(object):
         except:
             s += SIG_HT[0]
 
+        xprint("HT signature generated!")
+
         # signature consists of R, SIG_FORS, SIG_HT - all of type secure object
-        sig = util.to_secarray(pyspx.shake_256f.sign(bytes(m, 'utf-8'), skseed + skprf))
+        sig = util.to_secarray(pyspx.shake_256f.sign(bytes(m, 'utf-8'), skseed + skprf + pkseed + pkroot))
 
         # because of randomization - signature with secobj and normal should be different
         assert sig != s
