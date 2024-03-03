@@ -23,15 +23,15 @@ p1 = subprocess.Popen(user, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stder
 p2 = subprocess.Popen(signer, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
 # provide input for user
-p1.stdin.write(messages[0])
+p1.stdin.write(messages[0]+'\n')
 p1.stdin.flush()
-p1.stdin.write(keys[0])
+p1.stdin.write(keys[0]+'\n')
 p1.stdin.flush()
 
 # provide input for signer
-p2.stdin.write(keys[0])
+p2.stdin.write(keys[0]+'\n')
 p2.stdin.flush()
-p2.stdin.write(messages[0])
+p2.stdin.write(messages[0]+'\n')
 p2.stdin.flush()
 
 """
@@ -56,8 +56,8 @@ for i in range(len(keys)):
 """
 
 # wait for the processes to complete
-p1.wait()
-p2.wait()
+#p1.wait()
+#p2.wait()
 
 output_user, error_user = p1.communicate()
 output_signer, error_signer = p2.communicate()
