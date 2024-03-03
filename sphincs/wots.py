@@ -189,10 +189,11 @@ class WOTS:
         if log(self.w, 2) % 8 != 0:
             checksum = checksum << (8 - int((log(self.w, 2) * self.l2) % 8))
         l2_bytes = ceil((self.l2 * log(self.w, 2)) / 8)
-        msg = m + base_w(checksum.to_bytes(l2_bytes, 'big'), self.w, self.l2)
+        tmp1 = base_w(checksum.to_bytes(l2_bytes, 'big'), self.w, self.l2)
+        msg += tmp1
         # TODO: check base_w function and the output type
 
-        skadrs = adrs.copy() # copy address to create keygen address
+        skadrs = copy.deepcopy(adrs) # copy address to create keygen address
         skadrs.set_type(5)
         skadrs.set_keypair_addr(adrs.get_keypair_addr())
 
@@ -218,7 +219,7 @@ class WOTS:
         :return: WOTS+ public key
         """
         checksum = 0
-        wotspkAdrs = adrs.copy()
+        wotspkAdrs = copy.deepcopy(adrs)
 
         # convert message to base w
         msg = base_w(m, self.w, self.l1)
@@ -230,11 +231,15 @@ class WOTS:
         # convert checksum to base w
         checksum = checksum << (8 - int((log(self.w, 2) * self.l2) % 8))
         l2_bytes = ceil((self.l2 * log(self.w, 2)) / 8)
-        msg = m + base_w(checksum.to_bytes(l2_bytes, 'big'), self.w, self.l2)
+        tmp1 = base_w(checksum.to_bytes(l2_bytes, 'big'), self.w, self.l2)
+        msg += tmp1
         tmp = b''
         for i in range(self.l):
             adrs.set_chain_addr(i)
-            tmp += self.chain(sig[i], msg[i], self.w - 1 - msg[i], pkseed, adrs)
+            tmp += self.chain(sig[i*self.n:(i+1)*self.n], msg[i], self.w - 1 - msg[i], pkseed, adrs)
 
-        raise NotImplementedError("Not yet implemented")
+        wotspkAdrs.set_type(1)  # 1: WOTS PK
+        wotspkAdrs.set_keypair_addr(adrs.get_keypair_addr())
+        pk_sig = self.T_len(pkseed, wotspkAdrs, tmp)[1]
+        return pk_sig
 

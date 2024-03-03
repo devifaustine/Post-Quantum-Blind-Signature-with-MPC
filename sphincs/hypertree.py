@@ -65,7 +65,7 @@ class Hypertree():
             id_leaf = self.h // self.d  # least significatn bits of id_tree
             id_tree = (self.h - (i + 1) * (self.h / self.d))  # most significant bits of id_tree
             adrs.set_layer_addr(i)
-            adrs.set_tree_addr(id_tree)
+            adrs.set_tree_addr(int(id_tree))
             sig_tmp = self.xmss.xmss_sign(root, skseed, id_leaf, pkseed, adrs)
             sig_ht += sig_tmp
             if i < self.d - 1:

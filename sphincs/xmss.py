@@ -25,7 +25,7 @@ class XMSS:
         :param m: message
         :return: SHAKE256(pkseed || adrs || m, 8n)
         """
-        mes = pkseed + adrs + m
+        mes = pkseed + adrs.adrs + m
         hash = shake.shake(mes, 8 * self.n, 512)
         digest = hashlib.shake_256(mes).digest(8 * self.n)
         return hash, digest
@@ -63,9 +63,9 @@ class XMSS:
             adrs.set_tree_index(s + i)
 
             # while top node on stack has the same height as the node
-            while len(stack) > 0 and self.get_height(stack[-1]) == self.get_height(node[1]):
-                adrs.set_tree_index((int.from_bytes(adrs.get_tree_height(), 'big') - 1) / 2)
-                node = self.H(pkseed, adrs, stack.pop() + node[1])
+            while len(stack) > 0 and self.get_height(stack[-1]) == self.get_height(node):
+                adrs.set_tree_index((int.from_bytes(adrs.get_tree_height(), 'big') - 1) // 2)
+                node = self.H(pkseed, adrs, stack.pop() + node)[1]
                 adrs.set_tree_height(int.from_bytes(adrs.get_tree_height(), 'big') + 1)
             stack.append(node)
         return stack.pop()
@@ -91,7 +91,10 @@ class XMSS:
         :param adrs: address
         :return: XMSS signature SIG_XMSS(sig || AUTH)
         """
-        idx_int = int.from_bytes(idx, 'big')
+        if not isinstance(idx, int):
+            idx_int = int.from_bytes(idx, 'big')
+        else:
+            idx_int = idx
         auth = b''
         # build authentication path
         for i in range(self.h):
@@ -103,6 +106,28 @@ class XMSS:
         sig = wots.wots_sign(m, skseed, pkseed, adrs)
         sig_xmss = sig + auth
         return sig_xmss
+
+    def get_sigs(self, sig):
+        """
+        extract the signatures from the XMSS signature
+        :param sig: XMSS signature
+        :return: list of signatures
+        """
+        sigs = []
+        for i in range(self.h):
+            sigs.append(sig[i * 2 * self.n: (2 * i + 1) * self.n])
+        return sigs
+
+    def get_auth(self, sig):
+        """
+        extract the auth paths from the XMSS signature
+        :param sig: XMSS signature
+        :return: list of auth paths
+        """
+        auths = []
+        for i in range(self.h):
+            auths.append(sig[(i + 1) * self.n:(i + 1) * (self.n * 2)])
+        return auths
 
     def xmss_pk_from_sig(self, idx, sig, m, pkseed, adrs):
         """
@@ -119,22 +144,24 @@ class XMSS:
         # compute WOTS+ pk from sig
         adrs.set_type(0)
         adrs.set_keypair_addr(idx)
-        sig = sig[:self.n]  # extract sig from sig_xmss
-        auth = sig[self.n:]
-        node[0] = wots.wots_pkFromSig(sig, m, pkseed, adrs)
+        sigs = self.get_sigs(sig)  # extract signatures only from sig_xmss
+        auths = self.get_auth(sig)  # extract the auth paths only from sig_xmss
+        idx_int = int.from_bytes(idx, 'big')
+        node.append(wots.wots_pkFromSig(sig, m, pkseed, adrs))
 
         # compute root from WOTS+ pk and auth path
         adrs.set_type(2)
         adrs.set_tree_index(idx)
+
+
         for i in range(self.h):
             adrs.set_tree_height(i+1)
-            if floor(idx / pow(2, i)) % 2 == 0:
-                adrs.set_tree_index(adrs.get_tree_index() / 2)
-                node[1] = self.H(pkseed, adrs, node[0] + auth[i])
+            if floor(idx_int / pow(2, i)) % 2 == 0:
+                adrs.set_tree_index(int.from_bytes(adrs.get_tree_index(), 'big') // 2)
+                new_m = node[0] + auths[i]
             else:
-                adrs.set_tree_index((adrs.get_tree_index() - 1) / 2)
-                node[1] = self.H(pkseed, adrs, auth[i] + node[0])
-            node[0] = node[1]
+                adrs.set_tree_index((int.from_bytes(adrs.get_tree_index(), 'big')- 1) // 2)
+                new_m = auths[i] + node[0]
+            new_node = self.H(pkseed, adrs, new_m)
+            node[0] = new_node[1]
         return node[0]
-
-

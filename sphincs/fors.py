@@ -10,7 +10,7 @@ import time
 
 # change to false if no log wanted
 logging = True 
-timer = 10
+timer = 3
 
 def xprint(string):
     if logging: 
@@ -219,7 +219,7 @@ class FORS:
         xprint("compute roots fors")
         # compute roots
         start = time.time()
-        for i in range(self.k):
+        for i in range(self.k-60):
             # get the next index from bits i*log(t) to (i+1)*log(t) - 1 of message m
             # convert message to bit repr
             m_bits = ''.join(format(byte, '08b') for byte in m)
@@ -250,6 +250,7 @@ class FORS:
                 node[0] = (new_node[1])
             root.append(node[0])
             xprint(".")
+            time.sleep(0.01)
             if time.time() - start >= timer:
                 break
         forspkADRS = copy.deepcopy(adrs)  # copy address to create FTS pubkey address
