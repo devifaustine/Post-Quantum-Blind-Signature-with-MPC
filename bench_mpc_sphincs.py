@@ -15,8 +15,8 @@ with open("keys.txt", "r") as file:
     keys = [line.strip() for line in file]
 
 # Define the commands
-user = ["python3", "mpyc_sphincs_benchmark.py", "-M2", "-I0"]
-signer = ["python3", "mpyc_sphincs_benchmark.py", "-M2", "-I1"]
+user = ["python3", "sphincs/mpyc_sphincs_benchmark.py", "-M2", "-I0"]
+signer = ["python3", "sphincs/mpyc_sphincs_benchmark.py", "-M2", "-I1"]
 
 # Starts both processes
 p1 = subprocess.Popen(user, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
