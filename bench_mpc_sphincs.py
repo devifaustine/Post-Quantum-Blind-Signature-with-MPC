@@ -24,11 +24,15 @@ p2 = subprocess.Popen(signer, stdin=subprocess.PIPE, stdout=subprocess.PIPE, std
 
 # provide input for user
 p1.stdin.write(messages[0] + "\n")
+p1.stdin.flush()
 p1.stdin.write(keys[0] + "\n")
+p1.stdin.flush()
 
 # provide input for signer
 p2.stdin.write(keys[0] + "\n")
+p2.stdin.flush()
 p2.stdin.write(messages[0] + "\n")
+p2.stdin.flush()
 
 """
 for i in range(len(keys)):
@@ -55,6 +59,9 @@ for i in range(len(keys)):
 p1.wait()
 p2.wait()
 
+output_user, error_user = p1.communicate()
+output_signer, error_signer = p2.communicate()
+
 while p1.poll() is None and p2.poll() is None:
     print("Process is still running. ")
     time.sleep(1)
@@ -62,9 +69,11 @@ while p1.poll() is None and p2.poll() is None:
 # process has completed
 print("Benchmark is done! Check bench_res.txt for results.")
 
+"""
 if logging:
     # printing out the logs from the processes
     for line in p1.stdout:
         print(line)
     for line in p2.stdout:
         print(line)
+"""
