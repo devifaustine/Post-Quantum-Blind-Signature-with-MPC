@@ -234,9 +234,14 @@ async def main():
     elapsed1 = end - start  # elapsed time until sign() is done
     elapsed2 = end_out - start  # elapsed time until output is printed
 
+    # open and read the content first
+    with open("bench_res.txt", "r") as file: 
+        existing_content = file.read()
+
     # write the elapsed time to bench_res.txt
     with open("bench_res.txt", "w") as file:
-        var = str(elapsed1) + " " + str(elapsed2) + '\n'
+        var = existing_content
+        var += (str(elapsed1) + " " + str(elapsed2) + '\n')
         file.write(var)
 
     # verify the generated signature
