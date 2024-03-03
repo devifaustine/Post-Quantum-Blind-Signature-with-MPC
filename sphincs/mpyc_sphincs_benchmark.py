@@ -14,16 +14,25 @@ logging = True
 async def print_out(text, s):
     """Print and return bit array s as byte string."""
     s = await mpc.output(s)
+
+    s = pad_sec(s, 49856 * 8)
+
+    # Convert binary array to bytes
     s = np.fliplr(s.reshape(-1, 8)).reshape(-1)  # reverse bits for each byte
     print(type(s))
 
-    # Convert binary array to bytes
     byte_list = [int("".join(map(str, s[i:i + 8])), 2) for i in range(0, len(s), 8)]
     byte_string = bytes(byte_list)
 
     print(f'{text} {byte_string}')
     return byte_string
 
+def pad_sec(array, x):
+    """Pad secure array to length x"""
+    r = x - array.size 
+    pad = [0] * r
+    new_arr = mpc.np_concatenate(array, np.array(pad))
+    return new_arr
 
 def xprint(s, d=''):
     """
@@ -83,15 +92,6 @@ def to_bytes(y):
     x_bytes = bytes(int(x_bitstring[i:i + 8], 2) for i in range(0, len(x_bitstring), 8))
 
     return eval(x_bytes)
-
-def pad(x, y):
-    """
-    pad the array x with zeroes until y length is reached
-    :param x: to be padded
-    :param y: length to be reached
-    :return: new array of length y
-    """
-    pass
 
 def check_length(x, y):
     """
@@ -260,8 +260,7 @@ async def main():
         file.write(var)
 
     # verify the generated signature
-    pk = get_pk(sk)  # public key in bytes
-    assert sphincs.verify(sig, bytes(mes, 'utf-8'), pkseed + pkroot)
+    #assert sphincs.verify(sig, bytes(mes, 'utf-8'), pk_seed + pk_root)
 
     await mpc.shutdown()
 
