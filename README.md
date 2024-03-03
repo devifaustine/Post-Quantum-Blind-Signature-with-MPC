@@ -19,8 +19,8 @@ To run the benchmark, run the following command:
 ./bench_mpc_sphincs.sh
 ```
 This will run the benchmark for the MPC SPHINCS+ signature scheme, and output the results in the `results` file.
-The ```.\bench_mpc_sphincs.sh``` script first generates the messages and the key pairs for signing. It then initializes and runs two python3 instances, one for the user/requester and one for the signer. Both instances will give the right inputs into the console (the user sends the message and the signer the key pair), and the SPHINCS+ signing function in MPC begins.
+The ```bench_mpc_sphincs.sh``` script first generates the messages and the key pairs for signing. It then initializes and runs a python script, which runs two python3 instances running the SPHINCS+ built in MPC, one for the user/requester and one for the signer. Both instances will give the right inputs into the console (the user sends the message and the signer the key pair), and the SPHINCS+ signing function in MPC begins.
 
-The `log.txt` file gives the log output of each instance of the python3 program running. The `results` file gives the time taken for the MPC SPHINCS+ signature scheme to run.
+The `log.txt` file gives the log output of each instance of the python3 program running. The `bench_res.txt` file gives the time taken for the MPC SPHINCS+ signature scheme to run.
 
-PS: sometimes the key generation and message generation fail, and the script would need to be rerun. This is a known issue and is being worked on.
+PS: The efficiency of the code could be improved more. The code is still under development and is not yet ready for production use.
