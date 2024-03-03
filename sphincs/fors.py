@@ -6,11 +6,13 @@ from address import ADRS
 from shake import SHAKE
 from math import log, floor
 import copy
-import time 
+import time
+from utils import UTILS
 
 # change to false if no log wanted
 logging = True 
 timer = 3
+util = UTILS()
 
 def xprint(string):
     if logging: 
@@ -203,7 +205,7 @@ class FORS:
             if time.time() - start_time >= timer: 
                 break
         xprint("FORS signature generated.")
-        return sig_fors
+        return sig_fors  #, util.to_secarray(sig_fors)
 
     def fors_pkFromSig(self, sig_fors, m, pkseed, adrs):
         """
