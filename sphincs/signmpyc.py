@@ -59,7 +59,7 @@ def get_sk_ele(sk):
 
 def split_sk(key):
     #key_fixed = key.replace("x", '\\x')
-    pk, sk = eval(key)
+    pk, sk = key
     sk_seed = sk[:32]
     sk_prf = sk[32:64]
     pk_seed = sk[64:96]
