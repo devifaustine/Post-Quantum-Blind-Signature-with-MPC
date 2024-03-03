@@ -146,8 +146,7 @@ class SPHINCS(object):
         :return:
         """
         res = []
-        key_fixed = sk.replace("x", '\\x')
-        pk, sk = eval(key_fixed)
+        pk, sk = eval(sk)
         m = m.encode('utf-8')
         res.append(m)
         res.append(pk)
