@@ -368,6 +368,8 @@ class SPHINCS(object):
             s += SIG_HT[0]
 
         xprint("HT signature generated!")
+        print("Type of ht sig: ", type(s))
+        print("sig: ", s)
 
         # signature consists of R, SIG_FORS, SIG_HT - all of type secure object
         #sig = util.to_secarray(pyspx.shake_256f.sign(bytes(m, 'utf-8'), skseed + skprf + pkseed + pkroot))

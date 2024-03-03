@@ -9,7 +9,21 @@ sphincs = SPHINCS()
 secfld = mpc.SecFld(2)
 
 # set log to True to print the output
-log = True
+logging = True
+
+async def print_out(text, s):
+    """Print and return bit array s as byte string."""
+    s = await mpc.output(s)
+    s = np.fliplr(s.reshape(-1, 8)).reshape(-1)  # reverse bits for each byte
+    print(type(s))
+
+    # Convert binary array to bytes
+    byte_list = [int("".join(map(str, s[i:i + 8])), 2) for i in range(0, len(s), 8)]
+    byte_string = bytes(byte_list)
+
+    print(f'{text} {byte_string}')
+    return byte_string
+
 
 def xprint(s, d=''):
     """
@@ -18,7 +32,7 @@ def xprint(s, d=''):
     :param d: optional string
     :return: none
     """
-    if log:
+    if logging:
         print(s)
 
 def get_pk(key):
@@ -229,8 +243,7 @@ async def main():
         await mpc.shutdown()
         #return 
 
-    sig = await mpc.output(sig)
-    print("Signature generated!\nHere is the signature: ", sig)
+    sig = await print_out("Signature generated!\nHere is the signature: ", sig)
     
     end_out = time.time()
     elapsed1 = end - start  # elapsed time until sign() is done

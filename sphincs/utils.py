@@ -22,11 +22,10 @@ class UTILS(object):
 
     async def bits_to_bytestring(self, y):
         """
-        converts x from array of bits of secure object to normal bytes
-        :param x: input of type secfld.array (secure array)
+        converts x from array of bits to normal bytes
+        :param x: input of type
         :return: bytes(x)
         """
-        x = await mpc.output(y)
         x_bitstring = ''.join(str(bit) for bit in x)
 
         # Convert the binary string back to bytes
