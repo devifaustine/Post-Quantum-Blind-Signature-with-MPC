@@ -261,7 +261,7 @@ async def main():
 
     # verify the generated signature
     pk = get_pk(sk)  # public key in bytes
-    assert sphincs.verify(sig, bytes(mes, 'utf-8'), pk)
+    assert sphincs.verify(sig, bytes(mes, 'utf-8'), pkseed + pkroot)
 
     await mpc.shutdown()
 
