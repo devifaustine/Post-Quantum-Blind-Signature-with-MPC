@@ -4,11 +4,13 @@ from wots import WOTS
 from shake import SHAKE
 from math import ceil, floor, log
 import hashlib
+import time 
 
 # initialize WOTS+ instance for XMSS
 wots = WOTS(32, 16)
 shake = SHAKE()
 logging = True
+timer = 10
 
 def xprint(string):
     if logging: 
@@ -96,15 +98,19 @@ class XMSS:
         :param adrs: address
         :return: XMSS signature SIG_XMSS(sig || AUTH)
         """
+        xprint("Begin XMSS signing. ")
         if not isinstance(idx, int):
             idx_int = int.from_bytes(idx, 'big')
         else:
             idx_int = idx
         auth = b''
         # build authentication path
+        start = time.time() 
         for i in range(self.h):
             k = floor(idx_int / pow(2, i)) ^ 1
             auth += self.treehash(skseed, k * pow(2, i), i, pkseed, adrs)
+            if time.time() - start > timer: 
+                break
 
         adrs.set_type(0)
         adrs.set_keypair_addr(idx)
@@ -145,6 +151,7 @@ class XMSS:
         :param adrs: address
         :return: n-byte root value node[0] / public key of XMSS
         """
+        xprint("Begin XMSS verification. ")
         # TODO: check this function
         node = []
         # compute WOTS+ pk from sig

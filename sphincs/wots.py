@@ -161,6 +161,7 @@ class WOTS:
         :param adrs: address ADRS
         :return: WOTS+ signature sig
         """
+        xprint("Begin WOTS signing. ")
         checksum = 0
 
         # convert message to base w
@@ -202,6 +203,7 @@ class WOTS:
         :param adrs: address ADRS
         :return: WOTS+ public key
         """
+        xprint("Begin WOTS verification.")
         checksum = 0
         wotspkAdrs = copy.deepcopy(adrs)
 

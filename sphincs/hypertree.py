@@ -58,7 +58,7 @@ class Hypertree():
         :param id_leaf: index of the leaf
         :return: HT signature
         """
-        # TODO: check this function
+        xprint("Begin HT signing. ")
         # init
         adrs = ADRS(util.toByte(0, 32))
         sig_ht = b''

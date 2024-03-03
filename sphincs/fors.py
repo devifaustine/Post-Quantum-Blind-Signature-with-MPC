@@ -176,6 +176,7 @@ class FORS:
         :param adrs: address ADRS
         :return: FORS signature SIG_FORS
         """
+        xprint("Begin FORS signing. ")
         sig_fors = b''
         start_time = time.time() 
         # compute signature elements
@@ -188,7 +189,7 @@ class FORS:
             idx = m_bits[idx_start:idx_end] # index is bytestring
             int_id = int(idx, 2)
 
-            print("id: ", int_id)
+            #xprint("id: ", int_id)
 
             # pick private key element
             sk_element = self.fors_SKgen(skseed, adrs, i * self.t + int_id)
@@ -216,6 +217,7 @@ class FORS:
         :param adrs: address ADRS
         :return: PK seed of FORS
         """
+        xprint("Begin FORS verification. ")
         node = []
         root = []
         xprint("compute roots fors")
