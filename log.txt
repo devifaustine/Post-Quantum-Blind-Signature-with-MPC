@@ -1,1 +1,57 @@
+Output of second instance: 2024-03-04 03:01:52,657 Start MPyC runtime v0.9.9
+2024-03-04 03:01:52,669 All 2 parties connected.
+Give your input here: here's your payload:  (b'A3WNLJ5MCUGR68UJG5XQC58FX4Z4LR5HA\xc0{\xf5\xc5\xe5\xdb\xab\x07\xe3\xacB\x8fD\xd2\xc9\x89\xef\x87\xb3R\xfe\xc3\xbey\x1d\xa7X\xaf\x04\xcb\xcb', b'C95QISWHQCH3C9RAWD2G7FQRTYUUJ5OSXDNSUHCHHK6CDEFAKYB4EM81VH5WTE8NA3WNLJ5MCUGR68UJG5XQC58FX4Z4LR5HA\xc0{\xf5\xc5\xe5\xdb\xab\x07\xe3\xacB\x8fD\xd2\xc9\x89\xef\x87\xb3R\xfe\xc3\xbey\x1d\xa7X\xaf\x04\xcb\xcb')
+The given input is a secret key!
+Give the other input here: 
+Output of first instance: 2024-03-04 03:01:52,658 Start MPyC runtime v0.9.9
+2024-03-04 03:01:52,668 All 2 parties connected.
+Give your input here: here's your payload:  W0BOI6
+The given input is a message!
+Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7e466ed40>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8aea6b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8aea770>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8aeadd0>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8ae8a90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8ae9660>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8ae9630>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8ae86d0>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8ae8a00>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8ae86a0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8ae84f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7d8ae9750>]]
+
+Signing process begins now...
+sign started
+message digested.
+Begin FORS signing. 
+FORS signature generated.
+FORS signature generated.
+Begin FORS verification. 
+compute roots fors
+FORS verification done.
+Begin HT signing. 
+Begin XMSS signing. 
+Begin WOTS signing. 
+WOTS+ signature generated.
+XMSS signature generated
+Begin XMSS verification. 
+Begin WOTS verification.
+WOTS+ verification done.
+XMSS verification is done.
+Begin XMSS signing. 
+Begin WOTS signing. 
+WOTS+ signature generated.
+XMSS signature generated
+Begin XMSS verification. 
+Begin WOTS verification.
+WOTS+ verification done.
+XMSS verification is done.
+Hypertree signature generation is taking too long.
+Hypertree signature generated.
+HT signature generated!
+Type of ht sig:  <class 'mpyc.sectypes.ArraySecFld1(GF(2))'>
+sig:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe7650527a0>
+2024-03-04 03:12:04,630 Exception in callback _SelectorSocketTransport._call_connection_lost(None)
+handle: <Handle _SelectorSocketTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/usr/lib/python3.10/asyncio/selector_events.py", line 984, in _call_connection_lost
+    super()._call_connection_lost(exc)
+  File "/usr/lib/python3.10/asyncio/selector_events.py", line 742, in _call_connection_lost
+    self._protocol.connection_lost(exc)
+  File "/home/devifaustine/.local/lib/python3.10/site-packages/mpyc/asyncoro.py", line 134, in connection_lost
+    rt.parties[rt.pid].protocol.set_result(None)
+asyncio.exceptions.InvalidStateError: invalid state
+
 Benchmark is done! Check bench_res.txt for results.
