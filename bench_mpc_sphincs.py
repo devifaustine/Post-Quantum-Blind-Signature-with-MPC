@@ -42,7 +42,10 @@ def run_signer(instance_name, input_a, input_b, event):
     # Wait until the other instance connects
     event.wait()
     # Provide inputs
-    process.stdin.write(f'{input_a}\n{input_b}\n')
+    process.stdin.write(f'{input_a}\n')
+    process.stdin.flush()
+    event.wait()
+    process.stdin.write(f'{input_b}\n')
     process.stdin.flush()
     
     # Get the output
