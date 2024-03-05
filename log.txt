@@ -1,48 +1,14 @@
-Output of second instance: 2024-03-04 15:49:24,895 Start MPyC runtime v0.9
-2024-03-04 15:49:24,997 All 2 parties connected.
-Give your input here: here's your payload:  (b'8B9KRDS7MJUT3CIE6EWOIJ1TVPYD7K7Zk0\xc5\xae\x0e^\xca\xc1c\x94\x1b[:9\xa3"\xbeRQ\x8cv\x8a\xa2\x14\x91\xb1\x82}\xdfM=\x19', b'LIMD84Q2PJGQLTTDKMXRQKIBHON8JJT58LQ1DW8DQ68V3HS7ZJRPPNW80TWF52G58B9KRDS7MJUT3CIE6EWOIJ1TVPYD7K7Zk0\xc5\xae\x0e^\xca\xc1c\x94\x1b[:9\xa3"\xbeRQ\x8cv\x8a\xa2\x14\x91\xb1\x82}\xdfM=\x19')
+Output of second instance: 2024-03-05 14:35:24,341 Start MPyC runtime v0.9
+2024-03-05 14:35:24,353 All 2 parties connected.
+Give your input here: here's your payload:  (b'K8CC8OR66P3OOAI3AWRE6T1V19OKDBJF\x92\x14\xed\xd5m\xec\xce5\xb2 \x97\t\xa6\x86\xd59G\x19\xa0-6\xcd\xb0}\xbf\xe6\xdd\xfb$\xf8\xa4\xe2', b'JMVX5SM9ILXVQHTNIBITEUCVYJOMN9CCZE7DDGKW03ZOQZPK17ZEXEESZPVGQ4E6K8CC8OR66P3OOAI3AWRE6T1V19OKDBJF\x92\x14\xed\xd5m\xec\xce5\xb2 \x97\t\xa6\x86\xd59G\x19\xa0-6\xcd\xb0}\xbf\xe6\xdd\xfb$\xf8\xa4\xe2')
 The given input is a secret key!
-Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e433310>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e4333d0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e4332e0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e432b90>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e1d4460>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e1d44c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e1d44f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e1d4520>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e1d4490>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e1d4580>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e1d45b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a9e1d45e0>]]
-
-Signing process begins now...
-sign started
-message digested.
-Begin FORS signing. 
-FORS signature generated.
-FORS signature generated.
-Begin FORS verification. 
-compute roots fors
-FORS verification done.
-Begin HT signing. 
-Begin XMSS signing. 
-Begin WOTS signing. 
-WOTS+ signature generated.
-XMSS signature generated
-Begin XMSS verification. 
-Begin WOTS verification.
-WOTS+ verification done.
-XMSS verification is done.
-Begin XMSS signing. 
-Begin WOTS signing. 
-WOTS+ signature generated.
-XMSS signature generated
-Begin XMSS verification. 
-Begin WOTS verification.
-WOTS+ verification done.
-XMSS verification is done.
-Hypertree signature generation is taking too long.
-Hypertree signature generated.
-HT signature generated!
-Type of ht sig:  <class 'mpyc.sectypes.ArraySecFld1(GF(2))'>
-sig:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f0a745a1000>
-
-Output of first instance: 2024-03-04 15:49:24,879 Start MPyC runtime v0.9
-2024-03-04 15:49:24,994 All 2 parties connected.
-Give your input here: here's your payload:  OR8O7MQ0JSXZW58F5MKWDHQTW6
+Give the other input here: 
+Output of first instance: 2024-03-05 14:35:24,349 Start MPyC runtime v0.9
+2024-03-05 14:35:24,353 All 2 parties connected.
+Give your input here: here's your payload:  P1F4D7TL08N5WI9EZZA9PIRFTV7EAQZK
 The given input is a message!
-Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338b377910>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f3384876ad0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f3384876b90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f3384877bb0>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338461c640>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338461cc40>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338461c5e0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338461c610>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338461caf0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338461cbb0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338461ccd0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f338461cd00>]]
+Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd6e1b910>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd031aad0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd031ab90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd031b250>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0ac0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0af0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0c40>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c05e0>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0640>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0c10>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0bb0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0cd0>]]
 
 Signing process begins now...
 sign started
@@ -74,6 +40,18 @@ Hypertree signature generation is taking too long.
 Hypertree signature generated.
 HT signature generated!
 Type of ht sig:  <class 'mpyc.sectypes.ArraySecFld1(GF(2))'>
-sig:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7f335a8ad6f0>
+sig:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fed85dce1d0>
+2024-03-05 14:36:16,021 Exception in callback _SelectorSocketTransport._call_connection_lost(None)
+handle: <Handle _SelectorSocketTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.10/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/codespace/.python/current/lib/python3.10/asyncio/selector_events.py", line 984, in _call_connection_lost
+    super()._call_connection_lost(exc)
+  File "/home/codespace/.python/current/lib/python3.10/asyncio/selector_events.py", line 742, in _call_connection_lost
+    self._protocol.connection_lost(exc)
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 152, in connection_lost
+    rt.parties[rt.pid].protocol.set_result(None)
+asyncio.exceptions.InvalidStateError: invalid state
 
 Benchmark is done! Check bench_res.txt for results.
