@@ -28,10 +28,7 @@ sphincs = SPHINCS()
 
 # _________________________________________________________________________________________________
 
-# seed for SPHINCS+ with SHA-256 has to be 96 bytes long
-seed1 = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
-
-def gen_key(n=1, seed=seed1):
+def gen_key(n=1):
     """
     generate a key pair (pk, sk) n times
     :param n: the number of key pairs generated
@@ -39,17 +36,20 @@ def gen_key(n=1, seed=seed1):
     :return: key(s) (printed out)
     """
 
-    # seed has to be 96 bytes long
-    assert len(seed) == 96
-
-    # Convert the string to bytes
-    seed_bytes = seed.encode('utf-8')
-
     keys = []
     elapsed = []
 
     # generate public and private key pair
     for i in range(n):
+        # seed for SPHINCS+ with SHA-256 has to be 96 bytes long
+        seed = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(96))
+
+
+        # seed has to be 96 bytes long
+        assert len(seed) == 96
+
+        # Convert the string to bytes
+        seed_bytes = seed.encode('utf-8')
         start = time.time()
         key = sphincs.keygen(seed_bytes)
         end = time.time()

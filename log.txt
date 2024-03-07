@@ -1,14 +1,40 @@
-Output of second instance: 2024-03-05 14:35:24,341 Start MPyC runtime v0.9
-2024-03-05 14:35:24,353 All 2 parties connected.
-Give your input here: here's your payload:  (b'K8CC8OR66P3OOAI3AWRE6T1V19OKDBJF\x92\x14\xed\xd5m\xec\xce5\xb2 \x97\t\xa6\x86\xd59G\x19\xa0-6\xcd\xb0}\xbf\xe6\xdd\xfb$\xf8\xa4\xe2', b'JMVX5SM9ILXVQHTNIBITEUCVYJOMN9CCZE7DDGKW03ZOQZPK17ZEXEESZPVGQ4E6K8CC8OR66P3OOAI3AWRE6T1V19OKDBJF\x92\x14\xed\xd5m\xec\xce5\xb2 \x97\t\xa6\x86\xd59G\x19\xa0-6\xcd\xb0}\xbf\xe6\xdd\xfb$\xf8\xa4\xe2')
+Output of second instance: 2024-03-07 22:24:55,529 Start MPyC runtime v0.9
+2024-03-07 22:24:55,617 All 2 parties connected.
+Give your input here: here's your payload:  (b'W23CWXP3AUYR96HEGPDTCXE5YN4N4PQNq\x1a\xfb\xf6\xe1\xd0&\xfc\xfb\xee\xd4mW\xfcc\rC\x1a!\xbf\x1e|\xb1\x82\xd0\x87\xaa\x85{4\xc9n', b'WZ6OVKN5X99DYO7H0NV1ZT0LL8UQNEPHN92RRWA374TW1IM0R82D5MS9TCSSZQT4W23CWXP3AUYR96HEGPDTCXE5YN4N4PQNq\x1a\xfb\xf6\xe1\xd0&\xfc\xfb\xee\xd4mW\xfcc\rC\x1a!\xbf\x1e|\xb1\x82\xd0\x87\xaa\x85{4\xc9n')
 The given input is a secret key!
-Give the other input here: 
-Output of first instance: 2024-03-05 14:35:24,349 Start MPyC runtime v0.9
-2024-03-05 14:35:24,353 All 2 parties connected.
-Give your input here: here's your payload:  P1F4D7TL08N5WI9EZZA9PIRFTV7EAQZK
+Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd0177df310>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd0177df3d0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd0177df2e0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd0177deb90>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd017580460>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd0175804c0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd0175804f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd017580520>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd017580490>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd017580580>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd0175805b0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fd0175805e0>]]
+
+Signing process begins now...
+sign started
+The length of the message and secret key is wrong! Please restart the function!
+2024-03-07 22:25:38,481 Unhandled exception in event loop
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.10/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 431, in <lambda>
+    task.add_done_callback(lambda t: _reconcile(decl, t))
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 355, in _reconcile
+    givn = task.result()
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 283, in _wrap_in_coro
+    return await awaitable
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 271, in __await__
+    val = self.coro.send(None)
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 452, in _distribute
+    y = [[field.array(unmarshal(r), check=False).reshape(shape) for r in shares]]
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 452, in <listcomp>
+    y = [[field.array(unmarshal(r), check=False).reshape(shape) for r in shares]]
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/finfields.py", line 1289, in reshape
+    return type(self)(self.value.reshape(*args, **kwargs), check=False)
+ValueError: cannot reshape array of size 408 into shape (256,)
+Traceback (enclosing MPyC coroutine call):
+
+Output of first instance: 2024-03-07 22:24:55,495 Start MPyC runtime v0.9
+2024-03-07 22:24:55,611 All 2 parties connected.
+Give your input here: here's your payload:  IDCQV1ZEWERIKIAZNFCBZWPRX42JZF4BRS8P5YVVNCK9TO716G1
 The given input is a message!
-Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd6e1b910>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd031aad0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd031ab90>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd031b250>]
-here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0ac0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0af0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0c40>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c05e0>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0640>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0c10>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0bb0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fedd00c0cd0>]]
+Give the other input here: here's the payload:  [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0e43b3910>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0e43b37f0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0e43b3940>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd8baad0>]
+here's the inputs:  [[<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd664bb0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd664550>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd664b80>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd664b20>], [<mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd664520>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd664c70>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd664ca0>, <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0dd664cd0>]]
 
 Signing process begins now...
 sign started
@@ -40,8 +66,8 @@ Hypertree signature generation is taking too long.
 Hypertree signature generated.
 HT signature generated!
 Type of ht sig:  <class 'mpyc.sectypes.ArraySecFld1(GF(2))'>
-sig:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fed85dce1d0>
-2024-03-05 14:36:16,021 Exception in callback _SelectorSocketTransport._call_connection_lost(None)
+sig:  <mpyc.sectypes.ArraySecFld1(GF(2)) object at 0x7fe0b3a5e710>
+2024-03-07 22:25:40,802 Exception in callback _SelectorSocketTransport._call_connection_lost(None)
 handle: <Handle _SelectorSocketTransport._call_connection_lost(None)>
 Traceback (most recent call last):
   File "/home/codespace/.python/current/lib/python3.10/asyncio/events.py", line 80, in _run
@@ -53,5 +79,25 @@ Traceback (most recent call last):
   File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 152, in connection_lost
     rt.parties[rt.pid].protocol.set_result(None)
 asyncio.exceptions.InvalidStateError: invalid state
+2024-03-07 22:25:41,947 Unhandled exception in event loop
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.10/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 431, in <lambda>
+    task.add_done_callback(lambda t: _reconcile(decl, t))
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 355, in _reconcile
+    givn = task.result()
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 283, in _wrap_in_coro
+    return await awaitable
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/asyncoro.py", line 271, in __await__
+    val = self.coro.send(None)
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 452, in _distribute
+    y = [[field.array(unmarshal(r), check=False).reshape(shape) for r in shares]]
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/runtime.py", line 452, in <listcomp>
+    y = [[field.array(unmarshal(r), check=False).reshape(shape) for r in shares]]
+  File "/home/codespace/.python/current/lib/python3.10/site-packages/mpyc/finfields.py", line 1289, in reshape
+    return type(self)(self.value.reshape(*args, **kwargs), check=False)
+ValueError: cannot reshape array of size 256 into shape (408,)
+Traceback (enclosing MPyC coroutine call):
 
 Benchmark is done! Check bench_res.txt for results.
